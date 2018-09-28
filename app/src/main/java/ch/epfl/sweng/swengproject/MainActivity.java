@@ -13,27 +13,35 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
 
     private Button register_btn;
+    private Button login_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-        //Button-link to register
         register_btn = findViewById(R.id.register_btn);
+        login_btn = findViewById(R.id.login_btn);
+
         register_btn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
                 startActivity(new Intent(MainActivity.this, RegistrationActivity.class));
             }
         });
 
 
-        // Use this to check if the email has been confirmed: FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()
+        login_btn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        });
+
+
+    // Use this to check if the email has been confirmed: FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()
 
 
 
