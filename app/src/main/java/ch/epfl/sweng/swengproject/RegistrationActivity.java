@@ -1,12 +1,18 @@
 package ch.epfl.sweng.swengproject;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -23,6 +29,7 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
+        auth = FirebaseAuth.getInstance();
 
         inputEmail = findViewById(R.id.email);      //get the two texts
         inputPassword = findViewById(R.id.password);
@@ -37,8 +44,29 @@ public class RegistrationActivity extends AppCompatActivity {
 
                 //check entered informations...
 
-               // auth = FirebaseAuth.getInstance();
-               // auth.createUserWithEmailAndPassword(email, password);
+                auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<AuthResult>(){
+
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+
+                                    //change UI or activity !!!!!
+                                    startActivity(new Intent(RegistrationActivity.this, MapActivity.class));
+
+
+                                } else {
+                                    // If sign in fails, display a message to the user.
+
+                                    Toast fail = Toast.makeText(RegistrationActivity.this, "Registration Failed",Toast.LENGTH_LONG);
+                                    fail.show();
+
+                                }
+
+
+
+                            }
+                        });
 
             }
         });
