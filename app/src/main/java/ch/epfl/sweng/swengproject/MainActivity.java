@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -16,8 +19,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        register_btn = findViewById(R.id.register_btn);
 
+
+        //Button-link to register
+        register_btn = findViewById(R.id.register_btn);
         register_btn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -26,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, RegistrationActivity.class));
             }
         });
+
+
+        // Use this to check if the email has been confirmed: FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()
+
+
 
     }
 

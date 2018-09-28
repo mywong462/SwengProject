@@ -37,12 +37,14 @@ public class RegistrationActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.button);    //get the button
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 String email = inputEmail.getText().toString();         //recover the informations from the text fields
                 String password = inputPassword.getText().toString();
 
                 //check entered informations...
+                passwordStrengthCheck(password);
 
                 auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<AuthResult>(){
@@ -51,30 +53,39 @@ public class RegistrationActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
 
-                                    //change UI or activity !!!!!
-                                    startActivity(new Intent(RegistrationActivity.this, MapActivity.class));
+
+                                    auth.getCurrentUser().sendEmailVerification();    //send a verification email
+
+                                    startActivity(new Intent(RegistrationActivity.this, MainActivity.class));   //go back to login page
 
 
                                 } else {
                                     // If sign in fails, display a message to the user.
 
-                                    Toast fail = Toast.makeText(RegistrationActivity.this, "Registration Failed",Toast.LENGTH_LONG);
+                                    Toast fail = Toast.makeText(RegistrationActivity.this, "Registration Failed",Toast.LENGTH_SHORT);
                                     fail.show();
 
                                 }
-
-
-
                             }
                         });
 
             }
         });
-
-
-
     }
 
+
+    /**
+     * @brief Display an error message if the password is less than 6 characters long
+     * @param password The password to be checked
+     */
+    private void passwordStrengthCheck(String password){
+
+        if(password.length() < 6){
+
+            Toast fail = Toast.makeText(RegistrationActivity.this, "Password should be at least 6 characters long",Toast.LENGTH_LONG);
+            fail.show();
+        }
+    }
 
 
 }
