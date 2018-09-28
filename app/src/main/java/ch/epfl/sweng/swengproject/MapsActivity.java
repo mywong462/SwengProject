@@ -34,9 +34,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        Toast hello = Toast.makeText(this, "fuckthis", Toast.LENGTH_LONG);
-        hello.show();
-
         //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
