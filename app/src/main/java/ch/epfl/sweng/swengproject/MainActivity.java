@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         login_btn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -37,8 +41,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-        // Use this to check if the email has been confirmed: FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()
+    // Use this to check if the email has been confirmed: FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()
 
 
 
