@@ -1,6 +1,7 @@
 package ch.epfl.sweng.swengproject;
 
 import android.support.annotation.NonNull;
+import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,7 +22,9 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.TestCase.assertEquals;
 
@@ -39,7 +42,7 @@ public class RegistrationInstrumentedTest {
 
 
     @Test
-    public void testUserCanRegister() throws InterruptedException {
+    public void testRandomRegisteredUser() throws InterruptedException {
 
         String mail = "exemple"+Math.random()+"@hotmail.com";
         String pswd = "exemple"+Math.random();
@@ -48,26 +51,64 @@ public class RegistrationInstrumentedTest {
         onView(withId(R.id.password)).perform(typeText(pswd)).perform(closeSoftKeyboard());
         onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
         onView(withId(R.id.button)).perform(click());
+        Thread.sleep(2000);
+        onView(withId(R.id.login_btn)).perform(click());
+        onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText(pswd)).perform(closeSoftKeyboard());
+        onView(withId(R.id.button)).perform(click());
 
-        FirebaseAuth testAuth = FirebaseAuth.getInstance();
-
-       /* testAuth.signInWithEmailAndPassword(mail, pswd)
-                .addOnCompleteListener(mActivityRule.getActivity(), new OnCompleteListener<AuthResult>() {
-
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        assertEquals(task.isSuccessful(),true);
-
-                    }
-                });
-*/
-
-     
-
-
+        //will exit because email is not registered
 
     }
 
+    @Test
+    public void testWrongEmailInput(){
 
+        String mail = "exemple"+Math.random();
+        String pswd = "exemple"+Math.random();
+
+        onView(withId(R.id.register_btn)).perform(click());
+        onView(withId(R.id.password)).perform(typeText(pswd)).perform(closeSoftKeyboard());
+        onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.button)).perform(click());
+
+        boolean passed = false;
+
+        try { //the activity should not have changed => login_btn isn't on the view and should return an error
+            onView(withId(R.id.login_btn)).perform(click());
+        }
+        catch (NoMatchingViewException e) {
+
+            passed = true;
+        }
+
+        assertEquals(true,passed);
+
+    }
+
+    @Test
+    public void testSmallPasswordInput(){
+
+        String mail = "exemple"+Math.random();
+        String pswd = "12345";
+
+        onView(withId(R.id.register_btn)).perform(click());
+        onView(withId(R.id.password)).perform(typeText(pswd)).perform(closeSoftKeyboard());
+        onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.button)).perform(click());
+
+        boolean passed = false;
+
+        try { //the activity should not have changed => login_btn isn't on the view and should return an error
+            onView(withId(R.id.login_btn)).perform(click());
+        }
+        catch (NoMatchingViewException e) {
+
+            passed = true;
+        }
+
+        assertEquals(true,passed);
+
+    }
 
 }

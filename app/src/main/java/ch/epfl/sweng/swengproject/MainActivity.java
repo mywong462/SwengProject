@@ -41,10 +41,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-    // Use this to check if the email has been confirmed: FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()
-
-
-
     }
 
 
