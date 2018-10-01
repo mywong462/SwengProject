@@ -8,11 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -44,8 +40,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private final int LOCATION_REQUEST_CODE = 99;
 
-    private LocationManager mLocationManager;
-
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private Location mLastKnownLocation;
@@ -56,7 +50,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 
-    private Criteria criteria;
 
 
     @Override
@@ -64,7 +57,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        specifyCriteria();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -73,20 +65,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-    private void specifyCriteria(){
-
-        criteria = new Criteria();
-
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
-        criteria.setAltitudeRequired(false);
-        criteria.setBearingRequired(false);
-        criteria.setCostAllowed(false);
-        criteria.setPowerRequirement(Criteria.POWER_HIGH);
-        criteria.setSpeedRequired(false);
-
-    }
 
     private Boolean checkLocationPermission(){
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -183,36 +161,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (mLocationPermission) {
                 Log.d("HELLO", "OK PERMISSION");
 
-                mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                mLastKnownLocation = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, true));
+                mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+
+                        if(location != null){
+                            mLastKnownLocation = location;
+                            updateUI();
+                        }
+
+                    }
+                });
+
                 if(mLastKnownLocation == null){
                     Log.d("HELLO", "NULL LOCATION");
                 }
                 //updateUI();
 
-                /*mLocationManager.requestLocationUpdates(mLocationManager.getBestProvider(criteria, true), 500, 30, new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        mLastKnownLocation = location;
-                        Log.d("HELLO", "Latitude " + location.getLatitude() + " et longitude " + location.getLongitude());
-                        updateUI();
-                    }
-
-                    @Override
-                    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String s) {
-
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String s) {
-                        Log.d("HELLO", "NO PROVIDER");
-                    }
-                });*/
             } else {
                 Log.d("HELLO", "NO PERMISSION");
                 checkLocationPermission();
@@ -231,7 +197,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
                 LatLng mLatLng = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
             }
         }catch(SecurityException e){}
     }
