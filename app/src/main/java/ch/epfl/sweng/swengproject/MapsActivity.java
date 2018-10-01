@@ -20,6 +20,7 @@ import android.util.Log;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -126,6 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Location settings are satisfied
+                Log.d("HELLO", "createLocationRequest_true");
                 startLocationUpdates();
             }
         });
@@ -165,19 +168,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
-
                         if(location != null){
                             mLastKnownLocation = location;
                             updateUI();
                         }
-
                     }
                 });
-
-                if(mLastKnownLocation == null){
-                    Log.d("HELLO", "NULL LOCATION");
-                }
-                //updateUI();
 
             } else {
                 Log.d("HELLO", "NO PERMISSION");
