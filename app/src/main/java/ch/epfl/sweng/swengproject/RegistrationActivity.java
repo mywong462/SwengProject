@@ -18,10 +18,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-
+    private FirebaseAuth auth;
     private EditText inputEmail, inputPassword;
-    private Button btnRegister;
-    private FirebaseAuth auth;  //firebase instance
+    private Button btnLogin, btnRegister, btnResetPassword;
 
 
     @Override
@@ -31,10 +30,25 @@ public class RegistrationActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        inputEmail = findViewById(R.id.email);      //get the two texts
+        inputEmail = findViewById(R.id.email);
         inputPassword = findViewById(R.id.password);
+        btnLogin = findViewById(R.id.login_btn);
+        btnRegister = findViewById(R.id.register_btn);
+        btnResetPassword = findViewById(R.id.resetPassword_btn);
 
-        btnRegister = findViewById(R.id.button);    //get the button
+        btnResetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // start new resetPasswordActivity
+            }
+        });
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
+            }
+        });
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
 

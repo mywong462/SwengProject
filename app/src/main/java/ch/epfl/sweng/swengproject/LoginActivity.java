@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        inputEmail = findViewById(R.id.email);      //get the two texts
+        inputEmail = findViewById(R.id.email);
         inputPassword = findViewById(R.id.password);
         btnLogin = findViewById(R.id.button);
 
@@ -72,12 +72,8 @@ public class LoginActivity extends AppCompatActivity {
                                     fail.show();
 
                                 }
-
-
-
                             }
                         });
-
             }
         });
     }
