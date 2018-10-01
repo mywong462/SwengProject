@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
@@ -46,6 +47,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Location mLastKnownLocation;
 
+    private LocationCallback mLocationCallback;
+
+    private LocationRequest mLocationRequest;
+
     private Boolean mLocationPermission;
 
     private final int REQUEST_CHECK_SETTINGS = 555;
@@ -58,6 +63,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        mLocationCallback = new LocationCallback(){
+            @Override
+            public void onLocationResult(LocationResult locationResult){
+                if(locationResult == null){
+                    return;
+                }
+                mLastKnownLocation = locationResult.getLastLocation();
+                updateUI();
+                Log.d("HELLO", "NON NULL");
+            }
+        };
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -114,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     protected void createLocationRequest() {
-        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -165,15 +182,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("HELLO", "OK PERMISSION");
 
                 mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-                mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if(location != null){
-                            mLastKnownLocation = location;
-                            updateUI();
-                        }
-                    }
-                });
+                mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
             } else {
                 Log.d("HELLO", "NO PERMISSION");
