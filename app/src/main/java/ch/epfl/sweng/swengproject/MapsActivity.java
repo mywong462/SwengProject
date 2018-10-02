@@ -3,9 +3,12 @@ package ch.epfl.sweng.swengproject;
 
 import android.Manifest;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Instrumentation;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -19,17 +22,20 @@ import android.util.Log;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,6 +59,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Boolean mLocationPermission;
 
+    private Boolean isOpening;
+
+    private Boolean isLocationSettingsDemandDisplayed;
+
     private final int REQUEST_CHECK_SETTINGS = 555;
 
     private GoogleMap mMap;
@@ -63,6 +73,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        isOpening = true;
+        isLocationSettingsDemandDisplayed = false;
 
         mLocationCallback = new LocationCallback(){
             @Override
@@ -73,6 +85,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mLastKnownLocation = locationResult.getLastLocation();
                 updateUI();
                 Log.d("HELLO", "NON NULL");
+            }
+
+            @Override
+            public void onLocationAvailability(LocationAvailability locationAvailability){
+
+                if(!locationAvailability.isLocationAvailable()) {
+
+                    LocationSettingsRequest.Builder requestBuilder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
+
+                    SettingsClient client = LocationServices.getSettingsClient(MapsActivity.this);
+                    Task<LocationSettingsResponse> task = client.checkLocationSettings(requestBuilder.build());
+
+                    task.addOnSuccessListener(MapsActivity.this, new OnSuccessListener<LocationSettingsResponse>() {
+                        @Override
+                        public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+
+                        }
+                    });
+
+                    task.addOnFailureListener(MapsActivity.this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            setContentView(R.layout.activity_main);
+                            isLocationSettingsDemandDisplayed = true;
+                            Log.d("HELLO", "askkkkkkkkkkk1");
+                        }
+                    });
+
+                }else{
+                    if(isLocationSettingsDemandDisplayed){
+                        isLocationSettingsDemandDisplayed = false;
+                        setContentView(R.layout.activity_maps);
+                    }
+                }
             }
         };
 
@@ -153,6 +199,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         task.addOnFailureListener(this, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                // Show a layout to ask for location settings to be on and explain why this is total shittery
+
                 if(e instanceof ResolvableApiException){
                     // Location settings are not satisfied, ask the user for it
                     try{
@@ -163,9 +211,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 REQUEST_CHECK_SETTINGS);
                     }catch (IntentSender.SendIntentException sendEx){}
                 }
+
             }
         });
+
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // All required changes were successfully made
+                        Log.d("HELLO", "createLocationRequestAfterAskingViaDialog_true");
+                        startLocationUpdates();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // The user was asked to change settings, but chose not to
+                        Log.d("HELLO", "MOTHERFUCKER");
+                        startLocationUpdates();
+                        break;
+                    default:
+                        break;
+                }
+                break;
+        }
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap){
@@ -199,10 +273,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         try {
             if (mLocationPermission) {
+                mMap.clear();
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
                 LatLng mLatLng = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
+                CircleOptions mCircleOptions = new CircleOptions()
+                        .center(mLatLng)
+                        .radius(4000)
+                        .strokeWidth(0)
+                        .fillColor(0x300000cf);
+                mMap.clear();
+                mMap.addCircle(mCircleOptions);
+                if(isOpening) {
+                    isOpening = false;
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 12));
+                }
             }
         }catch(SecurityException e){}
     }
