@@ -7,13 +7,11 @@
     tools:context=".MainActivity">
 
     <EditText
-        android:id="@+id/email"
+        android:id="@+id/email2"
         android:layout_width="215dp"
         android:layout_height="48dp"
         android:layout_marginBottom="20dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:ems="10"
         android:inputType="textEmailAddress"
@@ -23,7 +21,7 @@
         app:layout_constraintTop_toBottomOf="@+id/email_txt" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/password2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="260dp"
@@ -44,8 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="160dp"
         android:text="Email :"
-        app:layout_constraintBottom_toTopOf="@+id/email"
-        app:layout_constraintStart_toStartOf="@+id/email"
+        app:layout_constraintBottom_toTopOf="@+id/email2"
+        app:layout_constraintStart_toStartOf="@+id/email2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -55,13 +53,13 @@
         android:layout_marginEnd="1dp"
         android:layout_marginRight="1dp"
         android:text="Password :"
-        app:layout_constraintBottom_toTopOf="@+id/password"
+        app:layout_constraintBottom_toTopOf="@+id/password2"
         app:layout_constraintEnd_toEndOf="@+id/email_txt"
-        app:layout_constraintStart_toStartOf="@+id/password"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintStart_toStartOf="@+id/password2"
+        app:layout_constraintTop_toBottomOf="@+id/email2" />
 
     <Button
-        android:id="@+id/register_btn"
+        android:id="@+id/register_btn2"
         android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -74,10 +72,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/password2" />
 
     <Button
-        android:id="@+id/login_btn"
+        android:id="@+id/login_btn2"
         android:layout_width="wrap_content"
         android:layout_height="17dp"
         android:layout_marginEnd="8dp"
@@ -91,10 +89,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resetPassword_btn"/>
+        app:layout_constraintTop_toBottomOf="@+id/resetPassword_btn2"/>
 
     <Button
-        android:id="@+id/resetPassword_btn"
+        android:id="@+id/resetPassword_btn2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -107,7 +105,7 @@
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/register_btn2" />
 
 
 </android.support.constraint.ConstraintLayout>

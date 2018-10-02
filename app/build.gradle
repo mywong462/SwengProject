@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "ch.epfl.sweng.swengproject"
-        minSdkVersion 16    //forced for google auth to put minimum 16
+        minSdkVersion 21    //forced for google auth to put minimum 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"

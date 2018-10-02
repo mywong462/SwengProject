@@ -31,11 +31,11 @@ public class RegistrationActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        inputEmail = findViewById(R.id.email);
-        inputPassword = findViewById(R.id.password);
-        btnLogin = findViewById(R.id.login_btn);
-        btnRegister = findViewById(R.id.register_btn);
-        btnResetPassword = findViewById(R.id.resetPassword_btn);
+        inputEmail = findViewById(R.id.email2);
+        inputPassword = findViewById(R.id.password2);
+        btnLogin = findViewById(R.id.login_btn2);
+        btnRegister = findViewById(R.id.register_btn2);
+        btnResetPassword = findViewById(R.id.resetPassword_btn2);
 
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
