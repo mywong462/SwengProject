@@ -1,6 +1,8 @@
 package ch.epfl.sweng.swengproject;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,7 +45,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 String email = inputEmail.getText().toString();         //recover the informations from the text fields
                 String password = inputPassword.getText().toString();
 
-                //check entered informations...
+                //additional password requirements can be added
                 passwordStrengthCheck(password);
 
                 auth.createUserWithEmailAndPassword(email, password)
@@ -65,6 +67,14 @@ public class RegistrationActivity extends AppCompatActivity {
                                     Toast fail = Toast.makeText(RegistrationActivity.this, "Registration Failed",Toast.LENGTH_SHORT);
                                     fail.show();
 
+                                    ConnectivityManager conMan = (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+                                    NetworkInfo info = conMan.getActiveNetworkInfo();
+
+                                    if(info == null ||!info.isConnected()){ //check if the error was caused by network connectivity problems
+
+                                        Toast failConnection = Toast.makeText(RegistrationActivity.this, "Please verify you are connected to a network",Toast.LENGTH_LONG);
+                                        failConnection.show();
+                                    }
                                 }
                             }
                         });
