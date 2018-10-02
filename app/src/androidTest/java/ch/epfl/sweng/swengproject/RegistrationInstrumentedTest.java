@@ -31,18 +31,16 @@ public class RegistrationInstrumentedTest {
         String mail = "exemple"+Math.random()+"@hotmail.com";
         String pswd = "exemple"+Math.random();
 
-        onView(withId(R.id.register_btn)).perform(click());
-        onView(withId(R.id.password)).perform(typeText(pswd)).perform(closeSoftKeyboard());
-        onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
-        onView(withId(R.id.button)).perform(click());
-        Thread.sleep(2000);
-        onView(withId(R.id.login_btn)).perform(click());
-        onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
-        onView(withId(R.id.password)).perform(typeText(pswd)).perform(closeSoftKeyboard());
-        onView(withId(R.id.button)).perform(click());
+        onView(withId(R.id.welcome_scr)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.register_btn1)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.email2)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.password2)).perform(typeText(pswd)).perform(closeSoftKeyboard());
+        onView(withId(R.id.register_btn2)).perform(click());
 
         //will exit because email is not registered
-
+        Thread.sleep(3000);
     }
 
     @Test
@@ -51,17 +49,19 @@ public class RegistrationInstrumentedTest {
         String mail = "exemple"+Math.random();  //the mail doesn't contains @something.domain
         String pswd = "exemple"+Math.random();
 
-        onView(withId(R.id.register_btn)).perform(click());
-        onView(withId(R.id.password)).perform(typeText(pswd)).perform(closeSoftKeyboard());
-        onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
-        onView(withId(R.id.button)).perform(click());
+        onView(withId(R.id.welcome_scr)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.register_btn1)).perform(click());
+        onView(withId(R.id.password2)).perform(typeText(pswd)).perform(closeSoftKeyboard());
+        onView(withId(R.id.email2)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.register_btn2)).perform(click());
 
-        Thread.sleep(2000);
+
 
         boolean passed = false;
 
-        try { //the activity should not have changed => login_btn isn't on the view and should return an error
-            onView(withId(R.id.login_btn)).perform(click());
+        try { //the activity should not have changed => we shouldn't be on the welcome screen
+            onView(withId(R.id.welcome_scr)).perform(click());
         }
         catch (NoMatchingViewException e) {
 
@@ -69,7 +69,7 @@ public class RegistrationInstrumentedTest {
         }
 
         assertEquals(true,passed);
-
+        Thread.sleep(1000);
     }
 
     @Test
@@ -78,17 +78,19 @@ public class RegistrationInstrumentedTest {
         String mail = "exemple"+Math.random();
         String pswd = "12345";
 
-        onView(withId(R.id.register_btn)).perform(click());
-        onView(withId(R.id.password)).perform(typeText(pswd)).perform(closeSoftKeyboard());
-        onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
-        onView(withId(R.id.button)).perform(click());
+        onView(withId(R.id.welcome_scr)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.register_btn1)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.password2)).perform(typeText(pswd)).perform(closeSoftKeyboard());
+        onView(withId(R.id.email2)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.register_btn2)).perform(click());
 
-        Thread.sleep(2000);
 
         boolean passed = false;
 
-        try { //the activity should not have changed => login_btn isn't on the view and should return an error
-            onView(withId(R.id.login_btn)).perform(click());
+        try { //the activity should not have changed => we shouldn't be on the welcome screen
+            onView(withId(R.id.welcome_scr)).perform(click());
         }
         catch (NoMatchingViewException e) {
 
@@ -96,7 +98,7 @@ public class RegistrationInstrumentedTest {
         }
 
         assertEquals(true,passed);
-
+        Thread.sleep(1000);
     }
 
 
@@ -108,23 +110,31 @@ public class RegistrationInstrumentedTest {
 
         //first register an email address
 
-        onView(withId(R.id.register_btn)).perform(click());
-        onView(withId(R.id.password)).perform(typeText(pswd)).perform(closeSoftKeyboard());
-        onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
-        onView(withId(R.id.button)).perform(click());
+        onView(withId(R.id.welcome_scr)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.register_btn1)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.password2)).perform(typeText(pswd)).perform(closeSoftKeyboard());
+        onView(withId(R.id.email2)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.register_btn2)).perform(click());
+        Thread.sleep(3000);
 
-        Thread.sleep(2000);
         //Then try to register with the same email
 
-        onView(withId(R.id.register_btn)).perform(click());
-        onView(withId(R.id.password)).perform(typeText("anyPassword")).perform(closeSoftKeyboard());
-        onView(withId(R.id.email)).perform(typeText(mail)).perform(closeSoftKeyboard());
-        onView(withId(R.id.button)).perform(click());
+        onView(withId(R.id.welcome_scr)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.register_btn1)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.password2)).perform(typeText("AnyPassword")).perform(closeSoftKeyboard());
+        onView(withId(R.id.email2)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.register_btn2)).perform(click());
+
 
         boolean passed = false;
 
         try { //the activity should not have changed => login_btn isn't on the view and should return an error
-            onView(withId(R.id.login_btn)).perform(click());
+            onView(withId(R.id.welcome_scr)).perform(click());
+
         }
         catch (NoMatchingViewException e) {
 
@@ -132,7 +142,7 @@ public class RegistrationInstrumentedTest {
         }
 
         assertEquals(true,passed);
-
+        Thread.sleep(1000);
     }
 
 

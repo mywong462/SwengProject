@@ -15,11 +15,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
-    private Button btnLogin;
+    private EditText inputEmail, inputPassword;
+    private Button btnLogin, btnRegister, btnResetPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +29,25 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        inputEmail = findViewById(R.id.email);      //get the two texts
-        inputPassword = findViewById(R.id.password);
-        btnLogin = findViewById(R.id.button);
+        inputEmail = findViewById(R.id.email1);
+        inputPassword = findViewById(R.id.password1);
+        btnLogin = findViewById(R.id.login_btn1);
+        btnRegister = findViewById(R.id.register_btn1);
+        btnResetPassword = findViewById(R.id.resetPassword_btn1);
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
+            }
+        });
+
+        btnResetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // start new resetPasswordActivity
+            }
+        });
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
 
@@ -49,35 +66,25 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (!auth.getCurrentUser().isEmailVerified()) {
-                    Toast.makeText(getApplicationContext(), "Email not verified", Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
                 auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>(){
 
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (!auth.getCurrentUser().isEmailVerified()) {
+                                    Toast.makeText(getApplicationContext(), "Email not verified", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
                                 if (task.isSuccessful()) {
-
-                                    //change UI or activity !!!!!
                                     startActivity(new Intent(LoginActivity.this, MapActivity.class));
-
-
+                                    finish();
                                 } else {
-                                    // If sign in fails, display a message to the user.
-
                                     Toast fail = Toast.makeText(LoginActivity.this, "Login Failed",Toast.LENGTH_LONG);
                                     fail.show();
-
                                 }
-
-
-
                             }
                         });
-
             }
         });
     }
