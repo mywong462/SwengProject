@@ -37,7 +37,7 @@ captures/
 .idea/
 .idea/workspace.xml
 .idea/tasks.xml
-gradle/
+#gradle/
 .idea/gradle.xml
 .idea/assetWizardSettings.xml
 .idea/dictionaries
