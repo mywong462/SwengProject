@@ -1,8 +1,16 @@
 language: android
 android:
+
+    licenses:   #command to solve license problems
+    - 'android-sdk-preview-license-.+'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
+
     components:
-        # for license problems
+    
+        #command to solve license problems
         - tools
+        - platform-tools
         # The BuildTools version used by your project
         - build-tools-27.0.3
         # The SDK version used to compile your project
@@ -12,6 +20,10 @@ android:
         # The system image, to run an emulator during the tests
         - sys-img-armeabi-v7a-android-22
 before_script:
+
+    # Prepare pre-accepted licenses to not be promted at installation
+        - mkdir -p "$ANDROID_HOME/licenses"
+        - cp ./google-licenses/* "$ANDROID_HOME/licenses/"
     # Emulator Management: Create, Start and Wait
     - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
     - emulator -avd test -no-audio -no-window &
