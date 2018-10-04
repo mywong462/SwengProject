@@ -49,6 +49,11 @@
         <activity
             android:name=".MapsActivity"
             android:label="EventMap"></activity>
-    </application>
 
+        <activity android:name=".RegistrationActivity" />
+        <activity android:name=".MapActivity" />
+        <activity android:name=".LoginActivity"></activity>
+
+    </application>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 </manifest>
