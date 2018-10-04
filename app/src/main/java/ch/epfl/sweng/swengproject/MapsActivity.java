@@ -5,8 +5,6 @@ import android.Manifest;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Instrumentation;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -29,7 +27,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,19 +34,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private final int LOCATION_REQUEST_CODE = 99;
-
-    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private Location mLastKnownLocation;
 
@@ -107,9 +100,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     task.addOnFailureListener(MapsActivity.this, new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            setContentView(R.layout.activity_main);
+                            setContentView(R.layout.page_location_services_up_demand);
                             isLocationSettingsDemandDisplayed = true;
-                            Log.d("HELLO", "askkkkkkkkkkk1");
+                            Log.d("HELLO", "ask to enable location services");
                         }
                     });
 
@@ -178,7 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
+        mLocationRequest.setInterval(7000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -230,7 +223,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
-                        Log.d("HELLO", "MOTHERFUCKER");
+                        Log.d("HELLO", "USER REFUSED TO ENABLE LOCATION SERVICES");
                         startLocationUpdates();
                         break;
                     default:
@@ -255,7 +248,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (mLocationPermission) {
                 Log.d("HELLO", "OK PERMISSION");
 
-                mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+                FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
             } else {
