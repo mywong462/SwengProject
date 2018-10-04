@@ -51,7 +51,6 @@
             android:label="EventMap"></activity>
 
         <activity android:name=".RegistrationActivity" />
-        <activity android:name=".MapActivity" />
         <activity android:name=".LoginActivity"></activity>
 
     </application>
