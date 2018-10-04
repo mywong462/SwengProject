@@ -11,5 +11,4 @@
     android:focusableInTouchMode="true"
     tools:context=".MainActivity">
 
-
 </android.support.constraint.ConstraintLayout>
