@@ -1,10 +1,9 @@
 language: android
 android:
-
-    licenses:   #command to solve license problems
-    - 'android-sdk-preview-license-.+'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
+    #licenses:   #command to solve license problems
+    #- 'android-sdk-preview-license-.+'
+    #- 'android-sdk-license-.+'
+    #- 'google-gdk-license-.+'
 
     components:
     
@@ -12,7 +11,7 @@ android:
         - tools
         - platform-tools
         # The BuildTools version used by your project
-        - build-tools-27.0.3
+        - build-tools-28.0.2
         # The SDK version used to compile your project
         - android-28
         # The SDK version used by the system image
@@ -22,10 +21,14 @@ android:
 before_script:
 
     # Prepare pre-accepted licenses to not be promted at installation
-        - mkdir -p "$ANDROID_HOME/licenses"
-        - cp ./google-licenses/* "$ANDROID_HOME/licenses/"
+    #- mkdir -p "$ANDROID_HOME/licenses"
+    #- cp ./google-licenses/* "$ANDROID_HOME/licenses/"
     # Emulator Management: Create, Start and Wait
     - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
     - emulator -avd test -no-audio -no-window &
     - android-wait-for-emulator
     - adb shell input keyevent 82
+script:
+    - chmod +x ./gradlew
+
+

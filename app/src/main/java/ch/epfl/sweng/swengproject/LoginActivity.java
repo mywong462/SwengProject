@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                                     return;
                                 }
                                 if (task.isSuccessful()) {
-                                    startActivity(new Intent(LoginActivity.this, MapActivity.class));
+                                    startActivity(new Intent(LoginActivity.this, MapsActivity.class));
                                     finish();
                                 } else {
                                     Toast fail = Toast.makeText(LoginActivity.this, "Login Failed",Toast.LENGTH_LONG);
