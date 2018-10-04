@@ -1,9 +1,9 @@
 language: android
 android:
-    licenses:   #command to solve license problems
-    - 'android-sdk-preview-license-.+'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
+    #licenses:   #command to solve license problems
+    #- 'android-sdk-preview-license-.+'
+    #- 'android-sdk-license-.+'
+    #- 'google-gdk-license-.+'
 
     components:
     
@@ -21,8 +21,8 @@ android:
 before_script:
 
     # Prepare pre-accepted licenses to not be promted at installation
-    - mkdir -p "$ANDROID_HOME/licenses"
-    - cp ./google-licenses/* "$ANDROID_HOME/licenses/"
+    #- mkdir -p "$ANDROID_HOME/licenses"
+    #- cp ./google-licenses/* "$ANDROID_HOME/licenses/"
     # Emulator Management: Create, Start and Wait
     - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
     - emulator -avd test -no-audio -no-window &
