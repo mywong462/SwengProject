@@ -14,6 +14,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static junit.framework.TestCase.assertEquals;
 import android.support.test.rule.ActivityTestRule;
 
+import com.google.android.gms.maps.model.LatLng;
+
 
 @RunWith(AndroidJUnit4.class)
 public class RegistrationInstrumentedTest {
@@ -144,6 +146,5 @@ public class RegistrationInstrumentedTest {
         assertEquals(true,passed);
         Thread.sleep(1000);
     }
-
 
 }

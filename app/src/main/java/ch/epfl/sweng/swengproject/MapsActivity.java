@@ -31,20 +31,26 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener {
 
     private final int LOCATION_REQUEST_CODE = 99;
 
     private Location mLastKnownLocation;
+
+    private LatLng mLatLng;
 
     private LocationCallback mLocationCallback;
 
@@ -60,6 +66,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 
+    private int range;
+
 
 
     @Override
@@ -68,6 +76,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         isOpening = true;
         isLocationSettingsDemandDisplayed = false;
+
+        //TODO: get range in user settings
+        range = 4000;
 
         mLocationCallback = new LocationCallback(){
             @Override
@@ -270,14 +281,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
-                LatLng mLatLng = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                mLatLng = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
                 CircleOptions mCircleOptions = new CircleOptions()
                         .center(mLatLng)
-                        .radius(4000)
+                        .radius(range)
                         .strokeWidth(0)
                         .fillColor(0x300000cf);
                 mMap.clear();
                 mMap.addCircle(mCircleOptions);
+                showAvailableNeeds();
                 if(isOpening) {
                     isOpening = false;
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 12));
@@ -285,4 +297,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }catch(SecurityException e){}
     }
+
+    private void showAvailableNeeds(){
+        ArrayList<Need> availableNeeds = Database.getNeeds(mLatLng);
+
+        for(Need need : availableNeeds){
+            Marker marker = mMap.addMarker(new MarkerOptions()
+                                    .position(need.getPos())
+                                    .title("WE SHOULD PUT TITLE"));
+            // TODO: change color depending on the type of need
+            marker.setTag(need);
+        }
+
+        mMap.setOnMarkerClickListener(this);
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker){
+        // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
+        return true;
+    }
+
 }
