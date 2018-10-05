@@ -11,11 +11,14 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -68,6 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private int range;
 
+    private FloatingActionButton createNeed_btn;
 
 
     @Override
@@ -79,6 +83,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //TODO: get range in user settings
         range = 4000;
+
+        //button with listener to create new needs
+
+        createNeed_btn = findViewById(R.id.create_need_btn);
+
+        createNeed_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapsActivity.this, AddNeedActivity.class));
+            }
+        });
+
 
         mLocationCallback = new LocationCallback(){
             @Override

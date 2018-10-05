@@ -10,11 +10,13 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 
+
 public final class Database {
 
     protected static final FirebaseAuth getDBauth = FirebaseAuth.getInstance();
 
     private static final FirebaseFirestore needsDB = FirebaseFirestore.getInstance();
+
 
     private static final CollectionReference needsRef = needsDB.collection("needs");
 
@@ -24,6 +26,7 @@ public final class Database {
 
     public static ArrayList<Need> getNeeds(LatLng myLocation){
         //Query query = needsRef.whereLessThanOrEqualTo()
+
     }
 
 }

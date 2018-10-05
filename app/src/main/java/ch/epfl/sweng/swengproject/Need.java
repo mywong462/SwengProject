@@ -1,6 +1,5 @@
 package ch.epfl.sweng.swengproject;
 
-
 import com.google.android.gms.maps.model.LatLng;	//for localization
 
 public class Need {
