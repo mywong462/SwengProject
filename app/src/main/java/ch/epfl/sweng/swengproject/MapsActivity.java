@@ -5,32 +5,20 @@ import android.Manifest;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.arch.core.util.Function;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.Toast;
 
 
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,9 +28,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
@@ -50,23 +35,11 @@ import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener {
 
-    private final int LOCATION_REQUEST_CODE = 99;
-
-    private Location mLastKnownLocation;
-
     private GeoPoint mGeoPoint;
 
-    private LocationCallback mLocationCallback;
-
-    private LocationRequest mLocationRequest;
-
-    private Boolean mLocationPermission;
+    private LatLng lastLatLng;
 
     private Boolean isOpening;
-
-    private Boolean isLocationSettingsDemandDisplayed;
-
-    private final int REQUEST_CHECK_SETTINGS = 555;
 
     private GoogleMap mMap;
 
@@ -74,16 +47,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private FloatingActionButton createNeed_btn;
 
+    private CurrentLocation currentLocation = new CurrentLocation();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         isOpening = true;
-        isLocationSettingsDemandDisplayed = false;
 
         //TODO: get range in user settings
-        range = 300;
+        range = 3000;
 
         //button with listener to create new needs
         createNeed_btn = findViewById(R.id.create_need_btn);
@@ -95,52 +69,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-        mLocationCallback = new LocationCallback(){
-            @Override
-            public void onLocationResult(LocationResult locationResult){
-                if(locationResult == null){
-                    return;
-                }
-                mLastKnownLocation = locationResult.getLastLocation();
-                updateUI();
-                Log.d("HELLO", "NON NULL");
-            }
-
-            @Override
-            public void onLocationAvailability(LocationAvailability locationAvailability){
-
-                if(!locationAvailability.isLocationAvailable()) {
-
-                    LocationSettingsRequest.Builder requestBuilder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-
-                    SettingsClient client = LocationServices.getSettingsClient(MapsActivity.this);
-                    Task<LocationSettingsResponse> task = client.checkLocationSettings(requestBuilder.build());
-
-                    task.addOnSuccessListener(MapsActivity.this, new OnSuccessListener<LocationSettingsResponse>() {
-                        @Override
-                        public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-
-                        }
-                    });
-
-                    task.addOnFailureListener(MapsActivity.this, new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            setContentView(R.layout.page_location_services_up_demand);
-                            isLocationSettingsDemandDisplayed = true;
-                            Log.d("HELLO", "ask to enable location services");
-                        }
-                    });
-
-                }else{
-                    if(isLocationSettingsDemandDisplayed){
-                        isLocationSettingsDemandDisplayed = false;
-                        setContentView(R.layout.activity_maps);
-                    }
-                }
-            }
-        };
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
@@ -149,30 +77,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private Boolean checkLocationPermission(){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
 
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        mMap = googleMap;
 
-            return false;
-
-        }else {
-            createLocationRequest();
-            return true;
-        }
+        currentLocation.setContextAndActivityAndMethodToCall(this.getApplicationContext(), this, new Function<Void, Void>() {
+            @Override
+            public Void apply(Void input) {
+                updateUI();
+                return null;
+            }
+        });
+        currentLocation.checkLocationPermission();
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults){
-        if(requestCode == LOCATION_REQUEST_CODE){
+        Log.d("HELLO","je passe");
+        if(requestCode == CurrentLocation.LOCATION_REQUEST_CODE){
 
             //Request cancelled -> result array is empty
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Log.d("HELLO", "onRequestPermissionsResult_true");
-                mLocationPermission = true;
-                createLocationRequest();
+                currentLocation.checkLocationPermission();
             }else{
                 //Explain why the app needs to access the location and re-ask for permission
                 new AlertDialog.Builder(this)
@@ -182,7 +111,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 ActivityCompat.requestPermissions(MapsActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, CurrentLocation.LOCATION_REQUEST_CODE);
                             }
                         })
                         .create()
@@ -194,62 +123,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(7000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationSettingsRequest.Builder requestBuilder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-
-        SettingsClient client = LocationServices.getSettingsClient(this);
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(requestBuilder.build());
-
-        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // Location settings are satisfied
-                Log.d("HELLO", "createLocationRequest_true");
-                startLocationUpdates();
-            }
-        });
-
-        task.addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Show a layout to ask for location settings to be on and explain why this is total shittery
-
-                if(e instanceof ResolvableApiException){
-                    // Location settings are not satisfied, ask the user for it
-                    try{
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(MapsActivity.this,
-                                REQUEST_CHECK_SETTINGS);
-                    }catch (IntentSender.SendIntentException sendEx){}
-                }
-
-            }
-        });
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode) {
-            case REQUEST_CHECK_SETTINGS:
+            case CurrentLocation.REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         // All required changes were successfully made
                         Log.d("HELLO", "createLocationRequestAfterAskingViaDialog_true");
-                        startLocationUpdates();
+                        currentLocation.startLocationUpdates();
+
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
                         Log.d("HELLO", "USER REFUSED TO ENABLE LOCATION SERVICES");
-                        startLocationUpdates();
+                        currentLocation.startLocationUpdates();
                         break;
                     default:
                         break;
@@ -259,46 +149,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    @Override
-    public void onMapReady(GoogleMap googleMap){
-
-        mMap = googleMap;
-
-        mLocationPermission = checkLocationPermission();
-
-    }
-
-    private void startLocationUpdates(){
-        try {
-            if (mLocationPermission) {
-                Log.d("HELLO", "OK PERMISSION");
-
-
-                FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-                mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-
-            } else {
-                Log.d("HELLO", "NO PERMISSION");
-                checkLocationPermission();
-
-            }
-        }catch(SecurityException e){}
-    }
-
 
     private void updateUI(){
 
         Log.d("HELLO", "UPDATEUI");
 
         try {
-            if (mLocationPermission) {
+            if (currentLocation.getLocationPermissionStatus()) {
                 mMap.clear();
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
-                mGeoPoint = new GeoPoint(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-                LatLng mLatLong = new LatLng(mGeoPoint.getLatitude(), mGeoPoint.getLongitude());
+
+                lastLatLng = currentLocation.getLastLocation();
+
+                mGeoPoint = new GeoPoint(lastLatLng.latitude, lastLatLng.longitude);
                 CircleOptions mCircleOptions = new CircleOptions()
-                        .center(mLatLong)
+                        .center(lastLatLng)
                         .radius(range)
                         .strokeWidth(0)
                         .fillColor(0x300000cf);
@@ -307,8 +173,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 showAvailableNeeds();
                 if(isOpening) {
                     isOpening = false;
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLong, 12));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
                 }
+            }else{
+                Log.d("HELLO", "NO UPDATEUI");
             }
         }catch(SecurityException e){}
     }
@@ -344,6 +212,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(final Marker marker){
         // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
+        Toast hehe = Toast.makeText(this, "doot doot", Toast.LENGTH_LONG);
+        hehe.show();
         return true;
     }
 
