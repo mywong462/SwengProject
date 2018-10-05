@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.Task;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 
 public class AddNeedActivity extends AppCompatActivity {
@@ -26,14 +27,14 @@ public class AddNeedActivity extends AppCompatActivity {
 
 
 
-        writeNewUser("new@epfl.ch","Test pour savoir si l'objet est online", 60,new LatLng(47.1330,7.0594));
+        writeNewUser("new@epfl.ch","Test pour savoir si l'objet est online", 60,7.0594, 47.1330);
     }
 
     //method used to write in the DB
 
-    private void writeNewUser(String emitter, String descr, int ttl, LatLng position) {
+    private void writeNewUser(String emitter, String descr, int ttl, double longitude, double latitude) {
 
-        Need newNeed = new Need(emitter, descr, ttl, position);
+        Need newNeed = new Need(emitter, descr, ttl, longitude, latitude);
         Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {

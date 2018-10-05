@@ -43,6 +43,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 
@@ -53,7 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Location mLastKnownLocation;
 
-    private LatLng mLatLng;
+    private GeoPoint mGeoPoint;
 
     private LocationCallback mLocationCallback;
 
@@ -69,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 
-    private int range;
+    private int range; //in kilometers
 
     private FloatingActionButton createNeed_btn;
 
@@ -82,12 +83,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         isLocationSettingsDemandDisplayed = false;
 
         //TODO: get range in user settings
-        range = 4000;
+        range = 300;
 
         //button with listener to create new needs
-
         createNeed_btn = findViewById(R.id.create_need_btn);
-
         createNeed_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,7 +140,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         };
-
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -297,9 +295,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
-                mLatLng = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                mGeoPoint = new GeoPoint(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                LatLng mLatLong = new LatLng(mGeoPoint.getLatitude(), mGeoPoint.getLongitude());
                 CircleOptions mCircleOptions = new CircleOptions()
-                        .center(mLatLng)
+                        .center(mLatLong)
                         .radius(range)
                         .strokeWidth(0)
                         .fillColor(0x300000cf);
@@ -308,19 +307,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 showAvailableNeeds();
                 if(isOpening) {
                     isOpening = false;
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 12));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLong, 12));
                 }
             }
         }catch(SecurityException e){}
     }
 
     private void showAvailableNeeds(){
-        ArrayList<Need> availableNeeds = Database.getNeeds(mLatLng);
+        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint);
+
+        Location here = new Location("");
+        here.setLatitude(mGeoPoint.getLatitude());
+        here.setLongitude(mGeoPoint.getLongitude());
 
         for(Need need : availableNeeds){
+            Location needLoc = new Location("");
+            needLoc.setLatitude(need.getLatitude());
+            needLoc.setLongitude(need.getLongitude());
+
+            //If the need isn't in the desired range (range is in kilometer
+            if(here.distanceTo(needLoc) > (float)range*1000){
+                //Log.d("MISSES", "ONE");
+                continue;
+            }
+
             Marker marker = mMap.addMarker(new MarkerOptions()
-                                    .position(need.getPos())
-                                    .title("WE SHOULD PUT TITLE"));
+                                    .position(new LatLng(need.getLatitude(), need.getLongitude()))
+                                    .title("TITLE"));
             // TODO: change color depending on the type of need
             marker.setTag(need);
         }
