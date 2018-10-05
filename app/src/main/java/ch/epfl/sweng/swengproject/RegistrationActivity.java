@@ -71,20 +71,6 @@ public class RegistrationActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    auth.getCurrentUser().sendEmailVerification()
-                                            .addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<Void>() {
-
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Toast success = Toast.makeText(RegistrationActivity.this, "Activation email sent to " + auth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT);
-                                                        success.show();
-                                                    } else {
-                                                        Toast fail = Toast.makeText(RegistrationActivity.this, "Failed to send activation email", Toast.LENGTH_SHORT);
-                                                        fail.show();
-                                                    }
-                                                }
-                                            });
 
                                     //return to main activity for login
 
