@@ -6,6 +6,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.arch.core.util.Function;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,6 +18,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.PopupWindow;
+import android.view.View;
+import android.view.LayoutInflater;
+import android.view.Gravity;
+import android.view.Display;
+import android.view.MotionEvent;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
+
+
+
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -214,6 +226,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
         Toast hehe = Toast.makeText(this, "doot doot", Toast.LENGTH_LONG);
         hehe.show();
+
+        //Get the size of screen and pop up a window
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.activity_pin_popup_window,null);
+        final PopupWindow pw = new PopupWindow(layout, (int)(width*0.8), (int)(height*0.7), true);
+
+        //Clicking outside the window will close the window
+        pw.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        pw.setTouchInterceptor(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                    pw.dismiss();
+                    return true;
+                }
+                return false;
+            }
+        });
+        pw.setOutsideTouchable(true);
+
+        //Display the pop-up window
+        pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
+
         return true;
     }
 
