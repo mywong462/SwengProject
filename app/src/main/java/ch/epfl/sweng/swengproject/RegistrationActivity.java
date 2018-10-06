@@ -74,7 +74,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
                                     //return to main activity for login
 
-                                    startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
+                                    startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
 
                                 } else {
                                     Toast fail = Toast.makeText(RegistrationActivity.this, "Registration Failed", Toast.LENGTH_SHORT);

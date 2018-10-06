@@ -2,8 +2,95 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/userProfile_scr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UserProfileActivity">
+
+    <EditText
+        android:id="@+id/userName1"
+        android:layout_width="215dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/userName1_txt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userName1_txt" />
+
+    <EditText
+        android:id="@+id/firstName1"
+        android:layout_width="215dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/firstName1_txt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/firstName1_txt" />
+
+    <EditText
+        android:id="@+id/lastName1"
+        android:layout_width="215dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lastName1_txt" />
+
+    <TextView
+        android:id="@+id/userName1_txt"
+        android:layout_width="92dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="90dp"
+        android:text="Username :"
+        app:layout_constraintBottom_toTopOf="@+id/userName1"
+        app:layout_constraintStart_toStartOf="@+id/userName1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/firstName1_txt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="First name :"
+        app:layout_constraintBottom_toTopOf="@+id/firstName1"
+        app:layout_constraintStart_toStartOf="@+id/userName1_txt"
+        app:layout_constraintTop_toBottomOf="@+id/userName1" />
+
+    <TextView
+        android:id="@+id/lastName1_txt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Last name :"
+        app:layout_constraintBottom_toTopOf="@+id/lastName1"
+        app:layout_constraintStart_toStartOf="@+id/firstName1_txt"
+        app:layout_constraintTop_toBottomOf="@+id/firstName1" />
+
+    <Button
+        android:id="@+id/save_btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="30dp"
+        android:text="Save"
+        android:textColor="@android:color/holo_blue_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lastName1" />
+
 
 </android.support.constraint.ConstraintLayout>

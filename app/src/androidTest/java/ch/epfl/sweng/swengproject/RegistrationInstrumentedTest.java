@@ -3,6 +3,7 @@ package ch.epfl.sweng.swengproject;
 
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.runner.AndroidJUnit4;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,15 +16,13 @@ import static junit.framework.TestCase.assertEquals;
 import android.support.test.rule.ActivityTestRule;
 
 
+
 @RunWith(AndroidJUnit4.class)
 public class RegistrationInstrumentedTest {
-
-
 
     @Rule
     public final ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(MainActivity.class);
-
 
     @Test
     public void testRandomRegisteredUser() throws InterruptedException {
