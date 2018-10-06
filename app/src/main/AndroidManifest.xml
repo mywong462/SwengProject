@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
 
-        <uses-library android:name="com.google.android.maps" />
+        <!--<uses-library android:name="com.google.android.maps" />-->
 
         <!--             embed the version of google play services that the app was compiled with -->
         <meta-data
