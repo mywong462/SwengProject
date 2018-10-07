@@ -17,9 +17,10 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.PopupWindow;
-import android.view.View;
+import android.widget.Button;
 import android.view.LayoutInflater;
 import android.view.Gravity;
 import android.view.Display;
@@ -221,6 +222,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(this);
     }
 
+    private void displayOnMenu(View menuView, GeoPoint tempGeo){
+        //  TODO: need to update this function when more fields from the needs are available
+        //The field to be update
+        TextView description = menuView.findViewById(R.id.needDescription);
+        Need selectedNeed = null;
+
+
+        //Searching for the need
+        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo);
+        for (int i = 0; i < currentNeed.size(); i++){
+
+            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
+                selectedNeed = currentNeed.get(i);
+                break;
+            }
+        }
+
+        //Updating information on the screen
+        if (selectedNeed != null){
+            description.setText(selectedNeed.getDescription());
+        }
+        else  Log.d("ERROR", "System cannot find Need matched with the GeoPoint");
+
+    }
+
+
+
     @Override
     public boolean onMarkerClick(final Marker marker){
         // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
@@ -236,6 +264,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.activity_pin_popup_window,null);
         final PopupWindow pw = new PopupWindow(layout, (int)(width*0.8), (int)(height*0.7), true);
+
+        //Get the marker information
+        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude,marker.getPosition().longitude);
+        displayOnMenu(layout,needRequest);
+
+        //Implemnent the close button
+        ((Button) layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                pw.dismiss();
+            }
+        });
 
         //Clicking outside the window will close the window
         pw.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
