@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Objects;
 
 
 class CurrentLocation extends FragmentActivity{
@@ -49,6 +50,10 @@ class CurrentLocation extends FragmentActivity{
     private Activity activity;
 
     private Function<Void, Void> function;
+
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+
+    private boolean enableLocationCallback;
 
     private LocationCallback mLocationCallback = new LocationCallback(){
         @Override
@@ -99,7 +104,32 @@ class CurrentLocation extends FragmentActivity{
     };
 
 
+    public CurrentLocation(Context context, Activity activity){
+        this.ctx = Objects.requireNonNull(context);
+        this.activity = Objects.requireNonNull(activity);
+        enableLocationCallback = false;
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
+
+        checkLocationPermission();
+    }
+
+
+    /**
+     * Constructor for CurrentLocation with callBack
+     */
+    public CurrentLocation(Context context, Activity activity, Function<Void, Void> function){
+        this.ctx = Objects.requireNonNull(context);
+        this.activity = Objects.requireNonNull(activity);
+        this.function = Objects.requireNonNull(function);
+        enableLocationCallback = true;
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
+
+        checkLocationPermission();
+    }
+
+
     protected void checkLocationPermission(){
+
         if(ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED){
 
@@ -134,7 +164,9 @@ class CurrentLocation extends FragmentActivity{
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Location settings are satisfied
                 Log.d("HELLO", "createLocationRequest_true");
-                startLocationUpdates();
+                if(enableLocationCallback) {
+                    startLocationUpdates();
+                }
             }
         });
 
@@ -166,8 +198,8 @@ class CurrentLocation extends FragmentActivity{
             if (mLocationPermission) {
                 Log.d("HELLO", "OK PERMISSION");
 
-                FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+
 
             } else {
                 Log.d("HELLO", "NO PERMISSION");
@@ -177,16 +209,14 @@ class CurrentLocation extends FragmentActivity{
         }catch(SecurityException e){}
     }
 
-    public LatLng getLastLocation(){
+
+    public LatLng getLastLocation() throws SecurityException{
+
 
         return new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+
     }
 
-    public void setContextAndActivityAndMethodToCall(Context context, Activity act, Function<Void, Void> function){
-        ctx = context;
-        activity = act;
-        this.function = function;
-    }
 
     public boolean getLocationPermissionStatus(){
         return mLocationPermission;

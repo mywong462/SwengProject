@@ -31,6 +31,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener {
@@ -47,7 +49,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private FloatingActionButton createNeed_btn;
 
-    private CurrentLocation currentLocation = new CurrentLocation();
+    private Thread t;
+
+    private CurrentLocation currentLocation;
 
 
     @Override
@@ -82,27 +86,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap = googleMap;
 
-        currentLocation.setContextAndActivityAndMethodToCall(this.getApplicationContext(), this, new Function<Void, Void>() {
+        Function<Void, Void> function = new Function<Void, Void>() {
             @Override
             public Void apply(Void input) {
                 updateUI();
                 return null;
             }
-        });
-        currentLocation.checkLocationPermission();
+        };
+
+        currentLocation = new CurrentLocation(this.getApplicationContext(),
+                this,
+                function);
     }
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults){
-        Log.d("HELLO","je passe");
-        if(requestCode == CurrentLocation.LOCATION_REQUEST_CODE){
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Log.d("HELLO", "je passe");
+        if (requestCode == CurrentLocation.LOCATION_REQUEST_CODE) {
 
             //Request cancelled -> result array is empty
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("HELLO", "onRequestPermissionsResult_true");
                 currentLocation.checkLocationPermission();
-            }else{
+            } else {
                 //Explain why the app needs to access the location and re-ask for permission
                 new AlertDialog.Builder(this)
                         .setTitle("Why the app needs your location")
@@ -121,7 +128,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     }
-
 
 
     @Override
@@ -149,8 +155,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
-    private void updateUI(){
+    private void updateUI() {
 
         Log.d("HELLO", "UPDATEUI");
 
@@ -171,37 +176,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 mMap.addCircle(mCircleOptions);
                 showAvailableNeeds();
-                if(isOpening) {
+                if (isOpening) {
                     isOpening = false;
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
                 }
-            }else{
+            } else {
                 Log.d("HELLO", "NO UPDATEUI");
             }
-        }catch(SecurityException e){}
+        } catch (SecurityException e) {
+        }
     }
 
-    private void showAvailableNeeds(){
+    private void showAvailableNeeds() {
         ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint);
 
         Location here = new Location("");
         here.setLatitude(mGeoPoint.getLatitude());
         here.setLongitude(mGeoPoint.getLongitude());
 
-        for(Need need : availableNeeds){
+        for (Need need : availableNeeds) {
             Location needLoc = new Location("");
             needLoc.setLatitude(need.getLatitude());
             needLoc.setLongitude(need.getLongitude());
 
             //If the need isn't in the desired range (range is in kilometer
-            if(here.distanceTo(needLoc) > (float)range*1000){
+            if (here.distanceTo(needLoc) > (float) range * 1000) {
                 //Log.d("MISSES", "ONE");
                 continue;
             }
 
             Marker marker = mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(need.getLatitude(), need.getLongitude()))
-                                    .title("TITLE"));
+                    .position(new LatLng(need.getLatitude(), need.getLongitude()))
+                    .title("TITLE"));
             // TODO: change color depending on the type of need
             marker.setTag(need);
         }
@@ -210,7 +216,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public boolean onMarkerClick(final Marker marker){
+    public boolean onMarkerClick(final Marker marker) {
         // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
         Toast hehe = Toast.makeText(this, "doot doot", Toast.LENGTH_LONG);
         hehe.show();
