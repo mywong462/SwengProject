@@ -104,6 +104,7 @@ public class RegistrationInstrumentedTest {
         assertEquals(true,passed);
         Thread.sleep(1000);
     }
+    /*
     @Ignore
     public void testSameEmailAddress() throws InterruptedException {
 
@@ -146,5 +147,5 @@ public class RegistrationInstrumentedTest {
         assertEquals(true,passed);
         Thread.sleep(1000);
     }
-
+*/
 }
