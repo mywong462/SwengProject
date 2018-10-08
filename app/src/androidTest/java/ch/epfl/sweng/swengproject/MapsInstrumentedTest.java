@@ -31,6 +31,10 @@ public class MapsInstrumentedTest {
             new ActivityTestRule<>(MapsActivity.class);
 
 
+    @Test
+    public void dummyTest(){
+        boolean passed = true;
+    }
 
     @Ignore
     public void canAddManyNeedsRapidly() throws InterruptedException {
