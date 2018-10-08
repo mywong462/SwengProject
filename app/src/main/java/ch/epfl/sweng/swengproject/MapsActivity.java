@@ -195,7 +195,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void showAvailableNeeds(){
-        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint);
+        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint,range);
 
         Location here = new Location("");
         here.setLatitude(mGeoPoint.getLatitude());

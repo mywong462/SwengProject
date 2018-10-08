@@ -36,7 +36,7 @@ public final class Database {
         return needsRef.add(need);
     }
 
-    public static ArrayList<Need> getNeeds(GeoPoint myLocation){
+    public static ArrayList<Need> getNeeds(GeoPoint myLocation, int range){
 
         needsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
