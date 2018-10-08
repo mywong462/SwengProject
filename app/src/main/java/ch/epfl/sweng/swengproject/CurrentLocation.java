@@ -2,8 +2,11 @@ package ch.epfl.sweng.swengproject;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.arch.core.util.Function;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -31,13 +34,11 @@ import com.google.android.gms.tasks.Task;
 import java.util.Objects;
 
 
-class CurrentLocation extends FragmentActivity{
+public class CurrentLocation extends FragmentActivity{
 
     protected static final int LOCATION_REQUEST_CODE = 99;
 
     protected static final int REQUEST_CHECK_SETTINGS = 555;
-
-    protected boolean mLocationPermission;
 
     private LocationRequest mLocationRequest;
 
@@ -53,8 +54,6 @@ class CurrentLocation extends FragmentActivity{
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
-    private boolean enableLocationCallback;
-
     private LocationCallback mLocationCallback = new LocationCallback(){
         @Override
         public void onLocationResult(LocationResult locationResult){
@@ -62,7 +61,9 @@ class CurrentLocation extends FragmentActivity{
                 return;
             }
             mLastKnownLocation = locationResult.getLastLocation();
-            function.apply(null);
+            if(function != null) {
+                function.apply(null);
+            }
 
             Log.d("HELLO", "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
         }
@@ -105,12 +106,7 @@ class CurrentLocation extends FragmentActivity{
 
 
     public CurrentLocation(Context context, Activity activity){
-        this.ctx = Objects.requireNonNull(context);
-        this.activity = Objects.requireNonNull(activity);
-        enableLocationCallback = false;
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
-
-        checkLocationPermission();
+        this(context, activity, null);
     }
 
 
@@ -120,18 +116,21 @@ class CurrentLocation extends FragmentActivity{
     public CurrentLocation(Context context, Activity activity, Function<Void, Void> function){
         this.ctx = Objects.requireNonNull(context);
         this.activity = Objects.requireNonNull(activity);
-        this.function = Objects.requireNonNull(function);
-        enableLocationCallback = true;
+        this.function = function;
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
 
         checkLocationPermission();
     }
 
+    protected boolean isPermissionGranted(){
+        return ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
 
     protected void checkLocationPermission(){
 
-        if(ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
+        if(!isPermissionGranted()){
 
             ActivityCompat.requestPermissions(activity,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
@@ -139,12 +138,39 @@ class CurrentLocation extends FragmentActivity{
 
         }else {
             Log.d("HELLO", "CAJOUE");
-            mLocationPermission = true;
             createLocationRequest();
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Log.d("HELLO", "je passe");
 
+        if (requestCode == CurrentLocation.LOCATION_REQUEST_CODE) {
+
+            //Request cancelled -> result array is empty
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("HELLO", "onRequestPermissionsResult_true");
+                checkLocationPermission();
+            } else {
+                //Explain why the app needs to access the location and re-ask for permission
+                new AlertDialog.Builder(this)
+                        .setTitle("Why the app needs your location")
+                        .setMessage("The app need to know your location in order to allow you to create Demands and reply to others' Demands")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(activity,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, CurrentLocation.LOCATION_REQUEST_CODE);
+                            }
+                        })
+                        .create()
+                        .show();
+
+            }
+
+        }
+    }
 
 
 
@@ -164,9 +190,7 @@ class CurrentLocation extends FragmentActivity{
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Location settings are satisfied
                 Log.d("HELLO", "createLocationRequest_true");
-                if(enableLocationCallback) {
                     startLocationUpdates();
-                }
             }
         });
 
@@ -191,11 +215,35 @@ class CurrentLocation extends FragmentActivity{
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case CurrentLocation.REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // All required changes were successfully made
+                        Log.d("HELLO", "createLocationRequestAfterAskingViaDialog_true");
+                        startLocationUpdates();
+
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // The user was asked to change settings, but chose not to
+                        Log.d("HELLO", "USER REFUSED TO ENABLE LOCATION SERVICES");
+                        startLocationUpdates();
+                        break;
+                    default:
+                        break;
+                }
+                break;
+        }
+    }
+
 
 
     protected void startLocationUpdates(){
         try {
-            if (mLocationPermission) {
+            if (isPermissionGranted()) {
                 Log.d("HELLO", "OK PERMISSION");
 
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
@@ -219,7 +267,7 @@ class CurrentLocation extends FragmentActivity{
 
 
     public boolean getLocationPermissionStatus(){
-        return mLocationPermission;
+        return isPermissionGranted();
     }
 
 }

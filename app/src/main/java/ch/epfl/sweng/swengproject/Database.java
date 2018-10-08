@@ -49,7 +49,7 @@ public final class Database {
             }
         });
 
-        return new ArrayList(listNeeds);
+        return new ArrayList<>(listNeeds);
     }
 
 
