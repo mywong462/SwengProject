@@ -30,7 +30,7 @@ public final class Database {
 
     private static final FirebaseFirestore needsDB = FirebaseFirestore.getInstance();
 
-    private static final CollectionReference needsRef = needsDB.collection("needs_db");
+    private static final CollectionReference needsRef = needsDB.collection("needs");
 
     public static Task<DocumentReference> saveNeed(Need need){
         return needsRef.add(need);
