@@ -3,9 +3,9 @@ package ch.epfl.sweng.swengproject.storage.db;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.util.Date;
@@ -14,16 +14,16 @@ import ch.epfl.sweng.swengproject.storage.filesystem.BitMapStorage;
 import ch.epfl.sweng.swengproject.storage.filesystem.Generic;
 
 
-@Entity(indices = {@Index(value = {"email"}, unique = true)})
+@Entity()
 public class User {
 
     private static String PICTURES_FOLDER = "user_pictures";
 
     @PrimaryKey
-    private long id = -1;
+    @NonNull
+    private String email;
     private String firstName = null;
     private String lastName = null;
-    private String email = null;
     private Date inscriptionDate = null;
 
 
@@ -41,7 +41,7 @@ public class User {
     }*/
 
     private String pathToPicture(){
-        return PICTURES_FOLDER + File.pathSeparator + id + ".jpeg";
+        return PICTURES_FOLDER + File.pathSeparator + email + ".jpeg";
     }
 
     /**
@@ -75,9 +75,6 @@ public class User {
     }
 
     //-----------SETTERS----------
-    public void setId(long id) {
-        this.id = id;
-    }
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -95,9 +92,6 @@ public class User {
     }
 
     //-----------GETTERS----------
-    public long id(){
-        return id;
-    }
     public String firstName(){
         return firstName;
     }

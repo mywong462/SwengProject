@@ -66,15 +66,15 @@ public class UserTests {
     }
 
     @Test
-    public void loadByIDs() {
+    public void loadByEmails() {
         List<User> usersToStore = UserTestUtil.randomUsers();
         userDao.deleteAll();
         userDao.insertUsers(usersToStore.toArray(new User[0]));
 
         for (int i = 0; i < 10; i++) {
             User u = usersToStore.get(i);
-            long[] id = {u.id()};
-            assertEquals(u.email(), userDao.findByIds(id).get(0).email());
+            String[] emails = {u.email()};
+            assertEquals(u.email(), userDao.selectByEmails(emails).get(0).email());
         }
 
     }
@@ -87,7 +87,7 @@ public class UserTests {
 
         for (int i = 0; i < 10; i++) {
             User u = usersToStore.get(i);
-            assertEquals(u.id(), userDao.getUserByEmail(u.email()).id());
+            assertEquals(u.inscriptionDate(), userDao.getUserByEmail(u.email()).inscriptionDate());
         }
     }
 
@@ -129,11 +129,10 @@ public class UserTests {
 
         for (int i = 0; i < 10; i++) {
             User u = usersToStore.get(i);
-            String newFirstName = UserTestUtil.randomUser(0L).firstName();
+            String newFirstName = UserTestUtil.randomUser().firstName();
             u.setFirstName(newFirstName);
             userDao.updateUsers(u);
-            long[] id = {u.id()};
-            u = userDao.findByIds(id).get(0);
+            u = userDao.getUserByEmail(u.email());
             assertEquals(newFirstName, u.firstName());
         }
     }

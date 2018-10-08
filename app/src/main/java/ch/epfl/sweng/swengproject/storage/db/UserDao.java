@@ -22,8 +22,8 @@ public abstract class  UserDao {
     @Query("SELECT * FROM user")
     public abstract List<User> getAll();
 
-    @Query("SELECT * FROM user WHERE id IN (:userIds)")
-    public abstract List<User> findByIds(long[] userIds);
+    @Query("SELECT * FROM user WHERE email IN (:emails)")
+    public abstract List<User> selectByEmails(String[] emails);
 
     @Query("SELECT * FROM user WHERE email == :email")
     public abstract User getUserByEmail(String email);

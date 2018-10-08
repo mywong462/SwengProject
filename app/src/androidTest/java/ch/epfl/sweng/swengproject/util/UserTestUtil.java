@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import ch.epfl.sweng.swengproject.storage.db.User;
 
@@ -27,20 +28,14 @@ public class UserTestUtil {
         return new Date(ms);
     }
 
-    private static long randomID(long previous){
-        return (long) (Math.random() * 1000 + previous + 1);
-    }
-
-    public static User randomUser(Long previousId){
+    public static User randomUser(){
         String rfn = firstNames[(int)(Math.random() * firstNames.length)];
         String rln = lastNames[(int)(Math.random() * lastNames.length)];
         String re = emails[(int)(Math.random() * emails.length)];
-        long rid = previousId == null ? randomID(0) : randomID(previousId);
         User u = new User();
-        u.setId(rid);
         u.setFirstName(rfn);
         u.setLastName(rln);
-        u.setEmail(re+rid);
+        u.setEmail(re+UUID.randomUUID());
         u.setInscriptionDate(randomDate());
         return u;
     }
@@ -48,10 +43,8 @@ public class UserTestUtil {
     public static List<User> randomUsers(){
         List<User> users = new ArrayList<>();
         int listLength = (int) (Math.random() * 50) + 10;
-        long previousId = 0;
         for(int i = 0; i< listLength; i++){
-            User u = randomUser(previousId);
-            previousId = u.id();
+            User u = randomUser();
             users.add(u);
         }
         return users;
