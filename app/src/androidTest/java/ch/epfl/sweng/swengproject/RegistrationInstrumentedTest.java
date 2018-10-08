@@ -105,7 +105,6 @@ public class RegistrationInstrumentedTest {
         Thread.sleep(1000);
     }
 
-
     @Ignore
     public void testSameEmailAddress() throws InterruptedException {
 

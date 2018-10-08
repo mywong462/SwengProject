@@ -8,10 +8,16 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
-
-
-
+import android.widget.PopupWindow;
+import android.widget.Button;
+import android.view.LayoutInflater;
+import android.view.Gravity;
+import android.view.Display;
+import android.view.MotionEvent;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -135,9 +141,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+
     private void showAvailableNeeds() {
         ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range);
-
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
@@ -149,7 +155,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(this);
     }
 
+    private void displayOnMenu(View menuView, GeoPoint tempGeo){
+        //  TODO: need to update this function when more fields from the needs are available
+        //The field to be update
+        TextView description = menuView.findViewById(R.id.needDescription);
+        Need selectedNeed = null;
 
+
+        //Searching for the need
+        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo,range);
+        for (int i = 0; i < currentNeed.size(); i++){
+
+            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
+                selectedNeed = currentNeed.get(i);
+                break;
+            }
+        }
+
+        //Updating information on the screen
+        if (selectedNeed != null){
+            description.setText(selectedNeed.getDescription());
+        }
+        else  Log.d("ERROR", "System cannot find Need matched with the GeoPoint");
+
+    }
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
