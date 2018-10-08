@@ -136,23 +136,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void showAvailableNeeds() {
-        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint);
-
-        Location here = new Location("");
-        here.setLatitude(mGeoPoint.getLatitude());
-        here.setLongitude(mGeoPoint.getLongitude());
+        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range);
 
         for (Need need : availableNeeds) {
-            Location needLoc = new Location("");
-            needLoc.setLatitude(need.getLatitude());
-            needLoc.setLongitude(need.getLongitude());
-
-            //If the need isn't in the desired range (range is in kilometer
-            if (here.distanceTo(needLoc) > (float) range * 1000) {
-                Log.d("THEONE", "MISSES : " + here.distanceTo(needLoc));
-                continue;
-            }
-
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
                     .title("TITLE"));

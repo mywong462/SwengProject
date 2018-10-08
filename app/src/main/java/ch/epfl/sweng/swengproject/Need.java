@@ -20,7 +20,7 @@ public class Need {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Need(String emitter, String descr, int ttl, double longitude, double latitude) {
+    public Need(String emitter, String descr, int ttl, double latitude, double longitude) {
         this.emitter = emitter;
         this.description = descr;
         this.longitude = longitude;
