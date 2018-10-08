@@ -36,7 +36,9 @@ public final class Database {
         return needsRef.add(need);
     }
 
-    public static ArrayList<Need> getNeeds(GeoPoint myLocation, int range){
+    public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range){
+
+        ArrayList<Need> availableNeeds = new ArrayList<>();
 
         needsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -49,7 +51,24 @@ public final class Database {
             }
         });
 
-        return new ArrayList(listNeeds);
+        //To remove the needs that aren't in the range
+        Location here = new Location("");
+        here.setLatitude(mGeoPoint.getLatitude());
+        here.setLongitude(mGeoPoint.getLongitude());
+
+        for (Need need : listNeeds) {
+            Location needLoc = new Location("");
+            needLoc.setLatitude(need.getLatitude());
+            needLoc.setLongitude(need.getLongitude());
+
+            //If the need isn't in the desired range (range is in kilometer
+            if (here.distanceTo(needLoc) <= (float) range * 1000) {
+                availableNeeds.add(need);
+            }
+
+        }
+
+        return availableNeeds;
     }
 
 

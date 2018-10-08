@@ -105,4 +105,47 @@ public class RegistrationInstrumentedTest {
         Thread.sleep(1000);
     }
 
+    @Ignore
+    public void testSameEmailAddress() throws InterruptedException {
+
+        String mail = "exemple"+Math.random()+"@hotmail.com";
+        String pswd = "asdf"+Math.random();
+
+        //first register an email address
+
+        onView(withId(R.id.welcome_scr)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.register_btn1)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.password2)).perform(typeText(pswd)).perform(closeSoftKeyboard());
+        onView(withId(R.id.email2)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.register_btn2)).perform(click());
+        Thread.sleep(3000);
+
+        //Then try to register with the same email
+
+        onView(withId(R.id.welcome_scr)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.register_btn1)).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.password2)).perform(typeText("AnyPassword")).perform(closeSoftKeyboard());
+        onView(withId(R.id.email2)).perform(typeText(mail)).perform(closeSoftKeyboard());
+        onView(withId(R.id.register_btn2)).perform(click());
+
+
+        boolean passed = false;
+
+        try { //the activity should not have changed => login_btn isn't on the view and should return an error
+            onView(withId(R.id.welcome_scr)).perform(click());
+
+        }
+        catch (NoMatchingViewException e) {
+
+            passed = true;
+        }
+
+        assertEquals(true,passed);
+        Thread.sleep(1000);
+    }
+
 }

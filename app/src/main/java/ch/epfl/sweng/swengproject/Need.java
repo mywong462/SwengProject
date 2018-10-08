@@ -1,9 +1,9 @@
 package ch.epfl.sweng.swengproject;
 
-import android.util.Log;
+        import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;	//for localization
-import com.google.firebase.firestore.GeoPoint;
+        import com.google.android.gms.maps.model.LatLng;	//for localization
+        import com.google.firebase.firestore.GeoPoint;
 
 public class Need {
 
@@ -20,7 +20,7 @@ public class Need {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Need(String emitter, String descr, int ttl, double longitude, double latitude) {
+    public Need(String emitter, String descr, int ttl, double latitude, double longitude) {
         this.emitter = emitter;
         this.description = descr;
         this.longitude = longitude;
@@ -39,14 +39,15 @@ public class Need {
     public double getLongitude(){
         return this.longitude;
     }
-    public double getLatitude(){ return this.latitude; }
+    public double getLatitude(){
+        return this.latitude;
+    }
     public int getTimeToLive(){
         return this.timeToLive;
     }
 
     //Used to return directly a GeoPoint
     public GeoPoint getPos(){ return new GeoPoint(this.latitude, this.longitude); }
-
 
     //Setters, for .toObjects
     public void setEmitter(String emitter){
@@ -62,6 +63,7 @@ public class Need {
     }
 
     public void setLatitude(double latitude){
+        Log.d("THEONE", "lat: " + latitude);
         this.latitude = latitude;
     }
 
