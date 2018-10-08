@@ -26,7 +26,7 @@ public class ExampleInstrumentedTest {
     public void useAppContext() throws Exception{
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
-        Thread.sleep(15000);
+        //Thread.sleep(15000);
 
         assertEquals("ch.epfl.sweng.swengproject", appContext.getPackageName());
     }
