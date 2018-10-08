@@ -230,7 +230,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         //Searching for the need
-        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo);
+        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo,range);
         for (int i = 0; i < currentNeed.size(); i++){
 
             if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
