@@ -28,6 +28,10 @@ public class UserTestUtil {
         return new Date(ms);
     }
 
+    /**
+     *
+     * @return a user that is make randommly to test purposes
+     */
     public static User randomUser(){
         String rfn = firstNames[(int)(Math.random() * firstNames.length)];
         String rln = lastNames[(int)(Math.random() * lastNames.length)];
@@ -40,6 +44,10 @@ public class UserTestUtil {
         return u;
     }
 
+    /**
+     *
+     * @return a random list of users  to test purposes
+     */
     public static List<User> randomUsers(){
         List<User> users = new ArrayList<>();
         int listLength = (int) (Math.random() * 50) + 10;
