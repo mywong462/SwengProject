@@ -27,11 +27,6 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
-
-
-
-
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
