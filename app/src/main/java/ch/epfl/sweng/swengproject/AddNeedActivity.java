@@ -81,8 +81,10 @@ public class AddNeedActivity extends AppCompatActivity {
 
                 }else{  //try to do something for the concurrency bug
 
-                    LatLng currPos = currLoc.getLastLocation();
-                    Log.d("HELLO", "currPos = " + currPos.latitude);
+
+                    LatLng currPos = currLoc.getLastLocation();;
+
+
 
                     writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,valid , currPos.latitude, currPos.longitude);
 

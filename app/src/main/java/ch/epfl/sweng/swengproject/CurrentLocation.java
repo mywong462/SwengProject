@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.common.data.DataBufferObserver;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
@@ -54,6 +55,7 @@ public class CurrentLocation extends FragmentActivity{
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
+
     private LocationCallback mLocationCallback = new LocationCallback(){
         @Override
         public void onLocationResult(LocationResult locationResult){
@@ -61,6 +63,7 @@ public class CurrentLocation extends FragmentActivity{
                 return;
             }
             mLastKnownLocation = locationResult.getLastLocation();
+
             if(function != null) {
                 function.apply(null);
             }
@@ -258,12 +261,11 @@ public class CurrentLocation extends FragmentActivity{
     }
 
 
-    public LatLng getLastLocation() throws SecurityException{
-
+    public LatLng getLastLocation(){
 
         return new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-
     }
+
 
 
     public boolean getLocationPermissionStatus(){

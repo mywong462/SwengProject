@@ -36,10 +36,11 @@ public class MapsInstrumentedTest {
 
 
         for(int i = 0; i < 10; ++i){
-
             onView(withId(R.id.create_need_btn)).perform(click());
+            Thread.sleep(3000);
             onView(withId(R.id.validity_txt)).perform(typeText("22")).perform(closeSoftKeyboard());
             onView(withId(R.id.descr_txt)).perform(typeText("Description written from tests : "+i)).perform(closeSoftKeyboard());
+            Thread.sleep(2000);
             onView(withId(R.id.create_btn)).perform(click());
 
         }
