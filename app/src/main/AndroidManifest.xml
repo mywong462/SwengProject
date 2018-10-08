@@ -50,6 +50,8 @@
             android:label="EventMap" />
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".AddNeedActivity"></activity>
     </application>
 
 </manifest>
+
