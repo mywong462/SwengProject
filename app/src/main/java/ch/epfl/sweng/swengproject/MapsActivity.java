@@ -144,17 +144,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (Need need : availableNeeds) {
             Location needLoc = new Location("");
-            needLoc.setLatitude(need.getLat());
-            needLoc.setLongitude(need.getLon());
+            needLoc.setLatitude(need.getLatitude());
+            needLoc.setLongitude(need.getLongitude());
 
             //If the need isn't in the desired range (range is in kilometer
             if (here.distanceTo(needLoc) > (float) range * 1000) {
-                //Log.d("MISSES", "ONE");
+                Log.d("THEONE", "MISSES : " + here.distanceTo(needLoc));
                 continue;
             }
 
             Marker marker = mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(need.getLat(), need.getLon()))
+                    .position(new LatLng(need.getLatitude(), need.getLongitude()))
                     .title("TITLE"));
             // TODO: change color depending on the type of need
             marker.setTag(need);
