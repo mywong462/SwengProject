@@ -38,6 +38,8 @@ public final class Database {
 
     public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range){
 
+        ArrayList<Need> availableNeeds = new ArrayList<>();
+
         needsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -60,13 +62,13 @@ public final class Database {
             needLoc.setLongitude(need.getLongitude());
 
             //If the need isn't in the desired range (range is in kilometer
-            if (here.distanceTo(needLoc) > (float) range * 1000) {
-                listNeeds.remove(need);
+            if (here.distanceTo(needLoc) <= (float) range * 1000) {
+                availableNeeds.add(need);
             }
 
         }
 
-        return new ArrayList<>(listNeeds);
+        return availableNeeds;
     }
 
 

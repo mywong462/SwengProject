@@ -63,6 +63,7 @@ public class Need {
     }
 
     public void setLatitude(double latitude){
+        Log.d("THEONE", "lat: " + latitude);
         this.latitude = latitude;
     }
 
