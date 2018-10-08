@@ -252,9 +252,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(final Marker marker){
         // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
-        Toast hehe = Toast.makeText(this, "doot doot", Toast.LENGTH_LONG);
-        hehe.show();
-
         //Get the size of screen and pop up a window
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
