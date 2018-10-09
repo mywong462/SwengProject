@@ -5,6 +5,9 @@ buildscript {
     repositories {
         google()
         jcenter()
+        //-----------Required to use a standard ImagePicker-------------
+        maven { url "https://jitpack.io" }
+        //-----------end of requirement to use a standard ImagePicker-------------
     }
     dependencies {
         //--from bootcamp--
