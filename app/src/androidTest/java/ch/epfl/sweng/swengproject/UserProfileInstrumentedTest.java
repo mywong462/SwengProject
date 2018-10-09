@@ -1,6 +1,7 @@
 package ch.epfl.sweng.swengproject;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +27,7 @@ public class UserProfileInstrumentedTest {
     public final ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(MainActivity.class);
 
-    @Test
+    @Ignore
     public void testUserProfilePromt() throws InterruptedException {
 
         // On first login, user should be prompted to add its user info
