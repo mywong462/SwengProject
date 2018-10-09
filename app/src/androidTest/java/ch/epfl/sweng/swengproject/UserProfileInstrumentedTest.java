@@ -26,6 +26,10 @@ public class UserProfileInstrumentedTest {
     @Rule
     public final ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(MainActivity.class);
+    @Test
+    public void EmptyTest(){
+    
+    }
 
     @Ignore
     public void testUserProfilePromt() throws InterruptedException {
