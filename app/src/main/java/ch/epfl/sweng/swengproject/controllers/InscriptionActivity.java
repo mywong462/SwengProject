@@ -1,6 +1,9 @@
 package ch.epfl.sweng.swengproject.controllers;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
@@ -8,8 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import ch.epfl.sweng.swengproject.LoginActivity;
-import ch.epfl.sweng.swengproject.MainActivity;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.RegistrationActivity;
 
@@ -60,9 +64,29 @@ public class InscriptionActivity extends Activity {
     }
 
     private void pickImage(){
-
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_PICK);
+        startActivityForResult(intent,1);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == RESULT_OK){
+            if(requestCode == 1){
+                Uri uri = data.getData();
+                try {
+                    InputStream stream = getContentResolver().openInputStream(uri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(stream);
+                    profilePictureButton.setImageBitmap(bitmap);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     private void goToLogginActivity(){
         startActivity(new Intent(this, RegistrationActivity.class));
