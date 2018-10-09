@@ -19,15 +19,13 @@ import android.support.test.rule.ActivityTestRule;
 import com.google.android.gms.maps.model.LatLng;
 
 
+
 @RunWith(AndroidJUnit4.class)
 public class RegistrationInstrumentedTest {
-
-
 
     @Rule
     public final ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(MainActivity.class);
-
 
     @Test
     public void testRandomRegisteredUser() throws InterruptedException {

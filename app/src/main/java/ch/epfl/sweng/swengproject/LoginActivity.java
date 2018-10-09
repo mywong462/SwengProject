@@ -1,6 +1,7 @@
 package ch.epfl.sweng.swengproject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+// TO DO: import the method checkInfo ect from Registration activity to call them here
+// (code repetition)
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -45,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // start new resetPasswordActivity
+                startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
             }
         });
 
@@ -77,8 +80,12 @@ public class LoginActivity extends AppCompatActivity {
                                     return;
                                 }
                                 if (task.isSuccessful()) {
-                                    startActivity(new Intent(LoginActivity.this, MapsActivity.class));
-                                    finish();
+                                    if (!LoginActivity.this.getSharedPreferences("UserProfile", 0).contains("userName")) {
+                                        startActivity(new Intent(LoginActivity.this, UserProfileActivity.class));
+                                    } else {
+                                        startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+                                        finish();
+                                    }
                                 } else {
                                     Toast fail = Toast.makeText(LoginActivity.this, "Login Failed",Toast.LENGTH_LONG);
                                     fail.show();
