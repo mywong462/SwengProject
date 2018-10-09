@@ -25,28 +25,30 @@ Android:layout_weight. C'est un attribut spécifique aux enfants d'un LinearLayo
         android:scaleType="fitCenter"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="11"
+        android:layout_weight="9"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="20dp"
         android:src="@drawable/emptyprofile"/>
 
     <EditText
         android:id="@+id/inscription_actrivity_email"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:gravity="center_horizontal"
         android:layout_margin="5dp"
-        android:hint="Your Email (Required)"/>
+        android:layout_weight="2"
+        android:gravity="center"
+        android:background="@null"
+        android:hint="Your Email (Required)" />
 
     <EditText
         android:id="@+id/inscription_actrivity_password"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:layout_margin="5dp"
+        android:inputType="textPassword"
+        android:background="@null"
         android:hint="Your Password (Required)"/>
 
     <EditText
@@ -54,8 +56,9 @@ Android:layout_weight. C'est un attribut spécifique aux enfants d'un LinearLayo
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:layout_margin="5dp"
+        android:background="@null"
         android:hint="Your First Name"/>
 
     <EditText
@@ -63,8 +66,9 @@ Android:layout_weight. C'est un attribut spécifique aux enfants d'un LinearLayo
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:layout_margin="5dp"
+        android:background="@null"
         android:hint="Your Last Name"/>
 
     <Button
@@ -72,7 +76,7 @@ Android:layout_weight. C'est un attribut spécifique aux enfants d'un LinearLayo
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="5dp"
-        android:layout_weight="3"
+        android:layout_weight="2"
         android:background="@android:color/white"
         android:backgroundTint="@color/colorAccent"
         android:text="Register"

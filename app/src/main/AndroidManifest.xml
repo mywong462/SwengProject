@@ -53,9 +53,11 @@
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".AddNeedActivity" />
+
         <activity
             android:name=".controllers.InscriptionActivity"
-            android:label="@string/title_activity_inscription"></activity>
+            android:label="@string/title_activity_inscription"
+            android:exported="true"></activity>
     </application>
 
 </manifest>
