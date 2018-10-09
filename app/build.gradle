@@ -67,7 +67,8 @@ dependencies {
     //added by Jonathan when setting the project to use a local database
     def room_version = "1.1.1"
     implementation "android.arch.persistence.room:runtime:$room_version"
-    annotationProcessor "android.arch.persistence.room:compiler:$room_version" // use kapt for Kotlin
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    // use kapt for Kotlin
     // optional - RxJava support for Room
     implementation "android.arch.persistence.room:rxjava2:$room_version"
     // optional - Guava support for Room, including Optional and ListenableFuture
@@ -100,3 +101,4 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
     ])
 }
 //--end bootcamp--
+

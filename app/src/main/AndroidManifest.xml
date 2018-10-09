@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
-        android:name="ch.epfl.sweng.swengproject.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -27,9 +27,10 @@
             </intent-filter>
         </activity>
 
-        <!--<uses-library android:name="com.google.android.maps" />-->
+        <!-- <uses-library android:name="com.google.android.maps" /> -->
 
-        <!--             embed the version of google play services that the app was compiled with -->
+
+        <!-- embed the version of google play services that the app was compiled with -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -51,8 +52,10 @@
             android:label="EventMap" />
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".AddNeedActivity"></activity>
+        <activity android:name=".AddNeedActivity" />
+        <activity
+            android:name=".controllers.InscriptionActivity"
+            android:label="@string/title_activity_inscription"></activity>
     </application>
 
 </manifest>
-
