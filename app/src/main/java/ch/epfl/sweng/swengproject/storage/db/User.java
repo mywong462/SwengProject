@@ -22,23 +22,15 @@ public class User {
     @PrimaryKey
     @NonNull
     private String email;
+    private String password = null;
     private String firstName = null;
     private String lastName = null;
     private Date inscriptionDate = null;
 
-
-
     @Ignore
     private Bitmap picture = null;
 
-    /*public User(long id, String firstName, String lastName, String email, Date inscriptionDate, Bitmap picture){
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.inscriptionDate = inscriptionDate;
-        this.picture = picture;
-    }*/
+
 
     private String pathToPicture(){
         return PICTURES_FOLDER + File.pathSeparator + email + ".jpeg";
@@ -75,6 +67,9 @@ public class User {
     }
 
     //-----------SETTERS----------
+    public void setPassword(String password) {
+        this.password = password;
+    }
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -92,6 +87,9 @@ public class User {
     }
 
     //-----------GETTERS----------
+    public String password(){
+        return password;
+    }
     public String firstName(){
         return firstName;
     }

@@ -3,6 +3,7 @@ package ch.epfl.sweng.swengproject.controllers;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
@@ -10,12 +11,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.RegistrationActivity;
+import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
+import ch.epfl.sweng.swengproject.storage.db.User;
+import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
 public class InscriptionActivity extends Activity {
 
@@ -93,6 +98,23 @@ public class InscriptionActivity extends Activity {
     }
 
     private void register(){
+        User me = new User();
+        me.setEmail(emailEditText.toString());
+        me.setPassword(pswEditText.toString());
+        me.setFirstName(firstNameEditText.toString());
+        me.setLastName(lastNameEditText.toString());
+        Bitmap bm = ((BitmapDrawable)profilePictureButton.getDrawable()).getBitmap();
+        me.setPicture(bm);
+        UserDao userDao = AppDatabase.getInMemoryDatabase(this).userDao();
+        userDao.storeMyOwnProfile(me);
+
+        User meButFetched = userDao.fetchMyOwnProfile();
+        emailEditText.setText(meButFetched.email(),TextView.BufferType.EDITABLE);
+        pswEditText.setText(meButFetched.password(),TextView.BufferType.EDITABLE);
+        firstNameEditText.setText(meButFetched.firstName(),TextView.BufferType.EDITABLE);
+        lastNameEditText.setText(meButFetched.lastName(),TextView.BufferType.EDITABLE);
+        profilePictureButton.setImageBitmap(meButFetched.picture());
+
 
     }
 

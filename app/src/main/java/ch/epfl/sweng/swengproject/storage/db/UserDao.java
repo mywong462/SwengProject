@@ -70,7 +70,7 @@ public abstract class  UserDao {
      * Store the profile of the client that own the end device in his(this) device
      * @param me the user that represent the profile of the client
      */
-    public void storeMyOwnProfile(User me){
+    public  void storeMyOwnProfile(User me){
         SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("user_email", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("my_email", me.email());
