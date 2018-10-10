@@ -38,7 +38,7 @@ import com.google.firebase.firestore.GeoPoint;
 import java.util.ArrayList;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener, Runnable {
 
     private GeoPoint mGeoPoint;
 
@@ -54,10 +54,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private CurrentLocation currentLocation;
 
+    private static final String KEY_LOCATION = "location";
+
+    private Thread t;
+
+    @Override
+    public void run(){
+        Function<Void, Void> function = new Function<Void, Void>() {
+            @Override
+            public Void apply(Void input) {
+                updateUI();
+                return null;
+            }
+        };
+
+        currentLocation = new CurrentLocation(this.getApplicationContext(),
+                this,
+                function);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null){
+            Log.d("HELLO", "getting old instance");
+            lastLatLng = savedInstanceState.getParcelable(KEY_LOCATION);
+        }
+
+        t = new Thread(this);
+        t.start();
+
         setContentView(R.layout.activity_maps);
         isOpening = true;
 
@@ -81,23 +109,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        if(mMap != null){
+            Log.d("HELLO", "saving instance of map");
+            outState.putParcelable(KEY_LOCATION, lastLatLng);
+            super.onSaveInstanceState(outState);
+        }
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
 
-        Function<Void, Void> function = new Function<Void, Void>() {
-            @Override
-            public Void apply(Void input) {
-                updateUI();
-                return null;
-            }
-        };
+        try{
+            t.join();
+        }catch (InterruptedException e){
+            Log.d("HELLO", "Thread has been interrupted");
+        }
 
-        currentLocation = new CurrentLocation(this.getApplicationContext(),
-                this,
-                function);
+
+        if(lastLatLng != null){
+            updateUI();
+        }
+
+        currentLocation.callerActivityReady();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        currentLocation.callerOnPause();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        currentLocation.callerOnResume();
     }
 
 
@@ -115,7 +165,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateUI() {
 
-        Log.d("HELLO", "UPDATEUI");
+        //Log.d("HELLO", "UPDATEUI");
 
         try {
             if (currentLocation.getLocationPermissionStatus()) {

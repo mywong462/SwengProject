@@ -45,7 +45,11 @@ public class CurrentLocation extends FragmentActivity{
 
     private Location mLastKnownLocation;
 
-    private Boolean isLocationSettingsDemandDisplayed = false;
+    private boolean isLocationSettingsDemandDisplayed = false;
+
+    private boolean callerActivityReady = false;
+
+    private boolean updatingLocation = false;
 
     private Context ctx;
 
@@ -63,12 +67,13 @@ public class CurrentLocation extends FragmentActivity{
                 return;
             }
             mLastKnownLocation = locationResult.getLastLocation();
+            updatingLocation = true;
 
-            if(function != null) {
+            if(function != null && callerActivityReady) {
                 function.apply(null);
             }
 
-            Log.d("HELLO", "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
+            //Log.d("HELLO", "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
         }
 
         @Override
@@ -114,7 +119,7 @@ public class CurrentLocation extends FragmentActivity{
 
 
     /**
-     * Constructor for CurrentLocation with callBack
+     * Constructor for CurrentLocation with callBack function
      */
     public CurrentLocation(Context context, Activity activity, Function<Void, Void> function){
         this.ctx = Objects.requireNonNull(context);
@@ -123,6 +128,18 @@ public class CurrentLocation extends FragmentActivity{
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
 
         checkLocationPermission();
+    }
+
+    protected void callerOnPause(){
+        Log.d("HELLO", "callerOnPause");
+        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+    }
+
+    protected void callerOnResume(){
+        Log.d("HELLO", "callerOnResume");
+        if(updatingLocation) {
+            startLocationUpdates();
+        }
     }
 
     protected boolean isPermissionGranted(){
@@ -144,6 +161,11 @@ public class CurrentLocation extends FragmentActivity{
             createLocationRequest();
         }
     }
+
+    protected void callerActivityReady(){
+        callerActivityReady = true;
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -179,8 +201,8 @@ public class CurrentLocation extends FragmentActivity{
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(2000);
-        mLocationRequest.setFastestInterval(2000);
+        mLocationRequest.setInterval(500);
+        mLocationRequest.setFastestInterval(500);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationSettingsRequest.Builder requestBuilder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);

@@ -130,4 +130,16 @@ public class AddNeedActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         currLoc.onActivityResult(requestCode, resultCode, data);
     }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        currLoc.callerOnPause();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        currLoc.callerOnResume();
+    }
 }
