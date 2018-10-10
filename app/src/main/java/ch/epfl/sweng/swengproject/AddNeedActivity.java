@@ -31,9 +31,11 @@ public class AddNeedActivity extends AppCompatActivity {
 
     //constant used for input checks
 
-    protected static final int MIN_VALIDITY = 10;
+    protected static final int MIN_VALIDITY = 1;
     protected static final int MAX_VALIDITY = 30;
     protected static final int MIN_DESCR_L = 10;
+
+    private static final int MILLS_IN_MINUTES = 60000; //there is 60000 miliseconds in 1 minute
 
     private Button create_btn;
 
@@ -84,9 +86,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
                     LatLng currPos = currLoc.getLastLocation();;
 
-
-
-                    writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,valid , currPos.latitude, currPos.longitude);
+                    writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos.latitude, currPos.longitude);
 
                     startActivity(new Intent(AddNeedActivity.this, MapsActivity.class));
 
@@ -99,7 +99,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
     //method used to write in the DB
 
-    private void writeNewUser(String emitter, String descr, int ttl, double lat, double lon) {
+    private void writeNewUser(String emitter, String descr, long ttl, double lat, double lon) {
 
         Need newNeed = new Need(emitter, descr, ttl, lat, lon);
         Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {

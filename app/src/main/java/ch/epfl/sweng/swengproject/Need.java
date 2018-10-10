@@ -13,14 +13,14 @@ public class Need {
     private String description;
     private double longitude;
     private double latitude;
-    private int timeToLive;
+    private long timeToLive;
 
 
     public Need() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Need(String emitter, String descr, int ttl, double latitude, double longitude) {
+    public Need(String emitter, String descr, long ttl, double latitude, double longitude) {
         this.emitter = emitter;
         this.description = descr;
         this.longitude = longitude;
@@ -42,7 +42,7 @@ public class Need {
     public double getLatitude(){
         return this.latitude;
     }
-    public int getTimeToLive(){
+    public long getTimeToLive(){
         return this.timeToLive;
     }
 
@@ -62,12 +62,9 @@ public class Need {
         this.longitude = longitude;
     }
 
-    public void setLatitude(double latitude){
-        Log.d("THEONE", "lat: " + latitude);
-        this.latitude = latitude;
-    }
+    public void setLatitude(double latitude){ this.latitude = latitude;}
 
-    public void setTimeToLive(int timeToLive){
+    public void setTimeToLive(long timeToLive){
         this.timeToLive = timeToLive;
     }
 

@@ -61,8 +61,8 @@ public final class Database {
             needLoc.setLatitude(need.getLatitude());
             needLoc.setLongitude(need.getLongitude());
 
-            //If the need isn't in the desired range (range is in kilometer
-            if (here.distanceTo(needLoc) <= (float) range * 1000) {
+            //If the need isn't in the desired range (range is in kilometer) and the need isn't outdated
+            if (here.distanceTo(needLoc) <= (float) range * 1000 && need.getTimeToLive() > System.currentTimeMillis()) {
                 availableNeeds.add(need);
             }
 
