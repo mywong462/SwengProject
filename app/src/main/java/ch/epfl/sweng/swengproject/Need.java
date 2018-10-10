@@ -62,10 +62,7 @@ public class Need {
         this.longitude = longitude;
     }
 
-    public void setLatitude(double latitude){
-        Log.d("THEONE", "lat: " + latitude);
-        this.latitude = latitude;
-    }
+    public void setLatitude(double latitude){ this.latitude = latitude;}
 
     public void setTimeToLive(int timeToLive){
         this.timeToLive = timeToLive;
