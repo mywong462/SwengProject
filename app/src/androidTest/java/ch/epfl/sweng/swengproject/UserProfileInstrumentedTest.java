@@ -28,6 +28,7 @@ import java.util.List;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
+import ch.epfl.sweng.swengproject.util.UserTestUtil;
 
 // Test is useless. Will wait for mock class to then mock sharedPreferences since
 // the file can't be accessed from androidTest
