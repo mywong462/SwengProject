@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -45,11 +46,22 @@ public final class Database {
                 if(e != null) {
                     Log.d("HELLO", "Got an exception querying the database");
                 }else{
+
+                    //get the needs from the database
+
                     listNeeds = queryDocumentSnapshots.toObjects(Need.class);
+
+                    //remove old needs from the database
+
+                    for(DocumentSnapshot old:queryDocumentSnapshots.getDocuments()){
+                        if(old.toObject(Need.class).getTimeToLive() < System.currentTimeMillis()){
+                            old.getReference().delete();
+                        }
+                    }
+
                 }
             }
         });
-
 
                 //To remove the needs that aren't in the range
         Location here = new Location("");
