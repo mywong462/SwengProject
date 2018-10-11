@@ -44,7 +44,7 @@ public final class Database {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if(e != null) {
-                    Log.d("HELLO", "Got an exception querying the database");
+                    Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
                 }else{
                     listNeeds = queryDocumentSnapshots.toObjects(Need.class);
                 }

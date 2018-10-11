@@ -28,6 +28,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 
 public class MainActivity extends AppCompatActivity {
+    
+    protected static final String LOGTAG = "HELLO";
 
     private ConstraintLayout scrWelcome;
 

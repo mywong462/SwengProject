@@ -77,7 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("HELLO", "onCreate");
+        Log.d(MainActivity.LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
 
         t = new Thread(this);
@@ -109,7 +109,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (mMap != null) {
-            Log.d("HELLO", "saving instance of map");
+            Log.d(MainActivity.LOGTAG, "saving instance of map");
             outState.putParcelable(KEY_LOCATION, lastLatLng);
         }
         super.onSaveInstanceState(outState);
@@ -119,7 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            Log.d("HELLO", "getting old instance");
+            Log.d(MainActivity.LOGTAG, "getting old instance");
             lastLatLng = savedInstanceState.getParcelable(KEY_LOCATION);
         }
     }
@@ -133,7 +133,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
             t.join();
         } catch (InterruptedException e) {
-            Log.d("HELLO", "Thread has been interrupted");
+            Log.d(MainActivity.LOGTAG, "Thread has been interrupted");
         }
 
 
@@ -171,7 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateUI() {
 
-        Log.d("HELLO", "UPDATEUI");
+        Log.d(MainActivity.LOGTAG, "UPDATEUI");
 
         try {
             if (currentLocation.getLocationPermissionStatus()) {
@@ -195,7 +195,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
                 }
             } else {
-                Log.d("HELLO", "NO UPDATEUI");
+                Log.d(MainActivity.LOGTAG, "NO UPDATEUI");
             }
         } catch (SecurityException e) {
         }

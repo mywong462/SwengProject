@@ -73,7 +73,7 @@ public class CurrentLocation extends FragmentActivity{
                 function.apply(null);
             }
 
-            Log.d("HELLO", "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
+            Log.d(MainActivity.LOGTAG, "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
         }
 
         @Override
@@ -98,14 +98,14 @@ public class CurrentLocation extends FragmentActivity{
                     public void onFailure(@NonNull Exception e) {
                         activity.setContentView(R.layout.page_location_services_up_demand);
                         isLocationSettingsDemandDisplayed = true;
-                        Log.d("HELLO", "ask to enable location services");
+                        Log.d(MainActivity.LOGTAG, "ask to enable location services");
                     }
                 });
 
             }else{
                 if(isLocationSettingsDemandDisplayed){
                     isLocationSettingsDemandDisplayed = false;
-                    Log.d("HELLO", "location services re-enabled");
+                    Log.d(MainActivity.LOGTAG, "location services re-enabled");
                     activity.setContentView(R.layout.activity_maps);
                 }
             }
@@ -131,12 +131,12 @@ public class CurrentLocation extends FragmentActivity{
     }
 
     protected void callerOnPause(){
-        Log.d("HELLO", "callerOnPause" + activity.getLocalClassName());
+        Log.d(MainActivity.LOGTAG, "callerOnPause" + activity.getLocalClassName());
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
     }
 
     protected void callerOnResume(){
-        Log.d("HELLO", "callerOnResume" + activity.getLocalClassName());
+        Log.d(MainActivity.LOGTAG, "callerOnResume" + activity.getLocalClassName());
         if(updatingLocation) {
             startLocationUpdates();
         }
@@ -157,7 +157,7 @@ public class CurrentLocation extends FragmentActivity{
 
 
         }else {
-            Log.d("HELLO", "CAJOUE");
+            Log.d(MainActivity.LOGTAG, "CAJOUE");
             createLocationRequest();
         }
     }
@@ -169,13 +169,13 @@ public class CurrentLocation extends FragmentActivity{
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d("HELLO", "je passe");
+        Log.d(MainActivity.LOGTAG, "je passe");
 
         if (requestCode == CurrentLocation.LOCATION_REQUEST_CODE) {
 
             //Request cancelled -> result array is empty
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("HELLO", "onRequestPermissionsResult_true");
+                Log.d(MainActivity.LOGTAG, "onRequestPermissionsResult_true");
                 checkLocationPermission();
             } else {
                 //Explain why the app needs to access the location and re-ask for permission
@@ -214,7 +214,7 @@ public class CurrentLocation extends FragmentActivity{
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Location settings are satisfied
-                Log.d("HELLO", "createLocationRequest_true");
+                Log.d(MainActivity.LOGTAG, "createLocationRequest_true");
                     startLocationUpdates();
             }
         });
@@ -248,13 +248,13 @@ public class CurrentLocation extends FragmentActivity{
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         // All required changes were successfully made
-                        Log.d("HELLO", "createLocationRequestAfterAskingViaDialog_true");
+                        Log.d(MainActivity.LOGTAG, "createLocationRequestAfterAskingViaDialog_true");
                         startLocationUpdates();
 
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
-                        Log.d("HELLO", "USER REFUSED TO ENABLE LOCATION SERVICES");
+                        Log.d(MainActivity.LOGTAG, "USER REFUSED TO ENABLE LOCATION SERVICES");
                         startLocationUpdates();
                         break;
                     default:
@@ -269,13 +269,13 @@ public class CurrentLocation extends FragmentActivity{
     protected void startLocationUpdates(){
         try {
             if (isPermissionGranted()) {
-                Log.d("HELLO", "OK PERMISSION");
+                Log.d(MainActivity.LOGTAG, "OK PERMISSION");
 
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
 
             } else {
-                Log.d("HELLO", "NO PERMISSION");
+                Log.d(MainActivity.LOGTAG, "NO PERMISSION");
                 checkLocationPermission();
 
             }
