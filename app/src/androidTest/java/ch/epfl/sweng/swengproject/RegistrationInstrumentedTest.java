@@ -16,7 +16,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static junit.framework.TestCase.assertEquals;
 import android.support.test.rule.ActivityTestRule;
 
-import com.google.android.gms.maps.model.LatLng;
+import ch.epfl.sweng.swengproject.controllers.MainActivity;
 
 
 @RunWith(AndroidJUnit4.class)

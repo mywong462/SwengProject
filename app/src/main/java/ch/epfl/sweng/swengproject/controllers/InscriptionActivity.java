@@ -1,6 +1,5 @@
 package ch.epfl.sweng.swengproject.controllers;
 
-import android.app.Application;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,10 +9,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,12 +22,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import ch.epfl.sweng.swengproject.Database;
+import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.RegistrationActivity;
@@ -131,32 +128,45 @@ public class InscriptionActivity extends AppCompatActivity {
 
     private void register(){
 
+        ConnectivityManager conMan = (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+        NetworkInfo info = conMan.getActiveNetworkInfo();
+
+        if(info == null ||!info.isConnected()){ //check if the error was caused by network connectivity problems
+            Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network",Toast.LENGTH_LONG).show();
+            return;
+        }
+
         auth.createUserWithEmailAndPassword(emailEditText.getText().toString(), pswEditText.getText().toString()
-        )
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            auth.getCurrentUser().sendEmailVerification();
-                            // Sign in success, update UI with the signed-in user's information
-                           /* Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);*/
-                            Toast.makeText(MyApplication.getAppContext(), "Okay", Toast.LENGTH_LONG).show();
+        ).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        } else {
+                if (task.isSuccessful()) {
+                    auth.getCurrentUser().sendEmailVerification();
+                    User me = new User();
+                    me.setEmail(emailEditText.toString());
+                    me.setPassword(pswEditText.toString());
+                    me.setFirstName(firstNameEditText.toString());
+                    me.setLastName(lastNameEditText.toString());
+                    //TODO: don't set the empty picture here!
+                    Bitmap bm = ((BitmapDrawable)profilePictureButton.getDrawable()).getBitmap();
+                    me.setPicture(bm);
 
-                            ConnectivityManager conMan = (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
-                            NetworkInfo info = conMan.getActiveNetworkInfo();
-
-                            if(info == null ||!info.isConnected()){ //check if the error was caused by network connectivity problems
-                                Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network",Toast.LENGTH_LONG).show();
-                            }else {
-                                Toast.makeText(MyApplication.getAppContext(), "Registration Failed", Toast.LENGTH_LONG).show();
-                            }
+                    new  AsyncTask<User, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(User... users) {
+                            User u = users[0];
+                            UserDao userDao = AppDatabase.getInMemoryDatabase(MyApplication.getAppContext()).userDao();
+                            userDao.storeMyOwnProfile(u);
+                            return null;
                         }
-                    }
-                });
+                    }.execute(me);
+                    startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
+                } else {
+                    Toast.makeText(MyApplication.getAppContext(), "Registration Failed", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         /*https://developer.android.com/reference/android/os/AsyncTask
         AsyncTask is designed to be a helper class around Thread
@@ -170,13 +180,7 @@ public class InscriptionActivity extends AppCompatActivity {
            called Params, Progress and Result,
            and 4 steps, called onPreExecute, doInBackground, onProgressUpdate and onPostExecute*/
 
-        /*User me = new User();
-        me.setEmail(emailEditText.toString());
-        me.setPassword(pswEditText.toString());
-        me.setFirstName(firstNameEditText.toString());
-        me.setLastName(lastNameEditText.toString());
-        Bitmap bm = ((BitmapDrawable)profilePictureButton.getDrawable()).getBitmap();
-        me.setPicture(bm);*/
+
 
         //UserDao userDao = AppDatabase.getInMemoryDatabase(this).userDao();
         //userDao.storeMyOwnProfile(me);
@@ -188,15 +192,7 @@ public class InscriptionActivity extends AppCompatActivity {
         lastNameEditText.setText(meButFetched.lastName(),TextView.BufferType.EDITABLE);
         profilePictureButton.setImageBitmap(meButFetched.picture());*/
 
-         /*new  AsyncTask<User, Void, Void>() {
-            @Override
-            protected Void doInBackground(User... users) {
-                User u = users[0];
-                UserDao userDao = AppDatabase.getInMemoryDatabase(MyApplication.getAppContext()).userDao();
-                userDao.storeMyOwnProfile(u);
-                return null;
-            }
-        }.execute(me);*/
+
 
 
     }
