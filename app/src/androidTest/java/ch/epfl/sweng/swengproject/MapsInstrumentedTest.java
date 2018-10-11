@@ -36,7 +36,7 @@ public class MapsInstrumentedTest {
         boolean passed = true;
     }
 
-    @Test
+    @Ignore
     public void canAddManyNeedsRapidly() throws InterruptedException {
 
 
