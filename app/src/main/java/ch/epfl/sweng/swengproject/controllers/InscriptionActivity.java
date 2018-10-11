@@ -1,5 +1,9 @@
 package ch.epfl.sweng.swengproject.controllers;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -27,16 +32,19 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import ch.epfl.sweng.swengproject.Database;
+import ch.epfl.sweng.swengproject.LoginActivity;
 import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.RegistrationActivity;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.AlertDialogListener;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.InscriptionAlertDialog;
 import ch.epfl.sweng.swengproject.helpers.inputvalidation.InscriptionValidator;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
-public class InscriptionActivity extends AppCompatActivity {
+public class InscriptionActivity extends AppCompatActivity implements AlertDialogListener {
 
     //widgets:
     private ImageButton profilePictureButton;
@@ -80,29 +88,29 @@ public class InscriptionActivity extends AppCompatActivity {
         goToLogginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToLogginActivity();
+                goToLoginActivity();
             }
         });
 
-        String email = "monEmailTest"+(int)(Math.random()*100000)+"@gmail.com";
-        emailEditText.setText(email,TextView.BufferType.EDITABLE);
-        pswEditText.setText("Top secret haha",TextView.BufferType.EDITABLE);
+        String email = "monEmailTest" + (int) (Math.random() * 100000) + "@gmail.com";
+        emailEditText.setText(email, TextView.BufferType.EDITABLE);
+        pswEditText.setText("Top secret haha", TextView.BufferType.EDITABLE);
     }
 
-    private void pickImage(){
+    private void pickImage() {
         //https://www.youtube.com/watch?v=Mm1dMWZWQ6w
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_PICK);
-        startActivityForResult(intent,1);
+        startActivityForResult(intent, 1);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK){
-            if(requestCode == 1){
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
                 Uri uri = data.getData();
                 try {
                     InputStream stream = getContentResolver().openInputStream(uri);
@@ -115,8 +123,8 @@ public class InscriptionActivity extends AppCompatActivity {
         }
     }
 
-    private void goToLogginActivity(){
-        startActivity(new Intent(this, RegistrationActivity.class));
+    private void goToLoginActivity() {
+        startActivity(new Intent(this, LoginActivity.class));
     }
 
     private void checkBeforeRegister() {
@@ -126,13 +134,20 @@ public class InscriptionActivity extends AppCompatActivity {
         }
     }
 
-    private void register(){
+    private void register() {
 
+       // presentAlertDialog();
+        DialogFragment df = new InscriptionAlertDialog();
+        df.show(getSupportFragmentManager(), "missiles");
+
+        if (true) return;
+
+        //TODO: change this useless test!
         ConnectivityManager conMan = (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
         NetworkInfo info = conMan.getActiveNetworkInfo();
 
-        if(info == null ||!info.isConnected()){ //check if the error was caused by network connectivity problems
-            Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network",Toast.LENGTH_LONG).show();
+        if (info == null || !info.isConnected()) { //check if the error was caused by network connectivity problems
+            Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -142,17 +157,19 @@ public class InscriptionActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
+
                     auth.getCurrentUser().sendEmailVerification();
+
                     User me = new User();
                     me.setEmail(emailEditText.toString());
                     me.setPassword(pswEditText.toString());
                     me.setFirstName(firstNameEditText.toString());
                     me.setLastName(lastNameEditText.toString());
                     //TODO: don't set the empty picture here!
-                    Bitmap bm = ((BitmapDrawable)profilePictureButton.getDrawable()).getBitmap();
+                    Bitmap bm = ((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap();
                     me.setPicture(bm);
 
-                    new  AsyncTask<User, Void, Void>() {
+                    new AsyncTask<User, Void, Void>() {
                         @Override
                         protected Void doInBackground(User... users) {
                             User u = users[0];
@@ -161,8 +178,11 @@ public class InscriptionActivity extends AppCompatActivity {
                             return null;
                         }
                     }.execute(me);
-                    startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
+
+
+                    //startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
                 } else {
+                    System.out.println("Failed inscription");
                     Toast.makeText(MyApplication.getAppContext(), "Registration Failed", Toast.LENGTH_LONG).show();
                 }
             }
@@ -181,7 +201,6 @@ public class InscriptionActivity extends AppCompatActivity {
            and 4 steps, called onPreExecute, doInBackground, onProgressUpdate and onPostExecute*/
 
 
-
         //UserDao userDao = AppDatabase.getInMemoryDatabase(this).userDao();
         //userDao.storeMyOwnProfile(me);
 
@@ -193,8 +212,54 @@ public class InscriptionActivity extends AppCompatActivity {
         profilePictureButton.setImageBitmap(meButFetched.picture());*/
 
 
+    }
 
+    private void presentAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Well done!")
+                .setMessage("Your score is ")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Intent intent = new Intent();
+                        // intent.putExtra(BUNDLE_EXTRA_SCORE, scorePlayer);
+                        // nous précisons au système Android que l'activité s'est correctement
+                        // terminée, et nous lui indiquons en second paramètre
+                        // notre Intent (qui contient le score) ;
+                        //setResult(RESULT_OK, intent);
+                        //finish();
+
+                    }
+                })
+                .create()
+                .show();
+    }
+
+
+
+
+    // The dialog fragment receives a reference to this Activity through the
+    // Fragment.onAttach() callback, which it uses to call the following methods
+    // defined by the NoticeDialogFragment.NoticeDialogListener interface
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's positive button
+        System.out.println("positive button touched");
+    }
+
+    @Override
+    public void onDialogNeutralClick(DialogFragment dialog) {
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+        System.out.println("negative button touched");
 
     }
 
 }
+
+
