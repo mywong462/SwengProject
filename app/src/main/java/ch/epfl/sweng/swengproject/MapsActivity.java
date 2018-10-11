@@ -29,6 +29,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -36,6 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener {
@@ -147,7 +150,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void showAvailableNeeds() {
+
         ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range);
+
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
