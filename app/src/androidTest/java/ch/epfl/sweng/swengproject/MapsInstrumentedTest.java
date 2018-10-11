@@ -28,7 +28,7 @@ public class MapsInstrumentedTest {
 
     @Rule
     public final ActivityTestRule<MapsActivity> mActivityRule =
-            new ActivityTestRule<>(MapsActivity.class);
+            new ActivityTestRule<>(MapsActivity.class,false,false);
 
 
     @Test
@@ -51,7 +51,7 @@ public class MapsInstrumentedTest {
         }
     }
 
-    @Ignore //Pass locally but not with Travis
+    @Test //Pass locally but not with Travis
     public void invalidValidity1(){
 
 
@@ -89,7 +89,7 @@ public class MapsInstrumentedTest {
     }
 
 
-    @Ignore //Pass locally but not with Travis
+    @Test //Pass locally but not with Travis
     public void invalidValidity2(){
 
 
@@ -127,7 +127,7 @@ public class MapsInstrumentedTest {
 
     }
 
-    @Ignore //Pass locally but not with Travis
+    @Test //Pass locally but not with Travis
     public void invalidDescription(){
 
 
