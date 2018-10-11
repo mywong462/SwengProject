@@ -51,7 +51,7 @@ public class MapsInstrumentedTest {
         }
     }
 
-    @Ignore //Pass locally but not with Travis
+    @Test //Pass locally but not with Travis
     public void invalidValidity1(){
 
 

@@ -12,7 +12,6 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
@@ -51,7 +50,8 @@ public final class Database {
             }
         });
 
-        //To remove the needs that aren't in the range
+
+                //To remove the needs that aren't in the range
         Location here = new Location("");
         here.setLatitude(mGeoPoint.getLatitude());
         here.setLongitude(mGeoPoint.getLongitude());
@@ -65,6 +65,7 @@ public final class Database {
             if (here.distanceTo(needLoc) <= (float) range * 1000 && need.getTimeToLive() > System.currentTimeMillis()) {
                 availableNeeds.add(need);
             }
+
 
         }
 

@@ -32,11 +32,21 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = Database.getDBauth;
 
+        getViewElements();
+
+        addListeners();
+    }
+
+
+    private void getViewElements(){
         inputEmail = findViewById(R.id.email1);
         inputPassword = findViewById(R.id.password1);
         btnLogin = findViewById(R.id.login_btn1);
         btnRegister = findViewById(R.id.register_btn1);
         btnResetPassword = findViewById(R.id.resetPassword_btn1);
+    }
+
+    private void addListeners(){
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,5 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                         });
             }
         });
+
     }
+
 }
