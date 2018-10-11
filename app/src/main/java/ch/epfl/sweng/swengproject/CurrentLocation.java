@@ -131,12 +131,12 @@ public class CurrentLocation extends FragmentActivity{
     }
 
     protected void callerOnPause(){
-        Log.d("HELLO", "callerOnPause");
+        Log.d("HELLO", "callerOnPause" + activity.getLocalClassName());
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
     }
 
     protected void callerOnResume(){
-        Log.d("HELLO", "callerOnResume");
+        Log.d("HELLO", "callerOnResume" + activity.getLocalClassName());
         if(updatingLocation) {
             startLocationUpdates();
         }

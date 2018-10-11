@@ -88,8 +88,8 @@ public class AddNeedActivity extends AppCompatActivity {
 
                     writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos.latitude, currPos.longitude);
 
-                    startActivity(new Intent(AddNeedActivity.this, MapsActivity.class));
 
+                    finish();
                 }
             }
         });

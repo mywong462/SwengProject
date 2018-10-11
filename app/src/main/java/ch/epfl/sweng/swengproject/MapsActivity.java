@@ -24,6 +24,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -59,7 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Thread t;
 
     @Override
-    public void run(){
+    public void run() {
         Function<Void, Void> function = new Function<Void, Void>() {
             @Override
             public Void apply(Void input) {
@@ -76,12 +77,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("HELLO", "onCreate");
         super.onCreate(savedInstanceState);
-
-        if(savedInstanceState != null){
-            Log.d("HELLO", "getting old instance");
-            lastLatLng = savedInstanceState.getParcelable(KEY_LOCATION);
-        }
 
         t = new Thread(this);
         t.start();
@@ -110,11 +107,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState){
-        if(mMap != null){
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mMap != null) {
             Log.d("HELLO", "saving instance of map");
             outState.putParcelable(KEY_LOCATION, lastLatLng);
-            super.onSaveInstanceState(outState);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            Log.d("HELLO", "getting old instance");
+            lastLatLng = savedInstanceState.getParcelable(KEY_LOCATION);
         }
     }
 
@@ -124,14 +130,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap = googleMap;
 
-        try{
+        try {
             t.join();
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             Log.d("HELLO", "Thread has been interrupted");
         }
 
 
-        if(lastLatLng != null){
+        if (lastLatLng != null) {
             updateUI();
         }
 
@@ -139,13 +145,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         currentLocation.callerOnPause();
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         currentLocation.callerOnResume();
     }
@@ -165,7 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateUI() {
 
-        //Log.d("HELLO", "UPDATEUI");
+        Log.d("HELLO", "UPDATEUI");
 
         try {
             if (currentLocation.getLocationPermissionStatus()) {
@@ -209,7 +215,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(this);
     }
 
-    private void displayOnMenu(View menuView, GeoPoint tempGeo){
+    private void displayOnMenu(View menuView, GeoPoint tempGeo) {
         //  TODO: need to update this function when more fields from the needs are available
         //The field to be update
         TextView description = menuView.findViewById(R.id.needDescription);
@@ -217,20 +223,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         //Searching for the need
-        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo,range);
-        for (int i = 0; i < currentNeed.size(); i++){
+        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo, range);
+        for (int i = 0; i < currentNeed.size(); i++) {
 
-            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
+            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())) {
                 selectedNeed = currentNeed.get(i);
                 break;
             }
         }
 
         //Updating information on the screen
-        if (selectedNeed != null){
+        if (selectedNeed != null) {
             description.setText(selectedNeed.getDescription());
-        }
-        else  Log.d("ERROR", "System cannot find Need matched with the GeoPoint");
+        } else Log.d("ERROR", "System cannot find Need matched with the GeoPoint");
 
     }
 
@@ -244,12 +249,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int width = size.x;
         int height = size.y;
         LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.activity_pin_popup_window,null);
-        final PopupWindow pw = new PopupWindow(layout, (int)(width*0.8), (int)(height*0.7), true);
+        View layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
+        final PopupWindow pw = new PopupWindow(layout, (int) (width * 0.8), (int) (height * 0.7), true);
 
         //Get the marker information
-        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude,marker.getPosition().longitude);
-        displayOnMenu(layout,needRequest);
+        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
+        displayOnMenu(layout, needRequest);
 
         //Implemnent the close button
         ((Button) layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
@@ -262,7 +267,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         pw.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         pw.setTouchInterceptor(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
                     pw.dismiss();
                     return true;
                 }
