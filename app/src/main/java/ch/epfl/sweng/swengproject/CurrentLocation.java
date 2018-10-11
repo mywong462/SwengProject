@@ -73,7 +73,7 @@ public class CurrentLocation extends FragmentActivity{
                 function.apply(null);
             }
 
-            //Log.d("HELLO", "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
+            Log.d("HELLO", "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
         }
 
         @Override
