@@ -28,7 +28,7 @@ public class MapsInstrumentedTest {
 
     @Rule
     public final ActivityTestRule<MapsActivity> mActivityRule =
-            new ActivityTestRule<>(MapsActivity.class,false,false);
+            new ActivityTestRule<>(MapsActivity.class,false,true);
 
 
     @Test
