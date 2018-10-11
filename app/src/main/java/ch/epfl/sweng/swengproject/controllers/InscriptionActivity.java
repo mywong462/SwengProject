@@ -5,11 +5,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,9 +21,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import ch.epfl.sweng.swengproject.Database;
 import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.RegistrationActivity;
@@ -30,6 +41,7 @@ import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
 public class InscriptionActivity extends AppCompatActivity {
 
+    //widgets:
     private ImageButton profilePictureButton;
     private EditText emailEditText;
     private EditText pswEditText;
@@ -37,6 +49,9 @@ public class InscriptionActivity extends AppCompatActivity {
     private EditText lastNameEditText;
     private Button registerButton;
     private Button goToLogginButton;
+
+    //Firebase auth
+    private FirebaseAuth auth = Database.getDBauth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +76,7 @@ public class InscriptionActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                register();
+                checkBeforeRegister();
             }
         });
 
@@ -72,6 +87,9 @@ public class InscriptionActivity extends AppCompatActivity {
             }
         });
 
+        String email = "monEmailTest"+(int)(Math.random()*100000)+"@gmail.com";
+        emailEditText.setText(email,TextView.BufferType.EDITABLE);
+        pswEditText.setText("Top secret haha",TextView.BufferType.EDITABLE);
     }
 
     private void pickImage(){
@@ -104,13 +122,41 @@ public class InscriptionActivity extends AppCompatActivity {
         startActivity(new Intent(this, RegistrationActivity.class));
     }
 
+    private void checkBeforeRegister() {
+        if (InscriptionValidator.fieldsAreValid(emailEditText.getText().toString(), pswEditText.getText().toString(),
+                firstNameEditText.getText().toString(), lastNameEditText.getText().toString())) {
+            register();
+        }
+    }
+
     private void register(){
 
-        if(InscriptionValidator.fieldsAreValid(emailEditText.getText().toString(), pswEditText.getText().toString(),
-                firstNameEditText.getText().toString(), lastNameEditText.getText().toString())){
-            Toast.makeText(this, "all is OK " +emailEditText.toString(), Toast.LENGTH_SHORT).show();
+        auth.createUserWithEmailAndPassword(emailEditText.getText().toString(), pswEditText.getText().toString()
+        )
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            auth.getCurrentUser().sendEmailVerification();
+                            // Sign in success, update UI with the signed-in user's information
+                           /* Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);*/
+                            Toast.makeText(MyApplication.getAppContext(), "Okay", Toast.LENGTH_LONG).show();
 
-        }
+                        } else {
+
+                            ConnectivityManager conMan = (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+                            NetworkInfo info = conMan.getActiveNetworkInfo();
+
+                            if(info == null ||!info.isConnected()){ //check if the error was caused by network connectivity problems
+                                Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network",Toast.LENGTH_LONG).show();
+                            }else {
+                                Toast.makeText(MyApplication.getAppContext(), "Registration Failed", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                });
 
         /*https://developer.android.com/reference/android/os/AsyncTask
         AsyncTask is designed to be a helper class around Thread

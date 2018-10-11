@@ -26,7 +26,7 @@ public final class Database {
 
     protected static List<Need> listNeeds = new ArrayList<>();
 
-    protected static final FirebaseAuth getDBauth = FirebaseAuth.getInstance();
+    public static final FirebaseAuth getDBauth = FirebaseAuth.getInstance();
 
     private static final FirebaseFirestore needsDB = FirebaseFirestore.getInstance();
 
