@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +28,7 @@ import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
-public class InscriptionActivity extends Activity {
+public class InscriptionActivity extends AppCompatActivity {
 
     private ImageButton profilePictureButton;
     private EditText emailEditText;

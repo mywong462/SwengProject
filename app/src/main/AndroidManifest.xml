@@ -56,7 +56,7 @@
 
         <activity
             android:name=".controllers.InscriptionActivity"
-            android:label="@string/title_activity_inscription"
+            android:label="Inscription"
             android:exported="true"></activity>
     </application>
 
