@@ -136,9 +136,11 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
     private void register() {
 
-       // presentAlertDialog();
+        //presentAlertDialog();
         DialogFragment df = new InscriptionAlertDialog();
+
         df.show(getSupportFragmentManager(), "missiles");
+
 
         if (true) return;
 
@@ -250,7 +252,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
     @Override
     public void onDialogNeutralClick(DialogFragment dialog) {
-
+        System.out.println("neutral button touched");
     }
 
     @Override

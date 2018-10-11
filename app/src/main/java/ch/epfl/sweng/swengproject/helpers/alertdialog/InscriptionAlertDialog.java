@@ -4,10 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
-
+//https://developer.android.com/guide/topics/ui/dialogs#top_of_page
 public  class InscriptionAlertDialog extends DialogFragment {
 
     // Use this instance of the interface to deliver action events
@@ -31,19 +32,32 @@ public  class InscriptionAlertDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("mon titre")
-                .setMessage("fire the missiles")
-                .setPositiveButton("fire", new DialogInterface.OnClickListener() {
+        builder.setTitle("Please certify your email ")
+                .setMessage("Before continuing to use this application, we must ensure that you provided your real email account. For this, please check your mailbox and click the link you received from us. \nNo email received ? Maybe you made an error when typing your email...")
+                .setPositiveButton("That's done !", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onDialogPositiveClick(InscriptionAlertDialog.this);
                     }
                 })
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Change my email", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onDialogNegativeClick(InscriptionAlertDialog.this);
                     }
                 });
         // Create the AlertDialog object and return it
-        return builder.create();
+        final AlertDialog ad = builder.create();
+
+        ad.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                ad.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
+                ad.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
+            }
+        });
+
+        //ad.setCancelable(false);
+        ad.setCanceledOnTouchOutside(false);
+
+        return ad;
     }
 }
