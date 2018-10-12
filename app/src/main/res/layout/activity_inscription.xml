@@ -36,9 +36,10 @@ Android:layout_weight. C'est un attribut spécifique aux enfants d'un LinearLayo
         android:layout_height="0dp"
         android:layout_margin="5dp"
         android:layout_weight="2"
-        android:gravity="center"
         android:background="@null"
-        android:hint="Your Email (Required)" />
+        android:gravity="center"
+        android:hint="Your Email (Required)"
+        android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/inscription_activity_password"
