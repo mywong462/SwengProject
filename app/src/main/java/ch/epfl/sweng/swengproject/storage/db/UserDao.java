@@ -82,7 +82,7 @@ public abstract class  UserDao {
      *
      * @return the client profile if it exist in his device, else null
      */
-    public User fetchMyOwnProfile(){
+    public User getMyOwnProfile(){
         String myEmail = MyApplication.getAppContext().
                 getSharedPreferences("user_email", MODE_PRIVATE).getString("my_email", null);
         if(myEmail == null){

@@ -174,7 +174,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                         @Override
                         protected Void doInBackground(User... users) {
                             User u = users[0];
-                            UserDao userDao = AppDatabase.getInMemoryDatabase(MyApplication.getAppContext()).userDao();
+                            UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
                             //userDao.storeMyOwnProfile(u);
                             User[] us = {me};
                             userDao.insertUsers(us);
