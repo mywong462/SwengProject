@@ -35,7 +35,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.Objects;
 
 
-public class CurrentLocation extends FragmentActivity{
+public class CurrentLocation extends FragmentActivity implements LocationServer{
 
     protected static final int LOCATION_REQUEST_CODE = 99;
 
@@ -219,7 +219,7 @@ public class CurrentLocation extends FragmentActivity{
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode) {
             case CurrentLocation.REQUEST_CHECK_SETTINGS:
@@ -262,7 +262,7 @@ public class CurrentLocation extends FragmentActivity{
 
 
     public LatLng getLastLocation(){
-
+        Log.d("DEBUGSS", "pos : " + mLastKnownLocation.getLatitude() + " " + mLastKnownLocation.getLongitude());
         return new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
     }
 

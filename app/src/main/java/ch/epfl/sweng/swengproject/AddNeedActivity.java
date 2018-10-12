@@ -52,7 +52,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
     private Button create_btn;
 
-    private CurrentLocation currLoc;
+    private LocationServer currLoc;
 
     //All the categories in the array listCategory
     private ArrayList<Categories> listCategory = new ArrayList<>(EnumSet.allOf(Categories.class));
@@ -80,8 +80,18 @@ public class AddNeedActivity extends AppCompatActivity {
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin.setAdapter(aa);
 
-        currLoc = new CurrentLocation(this.getApplicationContext(), this);
+  
+        LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
 
+        Log.d("DEBUG","got the Serializable : "+(loc == null));
+        if(loc != null){
+            currLoc = loc;
+        }
+        else {
+            Log.d("DEBUG","Normal code section");
+            currLoc = new CurrentLocation(this.getApplicationContext(), this);
+            Log.d("DEBUG","currloc is null ? : "+(currLoc == null));
+        }
         //Update text fields with local variables
         TextView validity = findViewById(R.id.need_validity);
         validity.setText("Validity (between "+MIN_VALIDITY+" and "+MAX_VALIDITY+") :");
@@ -105,9 +115,26 @@ public class AddNeedActivity extends AppCompatActivity {
                 EditText description = findViewById(R.id.descr_txt);
                 EditText nbPeopleNeeded = findViewById(R.id.nbPeople_txt);
 
+                Log.d("DEBUG", "VALUE IS : " + validity.getText() + " // null? " + validity.getText().length());
+
+                if(validity.getText().length() == 0 || description.getText().length() == 0 || nbPeopleNeeded.getText().length() == 0){
+                    Log.d("DEBUG", "At least one field is NULL");
+                    Toast.makeText(AddNeedActivity.this, "Incorrect input. Don't let anything blank !", Toast.LENGTH_LONG).show();
+                    return ;
+                }
+
+
                 String descr = description.getText().toString();
-                int valid = Integer.parseInt(validity.getText().toString());
-                int nbPeople = Integer.parseInt(nbPeopleNeeded.getText().toString());
+                int valid = 0;
+                int nbPeople = 0;
+                try{
+                    valid = Integer.parseInt(validity.getText().toString());
+                    nbPeople = Integer.parseInt(nbPeopleNeeded.getText().toString());
+                }catch(NumberFormatException e){
+                    Toast.makeText(AddNeedActivity.this, "The validity and the number of people needed must be numbers", Toast.LENGTH_LONG).show();
+                    return ;
+                }
+
 
 
                 //Perform checks
@@ -124,7 +151,9 @@ public class AddNeedActivity extends AppCompatActivity {
                 }else{  //try to do something for the concurrency bug
 
 
-                    LatLng currPos = currLoc.getLastLocation();;
+                    LatLng currPos = currLoc.getLastLocation();
+
+                    Log.d("DEBUG","position is null "+(currPos == null));
 
                     writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos.latitude, currPos.longitude, category, nbPeople);
 
@@ -167,7 +196,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         currLoc.onActivityResult(requestCode, resultCode, data);
     }
 }
