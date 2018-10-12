@@ -161,7 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             marker.setTag(need);
         }
 
-        mMap.setOnMarkerClickListener(this);
+         mMap.setOnMarkerClickListener(this);
     }
 
     private void displayOnMenu(View menuView, GeoPoint tempGeo){
