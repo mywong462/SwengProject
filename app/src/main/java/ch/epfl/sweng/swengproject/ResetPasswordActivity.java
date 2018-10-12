@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +32,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
         inputEmail = findViewById(R.id.email3);
         btnResetPassword = findViewById(R.id.resetPassword_btn3);
         btnGoBack = findViewById(R.id.goBack_btn);
+
+        String emailFromInscription  = getIntent().getStringExtra("email_to_propose");
+        if(emailFromInscription != null){
+            inputEmail.setText(emailFromInscription, TextView.BufferType.EDITABLE);
+        }
 
         btnGoBack.setOnClickListener(new View.OnClickListener() {
             @Override

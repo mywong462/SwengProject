@@ -264,7 +264,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
     public void onInscriptionDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
         new DeleteAllOnDisk().execute();
-        deleteAccountOnServer(emailEditText.getText().toString(), pswEditText.getText().toString());
+        auth.getCurrentUser().delete();
         userCanInteract = true;
     }
 
@@ -282,14 +282,8 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                 .putExtra("email_to_propose",  emailEditText.getText().toString()));
     }
 
-    /**
-     * Delete the account on the server without requirement, just delete it !
-     * @param email
-     * @param passworid
-     */
-    private void deleteAccountOnServer(String email, String passworid){
-        //TODO:!!!
-    }
+
+
 
 }
 

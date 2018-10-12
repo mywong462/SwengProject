@@ -139,7 +139,6 @@ final User[] us = {u};
         FirebaseUser user = auth.getCurrentUser();
         if (!user.isEmailVerified()) {
             System.out.println("The user cannot use this app if his email is verified. The user is sent to the logging activity");
-            //TODO: the login activity must have the email and psw set already héhé.
             goToLoginActivity(user.getEmail());
         } else {
             System.out.println("...and the email was verified, all is ok!");
