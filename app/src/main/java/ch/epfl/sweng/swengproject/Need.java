@@ -14,18 +14,22 @@ public class Need {
     private double longitude;
     private double latitude;
     private long timeToLive;
+    private Categories category;
+    private int nbPeopleNeeded;
 
 
     public Need() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Need(String emitter, String descr, long ttl, double latitude, double longitude) {
+    public Need(String emitter, String descr, long ttl, double latitude, double longitude, Categories category, int nbPeopleNeeded) {
         this.emitter = emitter;
         this.description = descr;
         this.longitude = longitude;
         this.latitude = latitude;
         this.timeToLive = ttl;
+        this.category = category;
+        this.nbPeopleNeeded = nbPeopleNeeded;
     }
 
 
@@ -45,27 +49,26 @@ public class Need {
     public long getTimeToLive(){
         return this.timeToLive;
     }
+    public Categories getCategory() { return this.category; }
+    public int getNbPeopleNeeded() { return this.nbPeopleNeeded; }
+
 
     //Used to return directly a GeoPoint
     public GeoPoint getPos(){ return new GeoPoint(this.latitude, this.longitude); }
+
 
     //Setters, for .toObjects
     public void setEmitter(String emitter){
         this.emitter = emitter;
     }
-
     public void setDescription(String description){
         this.description = description;
     }
-
     public void setLongitude(double longitude){
         this.longitude = longitude;
     }
-
-    public void setLatitude(double latitude){ this.latitude = latitude;}
-
-    public void setTimeToLive(long timeToLive){
-        this.timeToLive = timeToLive;
-    }
-
+    public void setLatitude(double latitude){ this.latitude = latitude; }
+    public void setTimeToLive(long timeToLive){ this.timeToLive = timeToLive; }
+    public void setCategory(Categories category) { this.category = category; }
+    public void setNbPeopleNeeded(int nbPeopleNeeded) { this.nbPeopleNeeded = nbPeopleNeeded; }
 }

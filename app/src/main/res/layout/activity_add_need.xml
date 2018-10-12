@@ -9,59 +9,115 @@
     <TextView
         android:id="@+id/need_descr"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="61dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/descr_txt"
+        android:layout_marginTop="50dp"
+        android:textSize="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    #app:layout_constraintBottom_toTopOf="@+id/descr_txt"
 
     <EditText
         android:id="@+id/descr_txt"
         android:layout_width="199dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="88dp"
-        android:layout_marginBottom="233dp"
-        android:ems="10"
+        android:layout_height="43dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/create_btn"
+        android:textSize="15dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/need_descr" />
 
     <TextView
         android:id="@+id/need_validity"
         android:layout_width="wrap_content"
-        android:layout_height="17dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="40dp"
+        android:textSize="15dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.441" />
+        app:layout_constraintTop_toBottomOf="@+id/descr_txt" />
+    #app:layout_constraintVertical_bias="0.441"
 
     <EditText
         android:id="@+id/validity_txt"
+        android:layout_width="199dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:inputType="text|number"
+        android:textSize="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/need_validity" />
+    #app:layout_constraintVertical_bias="0.441"
+
+    <TextView
+        android:id="@+id/need_nbPeople"
+        android:layout_width="wrap_content"
+        android:layout_height="17dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
+        android:textSize="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/validity_txt"
+        app:layout_constraintVertical_bias="0.441" />
+    #app:layout_constraintBottom_toBottomOf="parent"
+
+    <EditText
+        android:id="@+id/nbPeople_txt"
+        android:layout_width="199dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:inputType="text|number"
+        android:textSize="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/need_nbPeople"
+        app:layout_constraintVertical_bias="0.571" />
+    #app:layout_constraintBottom_toBottomOf="parent"
+
+    <TextView
+        android:id="@+id/textCategories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="202dp"
-        android:ems="10"
-        android:inputType="text|number"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="52dp"
+        android:layout_marginBottom="60dp"
+        android:text="Category : "
+        android:textSize="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/spinnerCategories"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descr_txt"
-        app:layout_constraintVertical_bias="0.764" />
+        app:layout_constraintTop_toBottomOf="@+id/nbPeople_txt"
+        app:layout_constraintVertical_bias="0.113" />
+
+    <Spinner
+        android:id="@+id/spinnerCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="60dp"
+        android:textSize="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/textCategories"
+        app:layout_constraintTop_toBottomOf="@+id/nbPeople_txt"
+        app:layout_constraintVertical_bias="0.117"
+        tools:layout_editor_absoluteX="139dp" />
 
     <Button
         android:id="@+id/create_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="65dp"
         android:text="Create"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descr_txt" />
+        app:layout_constraintTop_toBottomOf="@+id/descr_txt"
+        app:layout_constraintVertical_bias="0.788" />
+
 
 </android.support.constraint.ConstraintLayout>
