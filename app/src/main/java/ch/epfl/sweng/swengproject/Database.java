@@ -36,7 +36,8 @@ public final class Database {
         return needsRef.add(need);
     }
 
-    public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range){
+    //If there is no limitation in category, pass null into categories variable
+    public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range, Categories categories){
 
         ArrayList<Need> availableNeeds = new ArrayList<>();
 
@@ -63,7 +64,7 @@ public final class Database {
             }
         });
 
-                //To remove the needs that aren't in the range
+        //To remove the needs that aren't in the range
         Location here = new Location("");
         here.setLatitude(mGeoPoint.getLatitude());
         here.setLongitude(mGeoPoint.getLongitude());
@@ -75,7 +76,9 @@ public final class Database {
 
             //If the need isn't in the desired range (range is in kilometer) and the need isn't outdated
             if (here.distanceTo(needLoc) <= (float) range * 1000 && need.getTimeToLive() > System.currentTimeMillis()) {
-                availableNeeds.add(need);
+                if ((categories == need.getCategory())||(categories == null)){
+                    availableNeeds.add(need);
+                }
             }
 
 
