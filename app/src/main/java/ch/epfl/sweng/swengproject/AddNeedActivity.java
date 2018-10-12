@@ -47,11 +47,16 @@ public class AddNeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_need);
 
+        Log.d("DEBUG","before getting serializable thing");
+
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
+
+        Log.d("DEBUG","got the Serializable : "+(loc == null));
         if(loc != null){
             currLoc = loc;
         }
         else {
+            Log.d("DEBUG","Normal code section");
             currLoc = new CurrentLocation(this.getApplicationContext(), this);
         }
         //Update text fields with local variables
@@ -89,7 +94,7 @@ public class AddNeedActivity extends AppCompatActivity {
                 }else{  //try to do something for the concurrency bug
 
 
-                    LatLng currPos = currLoc.getLastLocation();;
+                    LatLng currPos = currLoc.getLastLocation();
 
                     writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos.latitude, currPos.longitude);
 

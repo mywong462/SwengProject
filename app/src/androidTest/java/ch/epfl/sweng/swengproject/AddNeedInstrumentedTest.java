@@ -14,6 +14,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class AddNeedInstrumentedTest {
     public void create() throws Throwable {
 
         LocationServer ls = new FakeLocation();
+
         mActivityRule.launchActivity(new Intent().putExtra("loc",ls));
 
     }
@@ -60,20 +62,13 @@ public class AddNeedInstrumentedTest {
 
         }
 
-       // onView(withId(R.id.create_need_btn)).perform(click());
-        //FloatingActionButton b = mActivityRule.getActivity().findViewById(R.id.create_need_btn);
-        //assertTrue(b.performClick());
 
         onView(withId(R.id.validity_txt)).perform(typeText(""+failNumber)).perform(closeSoftKeyboard());
-        //EditText t = mActivityRule.getActivity().findViewById(R.id.validity_txt);
-        //t.setText(failNumber);
-        onView(withId(R.id.descr_txt)).perform(typeText(sb.toString())).perform(closeSoftKeyboard());
-        //EditText t2 = mActivityRule.getActivity().findViewById(R.id.descr_txt);
-       // t2.setText(sb.toString());
 
-         onView(withId(R.id.create_btn)).perform(click());
-        //Button b2 = mActivityRule.getActivity().findViewById(R.id.create_btn);
-       // assertTrue(b2.performClick());
+        onView(withId(R.id.descr_txt)).perform(typeText(sb.toString())).perform(closeSoftKeyboard());
+
+        onView(withId(R.id.create_btn)).perform(click());
+
 
         boolean passed = false;
 
@@ -88,5 +83,74 @@ public class AddNeedInstrumentedTest {
         assertEquals(true,passed);
 
     }
+
+
+
+    @Test
+    public void invalidValidity2(){
+
+
+        int failNumber = (int)Math.ceil(Math.random()+AddNeedActivity.MAX_VALIDITY);
+
+
+
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 1; i < AddNeedActivity.MIN_DESCR_L; ++i){
+
+            sb.append('a');
+
+        }
+
+        onView(withId(R.id.validity_txt)).perform(typeText(""+failNumber)).perform(closeSoftKeyboard());
+        onView(withId(R.id.descr_txt)).perform(typeText(sb.toString())).perform(closeSoftKeyboard());
+
+        onView(withId(R.id.create_btn)).perform(click());
+
+        boolean passed = false;
+
+        try{
+            onView(withId(R.id.create_need_btn)).perform(click());
+        }
+        catch(NoMatchingViewException e){
+
+            passed = true;
+        }
+
+        assertEquals(true,passed);
+
+    }
+
+    @Test
+    public void invalidDescription(){
+
+
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 1; i < AddNeedActivity.MIN_DESCR_L; ++i){
+
+            sb.append('a');
+
+        }
+
+        onView(withId(R.id.validity_txt)).perform(typeText(((AddNeedActivity.MAX_VALIDITY + AddNeedActivity.MIN_VALIDITY)/2)+"")).perform(closeSoftKeyboard());
+        onView(withId(R.id.descr_txt)).perform(typeText(sb.toString())).perform(closeSoftKeyboard());
+
+        onView(withId(R.id.create_btn)).perform(click());
+
+        boolean passed = false;
+
+        try{
+            onView(withId(R.id.create_need_btn)).perform(click());
+        }
+        catch(NoMatchingViewException e){
+
+            passed = true;
+        }
+
+        assertEquals(true,passed);
+
+    }
+
 
 }
