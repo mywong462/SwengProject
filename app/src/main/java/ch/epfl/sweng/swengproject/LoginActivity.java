@@ -1,5 +1,6 @@
 package ch.epfl.sweng.swengproject;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -15,6 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
+import ch.epfl.sweng.swengproject.controllers.InscriptionActivity;
 
 // TO DO: import the method checkInfo ect from Registration activity to call them here
 // (code repetition)
@@ -51,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
+                startActivity(new Intent(LoginActivity.this, InscriptionActivity.class));
             }
         });
 

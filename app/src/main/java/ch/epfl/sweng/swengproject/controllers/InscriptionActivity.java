@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,7 +48,7 @@ import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
-public class InscriptionActivity extends AppCompatActivity implements AlertDialogListener {
+public class InscriptionActivity extends AppCompatActivity implements AlertDialogListener, View.OnClickListener {
 
     //widgets:
     private ImageButton profilePictureButton;
@@ -58,14 +59,27 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
     private Button registerButton;
     private Button goToLogginButton;
 
+    private boolean userCanInteract = true;
+
     //Firebase auth
     private FirebaseAuth auth = Database.getDBauth;
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        //blocks the event to reach the buttons when the Toast is displayed
+        return userCanInteract && super.dispatchTouchEvent(ev);
+    }
+    @Override
+    public void onClick(View v) {
+        //TODO: CHECK IF IT MUST BE IMPLEMENTED OR NOT
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
 
+        //connect the widgets to the code
         profilePictureButton = findViewById(R.id.activity_main_profile_image_input);
         emailEditText = findViewById(R.id.inscription_activity_email);
         pswEditText = findViewById(R.id.inscription_activity_password);
@@ -84,7 +98,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                registerButton.setEnabled(false);
+                userCanInteract = false;
                 checkBeforeRegister();
             }
         });
@@ -136,7 +150,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                 firstNameEditText.getText().toString(), lastNameEditText.getText().toString())) {
             register();
         }else{
-            registerButton.setEnabled(true);
+            userCanInteract = true;
         }
     }
 
@@ -148,6 +162,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
         if (info == null || !info.isConnected()) { //check if the error was caused by network connectivity problems
             Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network", Toast.LENGTH_LONG).show();
+            userCanInteract = true;
             return;
         }
 
@@ -162,7 +177,6 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
                     final User me = new User();
                     me.setEmail(emailEditText.getText().toString());
-                    me.setEmail("mon_email_test");
                     me.setPassword(pswEditText.getText().toString());
                     me.setFirstName(firstNameEditText.getText().toString());
                     me.setLastName(lastNameEditText.getText().toString());
@@ -175,9 +189,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                         protected Void doInBackground(User... users) {
                             User u = users[0];
                             UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
-                            //userDao.storeMyOwnProfile(u);
-                            User[] us = {me};
-                            userDao.insertUsers(us);
+                            userDao.storeMyOwnProfile(u);
                             System.out.println("my own profile was stored "+ u.email());
                             return null;
                         }
@@ -194,7 +206,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                     if(exception instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException){
                         System.out.println("because email already exist");
                     }
-                    registerButton.setEnabled(false);
+                    userCanInteract = true;
                 }
             }
         });
@@ -246,6 +258,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                         FirebaseUser user = auth.getCurrentUser();
 
                         if(user.isEmailVerified()){
+                            //TODO: call finish();
                             startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
                         }else{
                             DialogFragment df = new InscriptionAlertDialog();
@@ -263,8 +276,8 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
-        registerButton.setEnabled(true);
         System.out.println("negative button touched");
+        userCanInteract = true;
     }
 
 }
