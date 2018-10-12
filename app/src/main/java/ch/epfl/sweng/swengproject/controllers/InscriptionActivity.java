@@ -1,9 +1,5 @@
 package ch.epfl.sweng.swengproject.controllers;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,7 +17,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,15 +35,17 @@ import ch.epfl.sweng.swengproject.LoginActivity;
 import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
-import ch.epfl.sweng.swengproject.RegistrationActivity;
-import ch.epfl.sweng.swengproject.helpers.alertdialog.AlertDialogListener;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.EmailAlExADListener;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.EmailAlreadyExistAlertDialog;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.InscriptionADListener;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.InscriptionAlertDialog;
 import ch.epfl.sweng.swengproject.helpers.inputvalidation.InscriptionValidator;
+import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
-public class InscriptionActivity extends AppCompatActivity implements AlertDialogListener, View.OnClickListener {
+public class InscriptionActivity extends AppCompatActivity implements InscriptionADListener,EmailAlExADListener, View.OnClickListener {
 
     //widgets:
     private ImageButton profilePictureButton;
@@ -71,7 +68,6 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
     }
     @Override
     public void onClick(View v) {
-        //TODO: CHECK IF IT MUST BE IMPLEMENTED OR NOT
     }
 
     @Override
@@ -112,7 +108,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
         String email = "monEmailTest" + (int) (Math.random() * 100000) + "@gmail.com";
         emailEditText.setText(email, TextView.BufferType.EDITABLE);
-        pswEditText.setText("Top secret haha", TextView.BufferType.EDITABLE);
+        pswEditText.setText("123456", TextView.BufferType.EDITABLE);
     }
 
     private void pickImage() {
@@ -142,6 +138,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
     }
 
     private void goToLoginActivity() {
+        finish();
         startActivity(new Intent(this, LoginActivity.class));
     }
 
@@ -184,59 +181,52 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                     Bitmap bm = ((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap();
                     me.setPicture(bm);
 
-                    new AsyncTask<User, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(User... users) {
-                            User u = users[0];
-                            UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
-                            userDao.storeMyOwnProfile(u);
-                            System.out.println("my own profile was stored "+ u.email());
-                            return null;
-                        }
-                    }.execute(me);
+                    new StoreMyProfileTask().execute(me);
 
                     DialogFragment df = new InscriptionAlertDialog();
                     df.show(getSupportFragmentManager(), "validate_email");
 
                 } else {
-                    System.out.println("Failed inscription");
-                    Toast.makeText(MyApplication.getAppContext(), "Registration Failed", Toast.LENGTH_LONG).show();
                     Exception exception = task.getException();
-                    System.out.println(exception.toString());
                     if(exception instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException){
-                        System.out.println("because email already exist");
+                        DialogFragment df = new EmailAlreadyExistAlertDialog();
+                        df.show(getSupportFragmentManager(), "email_already_exist");
+                    }else{
+                        Toast.makeText(MyApplication.getAppContext(), "Your inscription failed ! We are sorry for that, please try later", Toast.LENGTH_LONG).show();
+                        userCanInteract = true;
                     }
-                    userCanInteract = true;
                 }
             }
         });
-
-        /*https://developer.android.com/reference/android/os/AsyncTask
-        AsyncTask is designed to be a helper class around Thread
-         and Handler and does not constitute a generic threading framework.
-          AsyncTasks should ideally be used for short operations
-          (a few seconds at the most.) [...]
-
-          An asynchronous task is defined by a computation that
-          runs on a background thread and whose result is published
-          on the UI thread. An asynchronous task is defined by 3 generic types,
-           called Params, Progress and Result,
-           and 4 steps, called onPreExecute, doInBackground, onProgressUpdate and onPostExecute*/
-
-
-        //UserDao userDao = AppDatabase.getInMemoryDatabase(this).userDao();
-        //userDao.storeMyOwnProfile(me);
-
-        /*User meButFetched = userDao.fetchMyOwnProfile();
-        emailEditText.setText(meButFetched.email(),TextView.BufferType.EDITABLE);
-        pswEditText.setText(meButFetched.password(),TextView.BufferType.EDITABLE);
-        firstNameEditText.setText(meButFetched.firstName(),TextView.BufferType.EDITABLE);
-        lastNameEditText.setText(meButFetched.lastName(),TextView.BufferType.EDITABLE);
-        profilePictureButton.setImageBitmap(meButFetched.picture());*/
-
-
     }
 
+
+
+    private static class StoreMyProfileTask extends AsyncTask<User, Void, Void> {
+
+        UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
+        User me = null;
+
+        @Override
+        protected Void doInBackground(User... users) {
+
+            StorageHelper.deleteAllDataStoredLocally();
+
+            User me = users[0];
+            UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
+            userDao.storeMyOwnProfile(me);
+            System.out.println("my own profile was stored with the email : "+ me.email());
+            return null;
+        }
+    }
+
+    private static class DeleteAllOnDisk extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StorageHelper.deleteAllDataStoredLocally();
+            return null;
+        }
+    }
 
 
 
@@ -246,7 +236,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
     // Fragment.onAttach() callback, which it uses to call the following methods
     // defined by the NoticeDialogFragment.NoticeDialogListener interface
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
+    public void onInscriptionDialogPositiveClick(DialogFragment dialog) {
         // User touched the dialog's positive button
 
         auth.getCurrentUser()
@@ -258,7 +248,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                         FirebaseUser user = auth.getCurrentUser();
 
                         if(user.isEmailVerified()){
-                            //TODO: call finish();
+                            finish();
                             startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
                         }else{
                             DialogFragment df = new InscriptionAlertDialog();
@@ -268,16 +258,35 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                 });
     }
 
+
+
     @Override
-    public void onDialogNeutralClick(DialogFragment dialog) {
-        //nothing to do
+    public void onInscriptionDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+        new DeleteAllOnDisk().execute();
+        deleteAccountOnServer(emailEditText.getText().toString(), pswEditText.getText().toString());
+        userCanInteract = true;
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's negative button
-        System.out.println("negative button touched");
+    public void onEmailAlExDialogPositiveClick(DialogFragment dialog) {
+        //user want to change his email
         userCanInteract = true;
+    }
+
+    @Override
+    public void onEmailAlExNegativeClick(DialogFragment dialog) {
+        //user want to login with this email
+        //TODO: A TRANSITION TO LOGIN ACTIVITY WHERE EMAIL IS SET ALREADY
+    }
+
+    /**
+     * Delete the account on the server without requirement, just delete it !
+     * @param email
+     * @param passworid
+     */
+    private void deleteAccountOnServer(String email, String passworid){
+        //TODO:!!!
     }
 
 }

@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/welcome_scr"
-    tools:context=".controllers.MainActivity">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/welcome_scr"
+        tools:context=".controllers.MainActivity">
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/main_activity_textView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Welcome 😃\nYour device is trying to connect to the server.\nIf it takes to long, please verify your network connection."
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+    </LinearLayout>

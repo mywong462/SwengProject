@@ -1,18 +1,11 @@
 package ch.epfl.sweng.swengproject.controllers;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,13 +14,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import ch.epfl.sweng.swengproject.Database;
 import ch.epfl.sweng.swengproject.LoginActivity;
 import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
+import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
@@ -78,24 +71,6 @@ final User[] us = {u};
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//------------------------------------------------------------------------------
-// SAFE AREA ABOVE
-//------------------------------------------------------------------------------
-
-
     private static class GetMyProfileTask extends AsyncTask<Void, Void, Void> {
 
         UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
@@ -129,7 +104,7 @@ final User[] us = {u};
         me = user;
 
         if (me == null || me.password() == null || me.email() == null) {
-            System.out.println("First decision taken, no profile found in HD (or founded but with email or password null), go to Loggin activity");
+            System.out.println("First decision taken, no profile found in HD (or founded but with email or password null), go to Login Activity");
             goToInscriptionActivity();
         } else {
             System.out.println("First decision taken, a profile found in HD, should try to login automatically");
@@ -167,13 +142,14 @@ final User[] us = {u};
             //TODO: the login activity must have the email and psw set already héhé.
             goToLoginActivity();
         } else {
-            System.out.println("..and the email was verified, all is ok!");
+            System.out.println("...and the email was verified, all is ok!");
             goToMapsActivity();
         }
 
     }
 
     private void goToInscriptionActivity() {
+        new DeleteAllOnDisk().execute();
         finish();
         startActivity(new Intent(MainActivity.this, InscriptionActivity.class));
     }
@@ -186,5 +162,13 @@ final User[] us = {u};
     private void goToMapsActivity() {
         finish();
         startActivity(new Intent(MainActivity.this, MapsActivity.class));
+    }
+
+    private static class DeleteAllOnDisk extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StorageHelper.deleteAllDataStoredLocally();
+            return null;
+        }
     }
 }
