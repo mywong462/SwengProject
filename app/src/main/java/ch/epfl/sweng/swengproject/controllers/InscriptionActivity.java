@@ -248,6 +248,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                         FirebaseUser user = auth.getCurrentUser();
 
                         if(user.isEmailVerified()){
+                            StorageHelper.sendMyProfileToTheServer();
                             finish();
                             startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
                         }else{

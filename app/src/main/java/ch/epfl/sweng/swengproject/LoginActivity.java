@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,11 +20,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import ch.epfl.sweng.swengproject.controllers.InscriptionActivity;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.InscriptionAlertDialog;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginADListener;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginAlertDialog;
 
 // TO DO: import the method checkInfo ect from Registration activity to call them here
 // (code repetition)
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoginADListener {
 
     private FirebaseAuth auth = Database.getDBauth;
     private EditText inputEmail, inputPassword;
@@ -45,12 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         if(emailFromInscription != null){
             inputEmail.setText(emailFromInscription, TextView.BufferType.EDITABLE);
         }
-
         addListeners();
     }
-
-
-
 
     private void addListeners(){
 
@@ -93,18 +93,15 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (!auth.getCurrentUser().isEmailVerified()) {
-                                    Toast.makeText(getApplicationContext(), "Email not verified", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                if (task.isSuccessful()) {
-                                    if (!LoginActivity.this.getSharedPreferences("UserProfile", 0).contains("userName")) {
-                                        startActivity(new Intent(LoginActivity.this, UserProfileActivity.class));
-                                    } else {
-                                        startActivity(new Intent(LoginActivity.this, MapsActivity.class));
-                                        finish();
-                                    }
-                                } else {
+
+                                if (task.isSuccessful() && auth.getCurrentUser().isEmailVerified()) {
+                                    //TODO: MAY WANT TO SENT THE PROFILE IN THE SERVER HERE
+                                    finish();
+                                    startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+                                } else if(task.isSuccessful() && auth.getCurrentUser().isEmailVerified()){
+                                    DialogFragment df = new LoginAlertDialog();
+                                    df.show(getSupportFragmentManager(), "validate_email");
+                                }else {
                                     Toast fail = Toast.makeText(LoginActivity.this, "Login Failed",Toast.LENGTH_LONG);
                                     fail.show();
                                 }
@@ -115,4 +112,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onLoginDialogPositivClick(DialogFragment dialog) {
+        auth.getCurrentUser().sendEmailVerification();
+    }
 }

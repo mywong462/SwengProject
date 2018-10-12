@@ -14,4 +14,12 @@ public class StorageHelper {
         UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
         userDao.deleteAll();
     }
+
+    /**
+     * Update the information of a user in the server: store there its first name and last name
+     * as well as his picture
+     */
+    public static void sendMyProfileToTheServer(){
+       //TODO: Implement me
+    }
 }
