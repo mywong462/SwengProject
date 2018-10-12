@@ -39,7 +39,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
     private Button create_btn;
 
-    private CurrentLocation currLoc;
+    private LocationServer currLoc;
 
 
     @Override
@@ -47,8 +47,13 @@ public class AddNeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_need);
 
-        currLoc = new CurrentLocation(this.getApplicationContext(), this);
-
+        LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
+        if(loc != null){
+            currLoc = loc;
+        }
+        else {
+            currLoc = new CurrentLocation(this.getApplicationContext(), this);
+        }
         //Update text fields with local variables
 
         TextView validity = findViewById(R.id.need_validity);
@@ -127,7 +132,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         currLoc.onActivityResult(requestCode, resultCode, data);
     }
 }
