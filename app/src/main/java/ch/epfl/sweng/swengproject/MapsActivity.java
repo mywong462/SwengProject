@@ -80,8 +80,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(MainActivity.LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
 
+
         t = new Thread(this);
         t.start();
+        Log.d(MainActivity.LOGTAG, "thread started");
 
         setContentView(R.layout.activity_maps);
         isOpening = true;
@@ -131,9 +133,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         try {
+            Log.d(MainActivity.LOGTAG, "waiting for thread to join");
             t.join();
+            Log.d(MainActivity.LOGTAG, "thread joined");
         } catch (InterruptedException e) {
             Log.d(MainActivity.LOGTAG, "Thread has been interrupted");
+            t.start();
+            this.onMapReady(googleMap);
+            return;
         }
 
 
@@ -141,6 +148,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             updateUI();
         }
 
+        /*Function<Void, Void> function = new Function<Void, Void>() {
+            @Override
+            public Void apply(Void input) {
+                updateUI();
+                return null;
+            }
+        };
+
+        currentLocation = new CurrentLocation(this.getApplicationContext(),
+                this,
+                function);*/
         currentLocation.callerActivityReady();
     }
 
@@ -152,8 +170,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onResume() {
+        Log.d(MainActivity.LOGTAG, "onResume before super");
         super.onResume();
-        currentLocation.callerOnResume();
+        Log.d(MainActivity.LOGTAG, "onResume after super");
+
+        if(currentLocation != null){
+            currentLocation.callerOnResume();
+            Log.d(MainActivity.LOGTAG, "onResume before super");
+        }
+
+
     }
 
 
