@@ -20,6 +20,8 @@ import android.support.test.rule.ActivityTestRule;
 
 import junit.framework.AssertionFailedError;
 
+import ch.epfl.sweng.swengproject.controllers.MainActivity;
+
 @RunWith(AndroidJUnit4.class)
 public class LoginInstrumentedTest {
 

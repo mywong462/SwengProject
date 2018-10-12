@@ -137,4 +137,15 @@ public class UserTests {
         }
     }
 
+    @Test
+    public void myProfile() {
+
+        List<User> randomUsers = UserTestUtil.randomUsers();
+        userDao.deleteAll();
+        User me = randomUsers.get(0);
+        userDao.storeMyOwnProfile(me);
+        User me2 = userDao.fetchMyOwnProfile();
+        assertEquals(me.email(), me2.email());
+    }
+
 }

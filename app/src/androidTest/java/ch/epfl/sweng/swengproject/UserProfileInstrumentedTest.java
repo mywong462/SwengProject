@@ -25,6 +25,7 @@ import junit.framework.AssertionFailedError;
 
 import java.util.List;
 
+import ch.epfl.sweng.swengproject.controllers.MainActivity;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;

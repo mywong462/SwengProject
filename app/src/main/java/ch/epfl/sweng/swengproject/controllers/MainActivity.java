@@ -2,6 +2,7 @@ package ch.epfl.sweng.swengproject.controllers;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 
@@ -24,6 +25,7 @@ import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
+import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,39 +38,69 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startActivity(new Intent(this, InscriptionActivity.class));
-        if(true) return;
-        User me = AppDatabase.getInMemoryDatabase(this).userDao().fetchMyOwnProfile();
 
-        if(me == null){
-            //the device do not store a profile for a user
-            startActivity(new Intent(this, InscriptionActivity.class));
-        }else{
-            //the device indeed store a profile for a user
 
-            auth.signInWithEmailAndPassword(me.email(), me.password())
-                    .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>(){
+        new AsyncTask<Void, Void, Void>() {
+            User me = null;
+            @Override
+            protected Void doInBackground(Void... params) {
+                UserDao userDao = AppDatabase.getInMemoryDatabase(MyApplication.getAppContext()).userDao();
+                /*me = userDao.fetchMyOwnProfile();
+                if(me == null){
+                    System.out.println("!!!!!!!!!!!!!!!!");
+                }else{
+                    System.out.println("my profile is not null in fact");
+                }*/
 
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
 
-                            if (task.isSuccessful()) {
-                                FirebaseUser user = auth.getCurrentUser();
-                                if(!user.isEmailVerified()){
-                                    Toast.makeText(getApplicationContext(), "Email not verified", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                                }else{
-                                    startActivity(new Intent(MainActivity.this, MapsActivity.class));
+
+                 me = userDao.getUserByEmail("mon_email_test");
+                if(me == null){
+                    System.out.println("!!!!!!!!!!!!!!!!");
+                }else {
+                    System.out.println("my profile is not null in fact");
+                }
+
+                    return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                if(me == null){
+                    System.out.println("From main activity: no profile user found in the disk");
+                    startActivity(new Intent(MainActivity.this, InscriptionActivity.class));
+                }else{
+                    System.out.println("From main activity: a profile user was found in the disk with email "+me.email());
+                    auth.signInWithEmailAndPassword(me.email(), me.password())
+                            .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>(){
+
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                    if (task.isSuccessful()) {
+                                        System.out.println("Correctly log in to an account ...");
+
+                                        FirebaseUser user = auth.getCurrentUser();
+                                        if(!user.isEmailVerified()){
+                                            System.out.println("...but the email was not verified");
+                                            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                        }else{
+                                            System.out.println( "..and the email was verified, all is ok!");
+                                            startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                                        }
+
+                                    } else {
+                                        System.out.println("We found a profile, but automatic login failed");
+                                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                    }
                                 }
-
-                            } else {
-                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                            }
-                        }
-                    });
+                            });
+                }
+            }
 
 
-        }
+        }.execute();
 
     }
 }

@@ -160,11 +160,12 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
                     auth.getCurrentUser().sendEmailVerification();
 
-                    User me = new User();
-                    me.setEmail(emailEditText.toString());
-                    me.setPassword(pswEditText.toString());
-                    me.setFirstName(firstNameEditText.toString());
-                    me.setLastName(lastNameEditText.toString());
+                    final User me = new User();
+                    me.setEmail(emailEditText.getText().toString());
+                    me.setEmail("mon_email_test");
+                    me.setPassword(pswEditText.getText().toString());
+                    me.setFirstName(firstNameEditText.getText().toString());
+                    me.setLastName(lastNameEditText.getText().toString());
                     //TODO: don't set the empty picture here!
                     Bitmap bm = ((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap();
                     me.setPicture(bm);
@@ -174,7 +175,10 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                         protected Void doInBackground(User... users) {
                             User u = users[0];
                             UserDao userDao = AppDatabase.getInMemoryDatabase(MyApplication.getAppContext()).userDao();
-                            userDao.storeMyOwnProfile(u);
+                            //userDao.storeMyOwnProfile(u);
+                            User[] us = {me};
+                            userDao.insertUsers(us);
+                            System.out.println("my own profile was stored "+ u.email());
                             return null;
                         }
                     }.execute(me);
