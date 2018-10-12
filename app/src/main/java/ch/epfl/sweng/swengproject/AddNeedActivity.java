@@ -58,6 +58,7 @@ public class AddNeedActivity extends AppCompatActivity {
         else {
             Log.d("DEBUG","Normal code section");
             currLoc = new CurrentLocation(this.getApplicationContext(), this);
+            Log.d("DEBUG","currloc is null ? : "+(currLoc == null));
         }
         //Update text fields with local variables
 
@@ -95,6 +96,8 @@ public class AddNeedActivity extends AppCompatActivity {
 
 
                     LatLng currPos = currLoc.getLastLocation();
+
+                    Log.d("DEBUG","position is null "+(currPos == null));
 
                     writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos.latitude, currPos.longitude);
 

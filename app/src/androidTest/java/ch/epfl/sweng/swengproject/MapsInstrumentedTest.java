@@ -37,14 +37,9 @@ public class MapsInstrumentedTest {
             new ActivityTestRule<>(MapsActivity.class);
 
 
-   /* @Before
-    public void launch(){
-        mActivityRule.launchActivity(new Intent());
-    }*/
-
     @Test
     public void dummyTest(){
-        boolean passed = true;
+
     }
 
     @Ignore
@@ -60,124 +55,6 @@ public class MapsInstrumentedTest {
             onView(withId(R.id.create_btn)).perform(click());
 
         }
-    }
-
-    @Ignore //Pass locally but not with Travis
-    public void invalidValidity1(){
-
-
-        int failNumber = (int)Math.floor(Math.random()*(AddNeedActivity.MIN_VALIDITY));
-
-
-        StringBuilder sb = new StringBuilder();
-
-        for(int i = 1; i < AddNeedActivity.MIN_DESCR_L; ++i){
-
-            sb.append('a');
-
-        }
-
-        //onView(withId(R.id.create_need_btn)).perform(click());
-        FloatingActionButton b = mActivityRule.getActivity().findViewById(R.id.create_need_btn);
-        assertTrue(b.performClick());
-
-        //onView(withId(R.id.validity_txt)).perform(typeText(""+failNumber)).perform(closeSoftKeyboard());
-        EditText t = mActivityRule.getActivity().findViewById(R.id.validity_txt);
-        t.setText(failNumber);
-        //onView(withId(R.id.descr_txt)).perform(typeText(sb.toString())).perform(closeSoftKeyboard());
-        EditText t2 = mActivityRule.getActivity().findViewById(R.id.descr_txt);
-        t2.setText(sb.toString());
-
-       // onView(withId(R.id.create_btn)).perform(click());
-        Button b2 = mActivityRule.getActivity().findViewById(R.id.create_btn);
-        assertTrue(b2.performClick());
-
-        boolean passed = false;
-
-        try{
-            onView(withId(R.id.create_need_btn)).perform(click());
-        }
-        catch(NoMatchingViewException e){
-
-            passed = true;
-        }
-
-        assertEquals(true,passed);
-
-    }
-
-
-    @Ignore //Pass locally but not with Travis
-    public void invalidValidity2(){
-
-
-        int failNumber = (int)Math.ceil(Math.random()+AddNeedActivity.MAX_VALIDITY);
-
-        
-
-        StringBuilder sb = new StringBuilder();
-
-        for(int i = 1; i < AddNeedActivity.MIN_DESCR_L; ++i){
-
-            sb.append('a');
-
-        }
-
-        onView(withId(R.id.create_need_btn)).perform(click());
-
-
-        onView(withId(R.id.validity_txt)).perform(typeText(""+failNumber)).perform(closeSoftKeyboard());
-        onView(withId(R.id.descr_txt)).perform(typeText(sb.toString())).perform(closeSoftKeyboard());
-
-        onView(withId(R.id.create_btn)).perform(click());
-
-        boolean passed = false;
-
-        try{
-            onView(withId(R.id.create_need_btn)).perform(click());
-        }
-        catch(NoMatchingViewException e){
-
-            passed = true;
-        }
-
-        assertEquals(true,passed);
-
-    }
-
-    @Ignore //Pass locally but not with Travis
-    public void invalidDescription(){
-
-
-        StringBuilder sb = new StringBuilder();
-
-        for(int i = 1; i < AddNeedActivity.MIN_DESCR_L; ++i){
-
-            sb.append('a');
-
-        }
-
-
-        onView(withId(R.id.create_need_btn)).perform(click());
-
-
-        onView(withId(R.id.validity_txt)).perform(typeText(((AddNeedActivity.MAX_VALIDITY + AddNeedActivity.MIN_VALIDITY)/2)+"")).perform(closeSoftKeyboard());
-        onView(withId(R.id.descr_txt)).perform(typeText(sb.toString())).perform(closeSoftKeyboard());
-
-        onView(withId(R.id.create_btn)).perform(click());
-
-        boolean passed = false;
-
-        try{
-            onView(withId(R.id.create_need_btn)).perform(click());
-        }
-        catch(NoMatchingViewException e){
-
-            passed = true;
-        }
-
-        assertEquals(true,passed);
-
     }
 
 
