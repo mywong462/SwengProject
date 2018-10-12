@@ -39,12 +39,47 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        User me = new User();
+        me.setEmail("monEmail");
+        me.setLastName("monNom");
+        me.setFirstName("monPrénom");
 
+        UserDao userDao = AppDatabase.getInMemoryDatabase(MyApplication.getAppContext()).userDao();
+
+
+        User us[] = {me};
+        userDao.insertUsers(me);
         new AsyncTask<Void, Void, Void>() {
             User me = null;
             @Override
             protected Void doInBackground(Void... params) {
                 UserDao userDao = AppDatabase.getInMemoryDatabase(MyApplication.getAppContext()).userDao();
+
+                    return null;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+        new AsyncTask<Void, Void, Void>() {
+            User me = null;
+            @Override
+            protected Void doInBackground(Void... params) {
+                UserDao userDao = AppDatabase.getInMemoryDatabase(MyApplication.getAppContext()).userDao();*/
                 /*me = userDao.fetchMyOwnProfile();
                 if(me == null){
                     System.out.println("!!!!!!!!!!!!!!!!");
@@ -52,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("my profile is not null in fact");
                 }*/
 
-
+/*
 
                  me = userDao.getUserByEmail("mon_email_test");
                 if(me == null){
@@ -101,6 +136,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         }.execute();
-
+      */
     }
 }
