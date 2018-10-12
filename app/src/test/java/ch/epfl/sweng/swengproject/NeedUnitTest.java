@@ -14,12 +14,14 @@ public class NeedUnitTest {
     int ttl = 25;
     double lat = 46;
     double lo = 37.2;
+    Categories category = Categories.HELP;
+    int nbPeopleNeeded = 2;
 
 
     @Test
     public void canCreateNeed(){
 
-        Need test = new Need(mail,description,ttl,lat,lo);
+        Need test = new Need(mail,description,ttl,lat,lo, category, nbPeopleNeeded);
         assertEquals(mail,test.getEmitter());
         assertEquals(description,test.getDescription());
         assertEquals(lat,test.getLatitude(),0.001);
@@ -38,12 +40,17 @@ public class NeedUnitTest {
         test.setLatitude(lat);
         test.setLongitude(lo);
         test.setTimeToLive(ttl);
+        test.setCategory(category);
+        test.setNbPeopleNeeded(nbPeopleNeeded);
 
         assertEquals(mail,test.getEmitter());
         assertEquals(description,test.getDescription());
         assertEquals(lat,test.getLatitude(),0.001);
         assertEquals(lo,test.getLongitude(),0.001);
         assertEquals(ttl,test.getTimeToLive());
+        assertEquals(category, test.getCategory());
+        assertEquals(nbPeopleNeeded, test.getNbPeopleNeeded());
+
     }
 
     @Test
@@ -56,6 +63,8 @@ public class NeedUnitTest {
         test.setLatitude(lat);
         test.setLongitude(lo);
         test.setTimeToLive(ttl);
+        test.setCategory(category);
+        test.setNbPeopleNeeded(nbPeopleNeeded);
 
         GeoPoint gp = test.getPos();
 
