@@ -262,7 +262,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
 
 
     public LatLng getLastLocation(){
-
+        Log.d("DEBUGSS", "pos : " + mLastKnownLocation.getLatitude() + " " + mLastKnownLocation.getLongitude());
         return new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
     }
 
