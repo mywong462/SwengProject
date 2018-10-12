@@ -1,9 +1,11 @@
 package ch.epfl.sweng.swengproject;
 
+import android.content.Intent;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,8 +30,13 @@ public class MapsInstrumentedTest {
 
     @Rule
     public final ActivityTestRule<MapsActivity> mActivityRule =
-            new ActivityTestRule<>(MapsActivity.class,false,true);
+            new ActivityTestRule<>(MapsActivity.class,false,false);
 
+
+    @Before
+    public void launch(){
+        mActivityRule.launchActivity(new Intent());
+    }
 
     @Test
     public void dummyTest(){
