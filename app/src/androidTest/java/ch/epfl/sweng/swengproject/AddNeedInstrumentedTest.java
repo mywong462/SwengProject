@@ -39,15 +39,16 @@ public class AddNeedInstrumentedTest {
             new ActivityTestRule<>(AddNeedActivity.class,false,false);
 
     @Before
-    public void create() throws Throwable {
+    public void create(){
 
         LocationServer ls = new FakeLocation();
 
+        //inject the mocked object in the activity
         mActivityRule.launchActivity(new Intent().putExtra("loc",ls));
 
     }
 
-    @Test //Pass locally but not with Travis
+    @Test
     public void invalidValidity1(){
 
 
