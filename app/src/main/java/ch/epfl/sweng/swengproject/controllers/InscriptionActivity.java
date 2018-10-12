@@ -277,7 +277,9 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
     @Override
     public void onEmailAlExNegativeClick(DialogFragment dialog) {
         //user want to login with this email
-        //TODO: A TRANSITION TO LOGIN ACTIVITY WHERE EMAIL IS SET ALREADY
+        finish();
+        startActivity(new Intent(this, LoginActivity.class)
+                .putExtra("email_to_propose",  emailEditText.getText().toString()));
     }
 
     /**

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,7 +25,7 @@ import ch.epfl.sweng.swengproject.controllers.InscriptionActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth;
+    private FirebaseAuth auth = Database.getDBauth;
     private EditText inputEmail, inputPassword;
     private Button btnLogin, btnRegister, btnResetPassword;
 
@@ -33,21 +34,23 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        auth = Database.getDBauth;
-
-        getViewElements();
-
-        addListeners();
-    }
-
-
-    private void getViewElements(){
+        //connect the widgets
         inputEmail = findViewById(R.id.email1);
         inputPassword = findViewById(R.id.password1);
         btnLogin = findViewById(R.id.login_btn1);
         btnRegister = findViewById(R.id.register_btn1);
         btnResetPassword = findViewById(R.id.resetPassword_btn1);
+
+        String emailFromInscription  = getIntent().getStringExtra("email_to_propose");
+        if(emailFromInscription != null){
+            inputEmail.setText(emailFromInscription, TextView.BufferType.EDITABLE);
+        }
+
+        addListeners();
     }
+
+
+
 
     private void addListeners(){
 

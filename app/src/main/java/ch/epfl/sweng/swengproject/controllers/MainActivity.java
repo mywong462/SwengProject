@@ -66,7 +66,7 @@ final User[] us = {u};
 
 
         }.execute();*/
-
+        setTitle("");
         new GetMyProfileTask(this).execute();
     }
 
@@ -140,7 +140,7 @@ final User[] us = {u};
         if (!user.isEmailVerified()) {
             System.out.println("The user cannot use this app if his email is verified. The user is sent to the logging activity");
             //TODO: the login activity must have the email and psw set already héhé.
-            goToLoginActivity();
+            goToLoginActivity(user.getEmail());
         } else {
             System.out.println("...and the email was verified, all is ok!");
             goToMapsActivity();
@@ -154,9 +154,11 @@ final User[] us = {u};
         startActivity(new Intent(MainActivity.this, InscriptionActivity.class));
     }
 
-    private void goToLoginActivity() {
+    private void goToLoginActivity(String emailToPropose) {
         finish();
-        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        startActivity(new Intent(this, LoginActivity.class)
+                .putExtra("email_to_propose", emailToPropose));
+
     }
 
     private void goToMapsActivity() {
