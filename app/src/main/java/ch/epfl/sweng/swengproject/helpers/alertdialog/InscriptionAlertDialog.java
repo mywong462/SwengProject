@@ -33,13 +33,13 @@ public  class InscriptionAlertDialog extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Please certify your email ")
-                .setMessage("Before continuing to use this application, we must ensure that you provided your real email account. For this, please check your mailbox and click the link you received from us. \nNo email received ? Maybe you made an error when typing your email...")
+                .setMessage("Before continuing to use this application, we must ensure that you provided your real email account. For this, please check your mailbox and click on the link you received from us. \nNo email received ? Maybe you made an error when typing your email...")
                 .setPositiveButton("That's done !", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onDialogPositiveClick(InscriptionAlertDialog.this);
                     }
                 })
-                .setNegativeButton("Change my email", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Check my email", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onDialogNegativeClick(InscriptionAlertDialog.this);
                     }

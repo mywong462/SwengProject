@@ -20,13 +20,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -81,6 +84,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                registerButton.setEnabled(false);
                 checkBeforeRegister();
             }
         });
@@ -131,18 +135,12 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
         if (InscriptionValidator.fieldsAreValid(emailEditText.getText().toString(), pswEditText.getText().toString(),
                 firstNameEditText.getText().toString(), lastNameEditText.getText().toString())) {
             register();
+        }else{
+            registerButton.setEnabled(true);
         }
     }
 
     private void register() {
-
-        //presentAlertDialog();
-        DialogFragment df = new InscriptionAlertDialog();
-
-        df.show(getSupportFragmentManager(), "missiles");
-
-
-        if (true) return;
 
         //TODO: change this useless test!
         ConnectivityManager conMan = (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
@@ -181,11 +179,18 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                         }
                     }.execute(me);
 
+                    DialogFragment df = new InscriptionAlertDialog();
+                    df.show(getSupportFragmentManager(), "validate_email");
 
-                    //startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
                 } else {
                     System.out.println("Failed inscription");
                     Toast.makeText(MyApplication.getAppContext(), "Registration Failed", Toast.LENGTH_LONG).show();
+                    Exception exception = task.getException();
+                    System.out.println(exception.toString());
+                    if(exception instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException){
+                        System.out.println("because email already exist");
+                    }
+                    registerButton.setEnabled(false);
                 }
             }
         });
@@ -216,27 +221,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
     }
 
-    private void presentAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("Well done!")
-                .setMessage("Your score is ")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Intent intent = new Intent();
-                        // intent.putExtra(BUNDLE_EXTRA_SCORE, scorePlayer);
-                        // nous précisons au système Android que l'activité s'est correctement
-                        // terminée, et nous lui indiquons en second paramètre
-                        // notre Intent (qui contient le score) ;
-                        //setResult(RESULT_OK, intent);
-                        //finish();
-
-                    }
-                })
-                .create()
-                .show();
-    }
 
 
 
@@ -247,19 +232,35 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         // User touched the dialog's positive button
-        System.out.println("positive button touched");
+
+        auth.getCurrentUser()
+                .reload()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        FirebaseUser user = auth.getCurrentUser();
+
+                        if(user.isEmailVerified()){
+                            startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
+                        }else{
+                            DialogFragment df = new InscriptionAlertDialog();
+                            df.show(getSupportFragmentManager(), "validate_email");
+                        }
+                    }
+                });
     }
 
     @Override
     public void onDialogNeutralClick(DialogFragment dialog) {
-        System.out.println("neutral button touched");
+        //nothing to do
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
+        registerButton.setEnabled(true);
         System.out.println("negative button touched");
-
     }
 
 }
