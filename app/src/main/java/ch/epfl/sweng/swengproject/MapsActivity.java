@@ -1,9 +1,15 @@
 package ch.epfl.sweng.swengproject;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.arch.core.util.Function;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,13 +24,13 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
-
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -32,6 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener {
@@ -143,7 +150,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void showAvailableNeeds() {
+
         ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range);
+
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
@@ -152,7 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             marker.setTag(need);
         }
 
-        mMap.setOnMarkerClickListener(this);
+         mMap.setOnMarkerClickListener(this);
     }
 
     private void displayOnMenu(View menuView, GeoPoint tempGeo){
@@ -183,8 +192,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(final Marker marker) {
         // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
-        Toast hehe = Toast.makeText(this, "doot doot", Toast.LENGTH_LONG);
-        hehe.show();
+        //Get the size of screen and pop up a window
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.activity_pin_popup_window,null);
+        final PopupWindow pw = new PopupWindow(layout, (int)(width*0.8), (int)(height*0.7), true);
+
+        //Get the marker information
+        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude,marker.getPosition().longitude);
+        displayOnMenu(layout,needRequest);
+
+        //Implemnent the close button
+        ((Button) layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                pw.dismiss();
+            }
+        });
+
+        //Clicking outside the window will close the window
+        pw.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        pw.setTouchInterceptor(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                    pw.dismiss();
+                    return true;
+                }
+                return false;
+            }
+        });
+        pw.setOutsideTouchable(true);
+
+        //Display the pop-up window
+        pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
         return true;
     }

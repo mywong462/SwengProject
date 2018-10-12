@@ -63,6 +63,17 @@ dependencies {
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     implementation 'com.android.support:design:28.0.0'
 
+
+
+    //mockito dependencies ------------------------------------------
+    testImplementation 'junit:junit:4.12'
+    // required if you want to use Mockito for unit tests
+    testImplementation 'org.mockito:mockito-core:2.22.0'
+    // required if you want to use Mockito for Android tests
+    androidTestImplementation 'org.mockito:mockito-android:2.22.0'
+   // -----------------------------------------------------------------
+
+
     //-----------Required to use Room for Pre-AndroidX-------------
     //added by Jonathan when setting the project to use a local database
     def room_version = "1.1.1"

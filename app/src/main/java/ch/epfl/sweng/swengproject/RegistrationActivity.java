@@ -42,7 +42,7 @@ public class RegistrationActivity extends AppCompatActivity {
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // start new resetPasswordActivity
+                startActivity(new Intent(RegistrationActivity.this, ResetPasswordActivity.class));
             }
         });
 
@@ -73,12 +73,10 @@ public class RegistrationActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    auth.getCurrentUser().sendEmailVerification();
-                                    
 
                                     //return to main activity for login
 
-                                    startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
+                                    startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
 
                                 } else {
                                     Toast fail = Toast.makeText(RegistrationActivity.this, "Registration Failed", Toast.LENGTH_SHORT);
@@ -115,11 +113,10 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
     /**
-     * @brief Sheck email and password fields for emptiness
+     * @brief Check email and password fields for emptiness
      * @param email
      * @param password
      */
-
     public void infoCheck(String email, String password){
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(getApplicationContext(), "Invalid email address", Toast.LENGTH_SHORT).show();

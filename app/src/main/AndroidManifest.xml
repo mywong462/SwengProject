@@ -51,7 +51,9 @@
             android:name=".MapsActivity"
             android:label="EventMap" />
         <activity android:name=".RegistrationActivity" />
+        <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".UserProfileActivity"></activity>
         <activity android:name=".AddNeedActivity" />
 
         <activity
