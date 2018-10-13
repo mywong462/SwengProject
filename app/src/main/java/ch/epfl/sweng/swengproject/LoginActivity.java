@@ -98,12 +98,14 @@ public class LoginActivity extends AppCompatActivity implements LoginADListener 
                                     //TODO: MAY WANT TO SENT THE PROFILE IN THE SERVER HERE
                                     finish();
                                     startActivity(new Intent(LoginActivity.this, MapsActivity.class));
-                                } else if(task.isSuccessful() && auth.getCurrentUser().isEmailVerified()){
+                                } else if(task.isSuccessful() && !auth.getCurrentUser().isEmailVerified()){
                                     DialogFragment df = new LoginAlertDialog();
                                     df.show(getSupportFragmentManager(), "validate_email");
                                 }else {
                                     Toast fail = Toast.makeText(LoginActivity.this, "Login Failed",Toast.LENGTH_LONG);
                                     fail.show();
+                                    Exception exception = task.getException();
+                                    System.out.println("The login failed because of : " + exception.toString());
                                 }
                             }
                         });
