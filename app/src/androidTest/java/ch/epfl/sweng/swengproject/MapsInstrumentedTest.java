@@ -39,16 +39,9 @@ public class MapsInstrumentedTest {
             new ActivityTestRule<>(MapsActivity.class);
 
 
-    @Test
+    @Test(expected = NoActivityResumedException.class)
     public void launchMapPrompt(){
-        try {
             onView(withId(R.id.map)).perform(click());
-        }
-        catch (NoActivityResumedException e){
-
-            return;
-        }
-        fail();
 
     }
 

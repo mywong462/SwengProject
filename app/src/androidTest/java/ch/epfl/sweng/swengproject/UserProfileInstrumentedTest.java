@@ -45,7 +45,7 @@ public class UserProfileInstrumentedTest {
             new ActivityTestRule<>(UserProfileActivity.class);
 
 
-    @Test
+    @Test(expected = NoActivityResumedException.class)
     public void testUserProfilePromt() {
 
         // On first login, user should be prompted to add its user info
@@ -55,15 +55,8 @@ public class UserProfileInstrumentedTest {
         onView(withId(R.id.lastName1)).perform(typeText("last name")).perform(closeSoftKeyboard());
         onView(withId(R.id.save_btn1)).perform(click());
 
-        try {
+
             onView(withId(R.id.map)).perform(click());
-        }
-        catch (NoActivityResumedException e){
-
-            return;
-        }
-        fail();
-
 
     }
 

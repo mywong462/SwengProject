@@ -48,7 +48,7 @@ public class RegistrationInstrumentedTest {
         Thread.sleep(3000);
     }
 
-    @Test
+    @Test(expected = NoMatchingViewException.class)
     public void testWrongEmailInput() throws InterruptedException {
 
         String mail = MAIL_NAME+Math.random();  //the mail doesn't contains @something.domain
@@ -62,22 +62,13 @@ public class RegistrationInstrumentedTest {
         onView(withId(R.id.register_btn2)).perform(click());
 
 
-
-        boolean passed = false;
-
-        try { //the activity should not have changed => we shouldn't be on the welcome screen
+        //the activity should not have changed => we shouldn't be on the welcome screen
             onView(withId(R.id.welcome_scr)).perform(click());
-        }
-        catch (NoMatchingViewException e) {
 
-            passed = true;
-        }
-
-        assertEquals(true,passed);
         Thread.sleep(1000);
     }
 
-    @Test
+    @Test(expected = NoMatchingViewException.class)
     public void testSmallPasswordInput() throws InterruptedException {
 
         String mail = MAIL_NAME+Math.random();
@@ -92,17 +83,9 @@ public class RegistrationInstrumentedTest {
         onView(withId(R.id.register_btn2)).perform(click());
 
 
-        boolean passed = false;
-
-        try { //the activity should not have changed => we shouldn't be on the welcome screen
+        //the activity should not have changed => we shouldn't be on the welcome screen
             onView(withId(R.id.welcome_scr)).perform(click());
-        }
-        catch (NoMatchingViewException e) {
 
-            passed = true;
-        }
-
-        assertEquals(true,passed);
         Thread.sleep(1000);
     }
 
