@@ -60,4 +60,14 @@ public class UserProfileInstrumentedTest {
 
     }
 
+    @Test(expected = NoMatchingViewException.class)
+    public void wrongInput(){
+
+        //direcly click on the button without entering any informations
+        onView(withId(R.id.save_btn1)).perform(click());
+
+        //then try to click on a button that is on the map activity => should launch an exception
+        onView(withId(R.id.create_need_btn)).perform(click());
+    }
+
 }
