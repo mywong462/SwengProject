@@ -23,6 +23,9 @@ import com.google.android.gms.maps.model.LatLng;
 @RunWith(AndroidJUnit4.class)
 public class RegistrationInstrumentedTest {
 
+    private final String MAIL_NAME = "example";
+    private final String MAIL_DOM = "@hotmail.com";
+
     @Rule
     public final ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(MainActivity.class);
@@ -30,8 +33,8 @@ public class RegistrationInstrumentedTest {
     @Test
     public void testRandomRegisteredUser() throws InterruptedException {
 
-        String mail = "exemple"+Math.random()+"@hotmail.com";
-        String pswd = "exemple"+Math.random();
+        String mail = MAIL_NAME+Math.random()+MAIL_DOM;
+        String pswd = MAIL_NAME+Math.random();
 
         onView(withId(R.id.welcome_scr)).perform(click());
         Thread.sleep(1000);
@@ -48,8 +51,8 @@ public class RegistrationInstrumentedTest {
     @Test
     public void testWrongEmailInput() throws InterruptedException {
 
-        String mail = "exemple"+Math.random();  //the mail doesn't contains @something.domain
-        String pswd = "exemple"+Math.random();
+        String mail = MAIL_NAME+Math.random();  //the mail doesn't contains @something.domain
+        String pswd = MAIL_NAME+Math.random();
 
         onView(withId(R.id.welcome_scr)).perform(click());
         Thread.sleep(1000);
@@ -77,7 +80,7 @@ public class RegistrationInstrumentedTest {
     @Test
     public void testSmallPasswordInput() throws InterruptedException {
 
-        String mail = "exemple"+Math.random();
+        String mail = MAIL_NAME+Math.random();
         String pswd = "12345";
 
         onView(withId(R.id.welcome_scr)).perform(click());
@@ -106,7 +109,7 @@ public class RegistrationInstrumentedTest {
     @Ignore
     public void testSameEmailAddress() throws InterruptedException {
 
-        String mail = "exemple"+Math.random()+"@hotmail.com";
+        String mail = MAIL_NAME+Math.random()+MAIL_DOM;
         String pswd = "asdf"+Math.random();
 
         //first register an email address

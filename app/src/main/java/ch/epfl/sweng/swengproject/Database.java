@@ -45,7 +45,7 @@ public final class Database {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if(e != null) {
-                    Log.d("HELLO", "Got an exception querying the database");
+                    Log.d("Debug", "Got an exception querying the database");
                 }else{
 
                     //get the needs from the database
@@ -65,14 +65,10 @@ public final class Database {
         });
 
         //To remove the needs that aren't in the range
-        Location here = new Location("");
-        here.setLatitude(mGeoPoint.getLatitude());
-        here.setLongitude(mGeoPoint.getLongitude());
+        Location here = createAndSetLoc(mGeoPoint.getLatitude(),mGeoPoint.getLongitude());
 
         for (Need need : listNeeds) {
-            Location needLoc = new Location("");
-            needLoc.setLatitude(need.getLatitude());
-            needLoc.setLongitude(need.getLongitude());
+            Location needLoc = createAndSetLoc(need.getLatitude(),need.getLongitude());
 
             //If the need isn't in the desired range (range is in kilometer) and the need isn't outdated
             if (here.distanceTo(needLoc) <= (float) range * 1000 && need.getTimeToLive() > System.currentTimeMillis()) {
@@ -87,5 +83,13 @@ public final class Database {
         return availableNeeds;
     }
 
+    private static Location createAndSetLoc(double lat, double lon){
+
+        Location loc = new Location("");
+        loc.setLatitude(lat);
+        loc.setLongitude(lon);
+
+        return loc;
+    }
 
 }
