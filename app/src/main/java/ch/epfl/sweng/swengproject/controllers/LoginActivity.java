@@ -1,8 +1,6 @@
-package ch.epfl.sweng.swengproject;
+package ch.epfl.sweng.swengproject.controllers;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -19,8 +17,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import ch.epfl.sweng.swengproject.controllers.InscriptionActivity;
-import ch.epfl.sweng.swengproject.helpers.alertdialog.InscriptionAlertDialog;
+import ch.epfl.sweng.swengproject.Database;
+import ch.epfl.sweng.swengproject.MapsActivity;
+import ch.epfl.sweng.swengproject.R;
+import ch.epfl.sweng.swengproject.ResetPasswordActivity;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginADListener;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginAlertDialog;
 

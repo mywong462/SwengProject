@@ -31,7 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import ch.epfl.sweng.swengproject.Database;
-import ch.epfl.sweng.swengproject.LoginActivity;
 import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
