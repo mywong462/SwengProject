@@ -19,6 +19,7 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -44,7 +45,7 @@ public class UserProfileInstrumentedTest {
 
 
     @Test
-    public void testUserProfilePromt() throws InterruptedException {
+    public void testUserProfilePromt() {
 
         // On first login, user should be prompted to add its user info
 
@@ -52,6 +53,14 @@ public class UserProfileInstrumentedTest {
         onView(withId(R.id.firstName1)).perform(typeText("name")).perform(closeSoftKeyboard());
         onView(withId(R.id.lastName1)).perform(typeText("last name")).perform(closeSoftKeyboard());
         onView(withId(R.id.save_btn1)).perform(click());
+
+        try{
+            onView(withId(R.id.map));
+        }
+        catch (NoMatchingViewException e){
+            return;
+        }
+        fail();
 
     }
 

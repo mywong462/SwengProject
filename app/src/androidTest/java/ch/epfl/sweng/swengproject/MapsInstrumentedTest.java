@@ -38,8 +38,14 @@ public class MapsInstrumentedTest {
 
 
     @Test
-    public void dummyTest(){
-
+    public void launchMapPrompt(){
+        try {
+            onView(withId(R.id.map));
+        }
+        catch (NoMatchingViewException e){
+            return;
+        }
+        fail();
     }
 
     @Ignore
