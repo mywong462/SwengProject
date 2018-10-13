@@ -3,12 +3,12 @@ apply plugin: 'jacoco'
 apply plugin: 'com.google.gms.google-services'
 
 jacoco {
-    toolVersion = "0.8.1"
+    toolVersion = "0.8.0"
 }
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "ch.epfl.sweng.swengproject"
         minSdkVersion 21    //forced for google auth to put minimum 16
