@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    public static final String user_profile = "UserProfile";
+    public static final String USER_PROFILE = "UserProfile";
     private EditText firstName, lastName, userName;
     private Button btnSave;
 
@@ -33,7 +33,7 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Create instance of SharedPreferences
-                SharedPreferences up = getSharedPreferences(user_profile, 0);
+                SharedPreferences up = getSharedPreferences(USER_PROFILE, 0);
 
                 // Get the editor
                 SharedPreferences.Editor edit = up.edit();
