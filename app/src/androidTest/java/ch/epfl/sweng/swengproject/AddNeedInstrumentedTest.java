@@ -2,22 +2,16 @@ package ch.epfl.sweng.swengproject;
 
 
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.widget.Button;
-import android.widget.EditText;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
-import java.util.ArrayList;
-import java.util.List;
+import ch.epfl.sweng.swengproject.util.FakeLocation;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;

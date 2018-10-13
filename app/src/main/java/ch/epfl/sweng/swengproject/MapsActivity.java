@@ -118,7 +118,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateUI() {
 
-        Log.d("HELLO", "UPDATEUI");
+        Log.d("DEBUG", "UPDATEUI");
 
         try {
             if (currentLocation.getLocationPermissionStatus()) {
@@ -142,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
                 }
             } else {
-                Log.d("HELLO", "NO UPDATEUI");
+                Log.d("ERROR", "NO UPDATEUI");
             }
         } catch (SecurityException e) {
         }

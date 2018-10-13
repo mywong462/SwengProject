@@ -2,9 +2,11 @@ package ch.epfl.sweng.swengproject;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.test.espresso.NoActivityResumedException;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -38,7 +40,10 @@ public class MapsInstrumentedTest {
 
 
     @Test
-    public void dummyTest(){
+    public void launchMapPrompt(){
+
+        onView(withId(R.id.map));
+
 
     }
 
