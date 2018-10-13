@@ -1,10 +1,12 @@
-package ch.epfl.sweng.swengproject;
+package ch.epfl.sweng.swengproject.util;
 
 import android.content.Intent;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
+
+import ch.epfl.sweng.swengproject.LocationServer;
 
 public class FakeLocation implements LocationServer {
 
