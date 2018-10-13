@@ -2,6 +2,7 @@ package ch.epfl.sweng.swengproject;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.NoActivityResumedException;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -54,13 +55,15 @@ public class UserProfileInstrumentedTest {
         onView(withId(R.id.lastName1)).perform(typeText("last name")).perform(closeSoftKeyboard());
         onView(withId(R.id.save_btn1)).perform(click());
 
-        try{
-            onView(withId(R.id.map));
+        try {
+            onView(withId(R.id.map)).perform(click());
         }
-        catch (NoMatchingViewException e){
+        catch (NoActivityResumedException e){
+
             return;
         }
         fail();
+
 
     }
 
