@@ -45,7 +45,7 @@ public class UserProfileInstrumentedTest {
             new ActivityTestRule<>(UserProfileActivity.class);
 
 
-    @Test(expected = NoActivityResumedException.class)
+    @Test
     public void testUserProfilePromt() {
 
         // On first login, user should be prompted to add its user info
@@ -56,7 +56,7 @@ public class UserProfileInstrumentedTest {
         onView(withId(R.id.save_btn1)).perform(click());
 
 
-            onView(withId(R.id.map)).perform(click());
+        onView(withId(R.id.map));
 
     }
 
