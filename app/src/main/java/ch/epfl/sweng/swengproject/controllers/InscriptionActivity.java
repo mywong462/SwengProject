@@ -56,6 +56,8 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
 
     private boolean userCanInteract = true;
 
+    private User meToSend = null;
+
     //Firebase auth
     private final FirebaseAuth auth = Database.getDBauth;
 
@@ -103,10 +105,6 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                 goToLoginActivity();
             }
         });
-
-        String email = "monEmailTest" + (int) (Math.random() * 100000) + "@gmail.com";
-        emailEditText.setText(email, TextView.BufferType.EDITABLE);
-        pswEditText.setText("123456", TextView.BufferType.EDITABLE);
     }
 
     private void pickImage() {
@@ -170,16 +168,16 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
 
                     auth.getCurrentUser().sendEmailVerification();
 
-                    final User me = new User();
-                    me.setEmail(emailEditText.getText().toString());
-                    me.setPassword(pswEditText.getText().toString());
-                    me.setFirstName(firstNameEditText.getText().toString());
-                    me.setLastName(lastNameEditText.getText().toString());
+                    meToSend = new User();
+                    meToSend.setEmail(emailEditText.getText().toString());
+                    meToSend.setPassword(pswEditText.getText().toString());
+                    meToSend.setFirstName(firstNameEditText.getText().toString());
+                    meToSend.setLastName(lastNameEditText.getText().toString());
                     //TODO: don't set the empty picture here!
                     Bitmap bm = ((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap();
-                    me.setPicture(bm);
+                    meToSend.setPicture(bm);
 
-                    new StoreMyProfileTask().execute(me);
+                    new StoreMyProfileTask().execute(meToSend);
 
                     DialogFragment df = new InscriptionAlertDialog();
                     df.show(getSupportFragmentManager(), "validate_email");
@@ -246,6 +244,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
 
                         if(user.isEmailVerified()){
                             StorageHelper.sendMyProfileToTheServer();
+                            sendMyProfileToTheServer();
                             finish();
                             startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
                         }else{
@@ -280,9 +279,10 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                 .putExtra("email_to_propose",  emailEditText.getText().toString()));
     }
 
-
-
-
+    private void sendMyProfileToTheServer(){
+        //TODO: implement me!
+        //use meToSend attribute of this classs
+    }
 }
 
 
