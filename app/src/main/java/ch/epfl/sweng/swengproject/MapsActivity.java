@@ -1,21 +1,16 @@
 package ch.epfl.sweng.swengproject;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.arch.core.util.Function;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
+
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
+
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.PopupWindow;
 import android.widget.Button;
 import android.view.LayoutInflater;
@@ -55,9 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private FloatingActionButton createNeed_btn;
 
-
     private static final String KEY_LOCATION = "location";
-
 
 
     @Override

@@ -113,8 +113,6 @@ public class CurrentLocation extends FragmentActivity{
     };
 
 
-    public CurrentLocation(){}
-
     public void setCurrentLocationParameters(Context context, Activity activity){
         this.setCurrentLocationParameters(context, activity, null);
     }
