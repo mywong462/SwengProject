@@ -48,8 +48,7 @@ public class MapsInstrumentedTest {
 
     @Test
     public void dummyTest(){
-
-
+        return;
     }
 
     @Ignore
