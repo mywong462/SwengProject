@@ -118,7 +118,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateUI() {
 
-        Log.d("HELLO", "UPDATEUI");
+        Log.d("DEBUG", "UPDATEUI");
 
         try {
             if (currentLocation.getLocationPermissionStatus()) {
@@ -142,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
                 }
             } else {
-                Log.d("HELLO", "NO UPDATEUI");
+                Log.d("ERROR", "NO UPDATEUI");
             }
         } catch (SecurityException e) {
         }
@@ -151,7 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void showAvailableNeeds() {
 
-        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range);
+        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range, null);
 
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
@@ -172,9 +172,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         //Searching for the need
-        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo,range);
+        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo,range, null);
         for (int i = 0; i < currentNeed.size(); i++){
-
             if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
                 selectedNeed = currentNeed.get(i);
                 break;
@@ -216,7 +215,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Clicking outside the window will close the window
         pw.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         pw.setTouchInterceptor(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
+            public boolean onTouch(View view, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_OUTSIDE) {
                     pw.dismiss();
                     return true;

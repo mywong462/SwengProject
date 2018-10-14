@@ -34,11 +34,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         auth = Database.getDBauth;
 
-        inputEmail = findViewById(R.id.email2);
-        inputPassword = findViewById(R.id.password2);
-        btnLogin = findViewById(R.id.login_btn2);
-        btnRegister = findViewById(R.id.register_btn2);
-        btnResetPassword = findViewById(R.id.resetPassword_btn2);
+        getUIElements();
 
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +124,15 @@ public class RegistrationActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Invalid password", Toast.LENGTH_SHORT).show();
             return;
         }
+    }
+
+    private void getUIElements(){
+
+        inputEmail = findViewById(R.id.email2);
+        inputPassword = findViewById(R.id.password2);
+        btnLogin = findViewById(R.id.login_btn2);
+        btnRegister = findViewById(R.id.register_btn2);
+        btnResetPassword = findViewById(R.id.resetPassword_btn2);
     }
 
 

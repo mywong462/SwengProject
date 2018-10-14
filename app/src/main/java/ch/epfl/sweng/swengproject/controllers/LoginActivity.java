@@ -74,19 +74,9 @@ public class LoginActivity extends AppCompatActivity implements LoginADListener 
 
             @Override
             public void onClick(View v) {
-                String email = inputEmail.getText().toString();
-                String password = inputPassword.getText().toString();
 
-                if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "Invalid email address", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Invalid password", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
+                String email = checkInput(inputEmail.getText().toString());
+                String password = checkInput(inputPassword.getText().toString());
 
                 auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>(){
@@ -118,4 +108,11 @@ public class LoginActivity extends AppCompatActivity implements LoginADListener 
     public void onLoginDialogPositivClick(DialogFragment dialog) {
         auth.getCurrentUser().sendEmailVerification();
     }
+    private String checkInput(String in){
+        if(in.isEmpty()){
+            Toast.makeText(getApplicationContext(), "Please fill all the fields", Toast.LENGTH_SHORT).show();
+        }
+        return in;
+    }
+
 }

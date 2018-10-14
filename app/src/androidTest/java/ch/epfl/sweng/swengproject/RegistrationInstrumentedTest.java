@@ -19,9 +19,11 @@ import android.support.test.rule.ActivityTestRule;
 import ch.epfl.sweng.swengproject.controllers.MainActivity;
 
 
-
 @RunWith(AndroidJUnit4.class)
 public class RegistrationInstrumentedTest {
+
+    private final String mailName = "example";
+    private final String mailDomain = "@hotmail.com";
 
     @Rule
     public final ActivityTestRule<MainActivity> mActivityRule =
@@ -30,8 +32,8 @@ public class RegistrationInstrumentedTest {
     @Test
     public void testRandomRegisteredUser() throws InterruptedException {
 
-        String mail = "exemple"+Math.random()+"@hotmail.com";
-        String pswd = "exemple"+Math.random();
+        String mail = mailName +Math.random()+mailDomain;
+        String pswd = mailName +Math.random();
 
         onView(withId(R.id.welcome_scr)).perform(click());
         Thread.sleep(1000);
@@ -45,11 +47,11 @@ public class RegistrationInstrumentedTest {
         Thread.sleep(3000);
     }
 
-    @Test
+    @Test(expected = NoMatchingViewException.class)
     public void testWrongEmailInput() throws InterruptedException {
 
-        String mail = "exemple"+Math.random();  //the mail doesn't contains @something.domain
-        String pswd = "exemple"+Math.random();
+        String mail = mailName +Math.random();  //the mail doesn't contains @something.domain
+        String pswd = mailName +Math.random();
 
         onView(withId(R.id.welcome_scr)).perform(click());
         Thread.sleep(1000);
@@ -59,25 +61,16 @@ public class RegistrationInstrumentedTest {
         onView(withId(R.id.register_btn2)).perform(click());
 
 
-
-        boolean passed = false;
-
-        try { //the activity should not have changed => we shouldn't be on the welcome screen
+        //the activity should not have changed => we shouldn't be on the welcome screen
             onView(withId(R.id.welcome_scr)).perform(click());
-        }
-        catch (NoMatchingViewException e) {
 
-            passed = true;
-        }
-
-        assertEquals(true,passed);
         Thread.sleep(1000);
     }
 
-    @Test
+    @Test(expected = NoMatchingViewException.class)
     public void testSmallPasswordInput() throws InterruptedException {
 
-        String mail = "exemple"+Math.random();
+        String mail = mailName +Math.random();
         String pswd = "12345";
 
         onView(withId(R.id.welcome_scr)).perform(click());
@@ -89,24 +82,16 @@ public class RegistrationInstrumentedTest {
         onView(withId(R.id.register_btn2)).perform(click());
 
 
-        boolean passed = false;
-
-        try { //the activity should not have changed => we shouldn't be on the welcome screen
+        //the activity should not have changed => we shouldn't be on the welcome screen
             onView(withId(R.id.welcome_scr)).perform(click());
-        }
-        catch (NoMatchingViewException e) {
 
-            passed = true;
-        }
-
-        assertEquals(true,passed);
         Thread.sleep(1000);
     }
 
     @Ignore
     public void testSameEmailAddress() throws InterruptedException {
 
-        String mail = "exemple"+Math.random()+"@hotmail.com";
+        String mail = mailName +Math.random()+mailDomain;
         String pswd = "asdf"+Math.random();
 
         //first register an email address
