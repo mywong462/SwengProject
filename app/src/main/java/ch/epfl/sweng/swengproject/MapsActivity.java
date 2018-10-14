@@ -207,7 +207,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         displayOnMenu(layout,needRequest);
 
         //Implemnent the close button
-        ((Button) layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
+        layout.findViewById(R.id.declineBtn).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 pw.dismiss();
             }

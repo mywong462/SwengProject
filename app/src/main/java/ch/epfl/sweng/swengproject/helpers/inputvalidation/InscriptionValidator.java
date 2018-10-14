@@ -1,6 +1,5 @@
 package ch.epfl.sweng.swengproject.helpers.inputvalidation;
 
-import android.app.Application;
 import android.widget.Toast;
 
 import ch.epfl.sweng.swengproject.MyApplication;

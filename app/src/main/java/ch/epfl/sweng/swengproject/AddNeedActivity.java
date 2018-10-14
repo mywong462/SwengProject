@@ -124,7 +124,7 @@ public class AddNeedActivity extends AppCompatActivity {
                 }else{  //try to do something for the concurrency bug
 
 
-                    LatLng currPos = currLoc.getLastLocation();;
+                    LatLng currPos = currLoc.getLastLocation();
 
                     writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos.latitude, currPos.longitude, category, nbPeople);
 

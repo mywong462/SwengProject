@@ -29,7 +29,7 @@ import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginAlertDialog;
 
 public class LoginActivity extends AppCompatActivity implements LoginADListener {
 
-    private FirebaseAuth auth = Database.getDBauth;
+    private final FirebaseAuth auth = Database.getDBauth;
     private EditText inputEmail, inputPassword;
     private Button btnLogin, btnRegister, btnResetPassword;
 

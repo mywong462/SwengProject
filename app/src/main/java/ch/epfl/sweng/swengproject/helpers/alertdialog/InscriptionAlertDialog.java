@@ -12,7 +12,7 @@ import android.support.v4.app.DialogFragment;
 public  class InscriptionAlertDialog extends DialogFragment {
 
     // Use this instance of the interface to deliver action events
-    InscriptionADListener mListener;
+    private InscriptionADListener mListener;
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override

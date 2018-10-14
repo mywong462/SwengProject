@@ -10,7 +10,7 @@ import android.support.v4.app.DialogFragment;
 public class EmailAlreadyExistAlertDialog extends DialogFragment  {
 
     // Use this instance of the interface to deliver action events
-    EmailAlExADListener mListener;
+    private EmailAlExADListener mListener;
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override

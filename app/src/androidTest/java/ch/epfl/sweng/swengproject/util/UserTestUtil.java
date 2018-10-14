@@ -13,7 +13,7 @@ import ch.epfl.sweng.swengproject.storage.db.User;
 public class UserTestUtil {
     private UserTestUtil(){}
 
-    private static String[] firstNames = {"Jean", "Peter", "Harsh", "Jojo", "Ginette", "Mark", "Antoine",
+    private static final String[] firstNames = {"Jean", "Peter", "Harsh", "Jojo", "Ginette", "Mark", "Antoine",
             "Aurélie", "Manon", "Candice", "Axelle", "Axel"};
 
     private static String[] lastNames = {"Dupont", "Desvaux", "Sancord", "Lepreu", "Du Jardin", "Beau", "Müller",

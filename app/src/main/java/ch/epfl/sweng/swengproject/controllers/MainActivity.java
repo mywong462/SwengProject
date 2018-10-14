@@ -27,7 +27,7 @@ import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth = Database.getDBauth;
+    private final FirebaseAuth auth = Database.getDBauth;
     private User me = null;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -72,10 +72,10 @@ final User[] us = {u};
 
     private static class GetMyProfileTask extends AsyncTask<Void, Void, Void> {
 
-        UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
+        final UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
         User me = null;
 
-        private WeakReference<MainActivity> activityReference;
+        private final WeakReference<MainActivity> activityReference;
 
         // only retain a weak reference to the activity
         GetMyProfileTask(MainActivity context) {

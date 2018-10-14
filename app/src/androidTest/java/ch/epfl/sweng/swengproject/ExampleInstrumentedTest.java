@@ -23,7 +23,7 @@ public class ExampleInstrumentedTest {
     public final ActivityTestRule<MapsActivity> mapsActivityActivityTestRule = new ActivityTestRule<>(MapsActivity.class);
 
     @Test
-    public void useAppContext() throws Exception{
+    public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
         //Thread.sleep(15000);

@@ -1,4 +1,5 @@
 package ch.epfl.sweng.swengproject;
+
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -10,7 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
-
 
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
@@ -144,7 +144,7 @@ public class UserTests {
         userDao.deleteAll();
         User me = randomUsers.get(0);
         userDao.storeMyOwnProfile(me);
-        User me2 = userDao.fetchMyOwnProfile();
+        User me2 = userDao.getMyOwnProfile();
         assertEquals(me.email(), me2.email());
     }
 

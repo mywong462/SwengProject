@@ -52,13 +52,12 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
     private EditText pswEditText;
     private EditText firstNameEditText;
     private EditText lastNameEditText;
-    private Button registerButton;
-    private Button goToLogginButton;
+
 
     private boolean userCanInteract = true;
 
     //Firebase auth
-    private FirebaseAuth auth = Database.getDBauth;
+    private final FirebaseAuth auth = Database.getDBauth;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -80,8 +79,8 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
         pswEditText = findViewById(R.id.inscription_activity_password);
         firstNameEditText = findViewById(R.id.inscription_activity_first_name);
         lastNameEditText = findViewById(R.id.inscription_activity_last_name);
-        registerButton = findViewById(R.id.inscription_activity_register_button);
-        goToLogginButton = findViewById(R.id.inscription_activity_go_to_login_activity);
+        Button registerButton = findViewById(R.id.inscription_activity_register_button);
+        Button goToLogginButton = findViewById(R.id.inscription_activity_go_to_login_activity);
 
         profilePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,7 +203,6 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
     private static class StoreMyProfileTask extends AsyncTask<User, Void, Void> {
 
         UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
-        User me = null;
 
         @Override
         protected Void doInBackground(User... users) {

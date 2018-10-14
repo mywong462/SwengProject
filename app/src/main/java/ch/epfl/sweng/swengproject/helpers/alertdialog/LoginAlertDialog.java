@@ -4,15 +4,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 
 public class LoginAlertDialog extends DialogFragment {
 
     // Use this instance of the interface to deliver action events
-    LoginADListener mListener;
+    private LoginADListener mListener;
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override

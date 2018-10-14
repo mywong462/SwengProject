@@ -17,7 +17,7 @@ import ch.epfl.sweng.swengproject.storage.filesystem.Generic;
 @Entity()
 public class User {
 
-    private static String PICTURES_FOLDER = "user_pictures";
+    private static final String PICTURES_FOLDER = "user_pictures";
 
     @PrimaryKey
     @NonNull
