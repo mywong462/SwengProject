@@ -113,18 +113,17 @@ public class CurrentLocation extends FragmentActivity{
     };
 
 
-    public CurrentLocation(Context context, Activity activity){
-        this(context, activity, null);
+    public CurrentLocation(){}
+
+    public void setCurrentLocationParameters(Context context, Activity activity){
+        this.setCurrentLocationParameters(context, activity, null);
     }
 
-
-    /**
-     * Constructor for CurrentLocation with callBack function
-     */
-    public CurrentLocation(Context context, Activity activity, Function<Void, Void> function){
+    public void setCurrentLocationParameters(Context context, Activity activity, Function<Void, Void> function){
         this.ctx = Objects.requireNonNull(context);
         this.activity = Objects.requireNonNull(activity);
         this.function = function;
+
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
 
         checkLocationPermission();

@@ -1,30 +1,23 @@
 package ch.epfl.sweng.swengproject;
 
-import android.arch.core.util.Function;
 import android.content.Intent;
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
+import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 
-import java.util.TreeMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import com.google.firebase.firestore.DocumentReference;
+
 
 
 public class AddNeedActivity extends AppCompatActivity {
@@ -39,15 +32,13 @@ public class AddNeedActivity extends AppCompatActivity {
 
     private Button create_btn;
 
-    private CurrentLocation currLoc;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_need);
 
-        currLoc = new CurrentLocation(this.getApplicationContext(), this);
+        currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this);
 
         //Update text fields with local variables
 
@@ -84,7 +75,7 @@ public class AddNeedActivity extends AppCompatActivity {
                 }else{  //try to do something for the concurrency bug
 
 
-                    LatLng currPos = currLoc.getLastLocation();;
+                    LatLng currPos = currentLocation.getLastLocation();
 
                     writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos.latitude, currPos.longitude);
 
@@ -122,24 +113,24 @@ public class AddNeedActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        currLoc.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        currentLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        currLoc.onActivityResult(requestCode, resultCode, data);
+        currentLocation.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        currLoc.callerOnPause();
+        currentLocation.callerOnPause();
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        currLoc.callerOnResume();
+        currentLocation.callerOnResume();
     }
 }

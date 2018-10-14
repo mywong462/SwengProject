@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
     
     protected static final String LOGTAG = "HELLO";
+    protected static final CurrentLocation currentLocation = new CurrentLocation();
 
     private ConstraintLayout scrWelcome;
 

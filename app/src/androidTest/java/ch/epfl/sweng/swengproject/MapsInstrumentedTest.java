@@ -1,5 +1,6 @@
 package ch.epfl.sweng.swengproject;
 
+import android.app.Activity;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -20,6 +21,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
+import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -33,7 +35,12 @@ public class MapsInstrumentedTest {
 
     @Test
     public void dummyTest(){
-        boolean passed = true;
+        try{
+            currentLocation.setCurrentLocationParameters(null, null);
+        }catch(NullPointerException e){
+            return;
+        }
+        fail();
     }
 
     @Ignore
