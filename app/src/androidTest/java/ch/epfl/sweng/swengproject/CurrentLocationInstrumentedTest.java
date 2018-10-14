@@ -35,12 +35,12 @@ public class CurrentLocationInstrumentedTest {
         assertNotNull(mDevice);
     }
 
-    @Ignore
+    @Test
     public void setCurrentLocationParametersValidTest(){
         mActivityRule.getActivity().currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity());
     }
 
-    @Ignore
+    @Test
     public void setCurrentLocationParametersInvalidTest1() {
         try {
             mActivityRule.getActivity().currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
@@ -50,7 +50,7 @@ public class CurrentLocationInstrumentedTest {
         fail();
     }
 
-    @Ignore
+    @Test
     public void setCurrentLocationParametersInvalidTest2() {
         try {
             mActivityRule.getActivity().currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), null);
