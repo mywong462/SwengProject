@@ -20,10 +20,11 @@ public class DBTools {
     private static final double R = 6371;
 
 
+
     private static double haversine(GeoPoint g1, GeoPoint g2){
 
         checkPoints(g1,g2);
-
+  
         return pow(sin((toRadians(g1.getLatitude()) - toRadians(g2.getLatitude()))/2), 2) +
                 cos(toRadians(g1.getLatitude())) * cos(toRadians(g2.getLatitude())) * pow(sin((toRadians(g1.getLongitude()) - toRadians(g2.getLongitude()))/2), 2);
     }
