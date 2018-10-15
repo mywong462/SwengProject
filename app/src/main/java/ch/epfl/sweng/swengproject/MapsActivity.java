@@ -142,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
                 }
             } else {
-                Log.d("ERROR", "NO UPDATEUI");
+                Log.d("ERROR", "NO PERMISSION TO UPDATEUI");
             }
         } catch (SecurityException e) {
         }
@@ -151,7 +151,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void showAvailableNeeds() {
 
-        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range, null);
+        //arrayCategories while the user choosing them is not implemented
+        ArrayList<Categories> arrayCategories = new ArrayList<>();
+        arrayCategories.add(Categories.ALL);
+
+        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range, arrayCategories);
 
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
