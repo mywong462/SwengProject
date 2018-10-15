@@ -7,14 +7,16 @@ android:
     - android-28
     # The SDK version used by the system image
     - android-22
+    - extra-google-google_play_services
     # The system image, to run an emulator during the tests
     - sys-img-armeabi-v7a-android-22
 before_script:
   # Emulator Management: Create, Start and Wait
   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
+  - emulator -avd test -no-audio -no-skin -no-window -no-boot-anim &
   - android-wait-for-emulator
-  - adb shell settings put secure location_providers_allowed +gps,network
+  #- adb shell settings put secure location_providers_allowed +gps &
+  #- adb shell settings put secure location_providers_allowed +network &
   - adb shell input keyevent 82
   # This should be in the `before_script` entry
   # Set up Code Climate test reporter
