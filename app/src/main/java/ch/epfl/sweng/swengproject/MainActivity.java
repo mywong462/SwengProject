@@ -28,28 +28,49 @@ import com.google.firebase.auth.FirebaseAuth;
 
 
 public class MainActivity extends AppCompatActivity {
-    
-    protected static final String LOGTAG = "HELLO";
-    protected static final CurrentLocation currentLocation = new CurrentLocation();
 
     private ConstraintLayout scrWelcome;
+    private int REQUEST_LOCATION;
+
+    protected static final String LOGTAG = "HELLO";
+    protected static final CurrentLocation currentLocation = new CurrentLocation();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      
         setContentView(R.layout.activity_main);
         scrWelcome = findViewById(R.id.welcome_scr);
+
+        /**
+         scrWelcome.setOnTouchListener(new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent m) {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.transition.slide_in_left, R.transition.slide_out_left);
+        return true;
+        }
+        });
+         */
+
         scrWelcome.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent m) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.transition.slide_in_left, R.transition.slide_out_left);
+                startActivityForResult(new Intent(MainActivity.this, ChooseLocationActivity.class), REQUEST_LOCATION);
                 return true;
             }
         });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_LOCATION) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(MainActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
+            }
+
+        }
     }
 }
