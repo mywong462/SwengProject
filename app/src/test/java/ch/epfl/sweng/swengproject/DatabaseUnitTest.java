@@ -23,7 +23,7 @@ public class DatabaseUnitTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void badRange(){
-        List<Categories> l = new ArrayList<>();
+        ArrayList<Categories> l = new ArrayList<>();
         l.add(Categories.HELP);
 
         Database.getNeeds(new GeoPoint(12,34),-200, l);
