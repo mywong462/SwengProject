@@ -135,13 +135,16 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
     }
 
     protected void callerOnPause(){
-        Log.d(MainActivity.LOGTAG, "callerOnPause" + activity.getLocalClassName());
-        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        if(updatingLocation) {
+            Log.d(MainActivity.LOGTAG, "callerOnPause" + activity.getLocalClassName());
+            mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        }
     }
 
     protected void callerOnResume(){
-        Log.d(MainActivity.LOGTAG, "callerOnResume" + activity.getLocalClassName());
+
         if(updatingLocation) {
+            Log.d(MainActivity.LOGTAG, "callerOnResume" + activity.getLocalClassName());
             startLocationUpdates();
         }
     }
