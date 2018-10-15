@@ -1,10 +1,12 @@
 package ch.epfl.sweng.swengproject;
 
+import android.Manifest;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.NoActivityResumedException;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 import android.widget.Button;
@@ -39,8 +41,11 @@ public class MapsInstrumentedTest {
 
 
     @Rule
-    public final ActivityTestRule<MainActivity> mActivityRule =
-            new ActivityTestRule<>(MainActivity.class);
+    public final ActivityTestRule<MapsActivity> mActivityRule =
+            new ActivityTestRule<>(MapsActivity.class);
+
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION);
 
 
     @Test
@@ -51,7 +56,7 @@ public class MapsInstrumentedTest {
 
     }
 
-    @Ignore
+    @Ignore com
     public void canAddManyNeedsRapidly() throws InterruptedException {
 
 

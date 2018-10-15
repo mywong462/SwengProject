@@ -200,7 +200,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
 
     private static class StoreMyProfileTask extends AsyncTask<User, Void, Void> {
 
-        UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
+        UserDao userDao = AppDatabase.getDatabase().userDao();
 
         @Override
         protected Void doInBackground(User... users) {
@@ -208,7 +208,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
             StorageHelper.deleteAllDataStoredLocally();
 
             User me = users[0];
-            UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
+            UserDao userDao = AppDatabase.getDatabase().userDao();
             userDao.storeMyOwnProfile(me);
             System.out.println("my own profile was stored with the email : "+ me.email());
             return null;

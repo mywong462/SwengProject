@@ -24,6 +24,8 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 
+import ch.epfl.sweng.swengproject.MyApplication;
+
 /**
  * Contains the database holder and serves as the main access point for the underlying
  * connection to your app's persisted, relational data.
@@ -37,7 +39,12 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 
 
-    public static AppDatabase getDatabase(Context context) {
+    /**
+     *
+     * @return the database instance that interact with the device hard disk for this application
+     */
+    public static AppDatabase getDatabase() {
+        Context context = MyApplication.getAppContext();
         if (INSTANCE == null) {
             INSTANCE =
                     Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class,"MyDataBase")

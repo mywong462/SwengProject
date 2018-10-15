@@ -72,7 +72,7 @@ final User[] us = {u};
 
     private static class GetMyProfileTask extends AsyncTask<Void, Void, Void> {
 
-        final UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
+        final UserDao userDao = AppDatabase.getDatabase().userDao();
         User me = null;
 
         private final WeakReference<MainActivity> activityReference;
