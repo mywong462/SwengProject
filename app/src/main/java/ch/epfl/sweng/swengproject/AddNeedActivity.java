@@ -162,7 +162,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
                     Log.d(debug,"position is null "+(currPos == null));
 
-                    writeNewUser(descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos, category, nbPeople);
+                    writeNewUser(descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos, nbPeople);
 
                     startActivity(new Intent(AddNeedActivity.this, MapsActivity.class));
 
@@ -175,7 +175,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
     //method used to write in the DB
 
-    private void writeNewUser( String descr, long ttl, LatLng pos, Categories category, int nbPeopleNeeded) {
+    private void writeNewUser( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
 
         Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded);
         Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {

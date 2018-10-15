@@ -39,12 +39,14 @@ public final class Database {
     //If there is no limitation in category, pass null into categories variable
     public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range, ArrayList<Categories> categories){
 
-        if(categories == null){
+        if(categories == null || mGeoPoint == null){
             Log.d(DEBUG_STRING, "categories is null in getNeeds");
             throw new NullPointerException();
         }
+        if(range < 0){
+            throw new IllegalArgumentException();
+        }
 
-        ArrayList<Need> availableNeeds = new ArrayList<>();
 
         needsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -69,6 +71,22 @@ public final class Database {
             }
         });
 
+        return filterNeeds(mGeoPoint,range,categories, listNeeds);
+    }
+
+    private static Location createAndSetLoc(double lat, double lon){
+
+        Location loc = new Location("");
+        loc.setLatitude(lat);
+        loc.setLongitude(lon);
+
+        return loc;
+    }
+
+    public static ArrayList<Need> filterNeeds(GeoPoint mGeoPoint, int range, ArrayList<Categories> categories, List<Need> listNeeds){
+
+        ArrayList<Need> availableNeeds = new ArrayList<>();
+
         //To remove the needs that aren't in the range
         Location here = createAndSetLoc(mGeoPoint.getLatitude(),mGeoPoint.getLongitude());
 
@@ -86,15 +104,7 @@ public final class Database {
         }
 
         return availableNeeds;
-    }
 
-    private static Location createAndSetLoc(double lat, double lon){
-
-        Location loc = new Location("");
-        loc.setLatitude(lat);
-        loc.setLongitude(lon);
-
-        return loc;
     }
 
 }
