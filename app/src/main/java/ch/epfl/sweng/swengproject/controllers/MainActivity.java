@@ -36,35 +36,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-/*User u = new User();
-        u.setFirstName("Jojo");
-        u.setLastName("Kaes");
-        u.setEmail("monEmail" + (int) (Math.random() * 1000000));
-        u.setPassword("Top secret putain");
-final User[] us = {u};
-
-        new AsyncTask<Void, Void, Void>() {
-
-            UserDao userDao = AppDatabase.getDatabase(MyApplication.getAppContext()).userDao();
-
-            @Override
-            protected Void doInBackground (Void... aV){
-                User lastMe = userDao.getMyOwnProfile();
-                if(lastMe == null){
-                    System.out.println("Impossible to retrive my last profile on disk");
-                }else{
-                    System.out.println("My last profile retrived had as email " + lastMe.email());
-                }
-                System.out.println("Ready to insert the user with email " + us[0].email() + "in the database as me !");
-
-                userDao.storeMyOwnProfile(us[0]);
-                List<User> allUsers = userDao.getAll();
-                System.out.println("The is currently " + allUsers.size() + " users in the database.");
-                return null;
-            }
-
-
-        }.execute();*/
         setTitle("");
         new GetMyProfileTask(this).execute();
     }

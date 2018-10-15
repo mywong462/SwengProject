@@ -56,7 +56,7 @@ public class MapsInstrumentedTest {
 
     }
 
-    @Ignore com
+    @Ignore
     public void canAddManyNeedsRapidly() throws InterruptedException {
 
 
