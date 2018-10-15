@@ -8,7 +8,7 @@ jacoco {
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "27.0.3"
+    buildToolsVersion "28.0.2"
     defaultConfig {
         applicationId "ch.epfl.sweng.swengproject"
         minSdkVersion 21    //forced for google auth to put minimum 16
@@ -69,14 +69,14 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.22.0'
     // required if you want to use Mockito for Android tests
     androidTestImplementation 'org.mockito:mockito-android:2.22.0'
-   // -----------------------------------------------------------------
-
+    // -----------------------------------------------------------------
 
     //-----------Required to use Room for Pre-AndroidX-------------
     //added by Jonathan when setting the project to use a local database
     def room_version = "1.1.1"
     implementation "android.arch.persistence.room:runtime:$room_version"
-    annotationProcessor "android.arch.persistence.room:compiler:$room_version" // use kapt for Kotlin
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    // use kapt for Kotlin
     // optional - RxJava support for Room
     implementation "android.arch.persistence.room:rxjava2:$room_version"
     // optional - Guava support for Room, including Optional and ListenableFuture
@@ -109,3 +109,4 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
     ])
 }
 //--end bootcamp--
+
