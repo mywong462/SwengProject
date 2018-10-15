@@ -1,10 +1,12 @@
 package ch.epfl.sweng.swengproject;
 
+import android.Manifest;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.NoActivityResumedException;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 import android.widget.Button;
@@ -37,14 +39,16 @@ public class MapsInstrumentedTest {
 
 
     @Rule
-    public final ActivityTestRule<MainActivity> mActivityRule =
-            new ActivityTestRule<>(MainActivity.class);
+    public GrantPermissionRule grantPermission = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION);
+
+    @Rule
+    public final ActivityTestRule<MapsActivity> mActivityRule =
+            new ActivityTestRule<>(MapsActivity.class);
 
 
     @Test
-    public void launchMapPrompt(){
+    public void dummyTest(){
 
-        //onView(withId(R.id.map));
         return;
 
     }
