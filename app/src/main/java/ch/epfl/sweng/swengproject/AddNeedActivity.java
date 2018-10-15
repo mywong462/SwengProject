@@ -76,6 +76,7 @@ public class AddNeedActivity extends AppCompatActivity {
             }
         });
         //Adapt the array for the spinner
+        listCategory.remove(Categories.ALL); //A need cannot choose 'ALL' as a category
         ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listCategory);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin.setAdapter(aa);

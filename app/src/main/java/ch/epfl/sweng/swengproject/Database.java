@@ -37,7 +37,7 @@ public final class Database {
     }
 
     //If there is no limitation in category, pass null into categories variable
-    public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range, Categories categories){
+    public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range, ArrayList<Categories> categories){
 
         ArrayList<Need> availableNeeds = new ArrayList<>();
 
@@ -72,7 +72,7 @@ public final class Database {
 
             //If the need isn't in the desired range (range is in kilometer) and the need isn't outdated
             if (here.distanceTo(needLoc) <= (float) range * 1000 && need.getTimeToLive() > System.currentTimeMillis()) {
-                if ((categories == need.getCategory())||(categories == null)){
+                if (categories.contains(need.getCategory())){
                     availableNeeds.add(need);
                 }
             }
