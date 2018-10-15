@@ -35,7 +35,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.Objects;
 
 
-public class CurrentLocation extends FragmentActivity{
+public class CurrentLocation extends FragmentActivity implements LocationServer{
 
     protected static final int LOCATION_REQUEST_CODE = 99;
 
@@ -98,14 +98,18 @@ public class CurrentLocation extends FragmentActivity{
                     public void onFailure(@NonNull Exception e) {
                         activity.setContentView(R.layout.page_location_services_up_demand);
                         isLocationSettingsDemandDisplayed = true;
+
                         Log.d(MainActivity.LOGTAG, "ask to enable location services");
+
                     }
                 });
 
             }else{
                 if(isLocationSettingsDemandDisplayed){
                     isLocationSettingsDemandDisplayed = false;
+
                     Log.d(MainActivity.LOGTAG, "location services re-enabled");
+
                     activity.setContentView(R.layout.activity_maps);
                 }
             }
@@ -157,7 +161,7 @@ public class CurrentLocation extends FragmentActivity{
 
 
         }else {
-            Log.d(MainActivity.LOGTAG, "CAJOUE");
+            Log.d(MainActivity.LOGTAG, "permissions granted");
             createLocationRequest();
         }
     }
@@ -169,12 +173,14 @@ public class CurrentLocation extends FragmentActivity{
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d(MainActivity.LOGTAG, "je passe");
+
+        Log.d(MainActivity.LOGTAG, "resquest permission result");
 
         if (requestCode == CurrentLocation.LOCATION_REQUEST_CODE) {
 
             //Request cancelled -> result array is empty
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
                 Log.d(MainActivity.LOGTAG, "onRequestPermissionsResult_true");
                 checkLocationPermission();
             } else {
@@ -214,8 +220,9 @@ public class CurrentLocation extends FragmentActivity{
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Location settings are satisfied
+
                 Log.d(MainActivity.LOGTAG, "createLocationRequest_true");
-                    startLocationUpdates();
+                startLocationUpdates();
             }
         });
 
@@ -241,7 +248,7 @@ public class CurrentLocation extends FragmentActivity{
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode) {
             case CurrentLocation.REQUEST_CHECK_SETTINGS:
@@ -255,6 +262,7 @@ public class CurrentLocation extends FragmentActivity{
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
                         Log.d(MainActivity.LOGTAG, "USER REFUSED TO ENABLE LOCATION SERVICES");
+
                         startLocationUpdates();
                         break;
                     default:
@@ -276,6 +284,7 @@ public class CurrentLocation extends FragmentActivity{
 
             } else {
                 Log.d(MainActivity.LOGTAG, "NO PERMISSION");
+
                 checkLocationPermission();
 
             }
@@ -284,7 +293,7 @@ public class CurrentLocation extends FragmentActivity{
 
 
     public LatLng getLastLocation(){
-
+        Log.d(DEBUG, "pos : " + mLastKnownLocation.getLatitude() + " " + mLastKnownLocation.getLongitude());
         return new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
     }
 
