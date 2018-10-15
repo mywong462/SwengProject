@@ -46,6 +46,12 @@ public class AddNeedActivity extends AppCompatActivity {
     protected static final int MIN_NB_PEOPLE = 1;
     protected static final int MAX_NB_PEOPLE = 50;
 
+
+    private final String debug = "DEBUG";
+
+    private final String validityInterval = "between " + MIN_VALIDITY + " and " + MAX_VALIDITY;
+    private final String peopleInterval = "between "+MIN_NB_PEOPLE+" and "+MAX_NB_PEOPLE;
+
     private static final int MILLS_IN_MINUTES = 60000; //there is 60000 miliseconds in 1 minute
 
     private Categories category = Categories.HELP;
@@ -81,27 +87,27 @@ public class AddNeedActivity extends AppCompatActivity {
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin.setAdapter(aa);
 
-  
+
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
 
-        Log.d("DEBUG","got the Serializable : "+(loc == null));
+        Log.d(debug,"got the Serializable : "+(loc == null));
         if(loc != null){
             currLoc = loc;
         }
         else {
-            Log.d("DEBUG","Normal code section");
+            Log.d(debug,"Normal code section");
             currLoc = new CurrentLocation(this.getApplicationContext(), this);
-            Log.d("DEBUG","currloc is null ? : "+(currLoc == null));
+            Log.d(debug,"currloc is null ? : "+(currLoc == null));
         }
         //Update text fields with local variables
         TextView validity = findViewById(R.id.need_validity);
-        validity.setText("Validity (between "+MIN_VALIDITY+" and "+MAX_VALIDITY+") :");
+        validity.setText("Validity ("+validityInterval+") :");
 
         TextView description = findViewById(R.id.need_descr);
         description.setText("Description (at least "+MIN_DESCR_L+" characters) :");
 
         TextView nbPeopleNeeded = findViewById(R.id.need_nbPeople);
-        nbPeopleNeeded.setText("Number of people needed (between "+MIN_NB_PEOPLE+" and "+MAX_NB_PEOPLE+") :");
+        nbPeopleNeeded.setText("Number of people needed ("+peopleInterval+") :");
 
 
         //configure what happens when the create button is clicked
@@ -116,10 +122,10 @@ public class AddNeedActivity extends AppCompatActivity {
                 EditText description = findViewById(R.id.descr_txt);
                 EditText nbPeopleNeeded = findViewById(R.id.nbPeople_txt);
 
-                Log.d("DEBUG", "VALUE IS : " + validity.getText() + " // null? " + validity.getText().length());
+                Log.d(debug, "VALUE IS : " + validity.getText() + " // null? " + validity.getText().length());
 
                 if(validity.getText().length() == 0 || description.getText().length() == 0 || nbPeopleNeeded.getText().length() == 0){
-                    Log.d("DEBUG", "At least one field is NULL");
+                    Log.d(debug, "At least one field is NULL");
                     Toast.makeText(AddNeedActivity.this, "Incorrect input. Don't let anything blank !", Toast.LENGTH_LONG).show();
                     return ;
                 }
@@ -142,21 +148,21 @@ public class AddNeedActivity extends AppCompatActivity {
 
                 if (valid < MIN_VALIDITY || valid > MAX_VALIDITY || description.length() < MIN_DESCR_L) {
 
-                    Toast.makeText(AddNeedActivity.this, "Incorrect input. Validity must be between " + MIN_VALIDITY + " and " + MAX_VALIDITY + " and the description must be at least 10 characters long", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AddNeedActivity.this, "Incorrect input. Validity must be "+validityInterval + " and the description must be at least 10 characters long", Toast.LENGTH_LONG).show();
 
 
                 }else if(nbPeople < MIN_NB_PEOPLE || nbPeople > MAX_NB_PEOPLE){
 
-                    Toast.makeText(AddNeedActivity.this, "Incorrect input. The number of people needed must be between "+MIN_NB_PEOPLE+" and "+MAX_NB_PEOPLE, Toast.LENGTH_LONG).show();
+                    Toast.makeText(AddNeedActivity.this, "Incorrect input. The number of people needed must be "+peopleInterval, Toast.LENGTH_LONG).show();
 
                 }else{  //try to do something for the concurrency bug
 
 
                     LatLng currPos = currLoc.getLastLocation();
 
-                    Log.d("DEBUG","position is null "+(currPos == null));
+                    Log.d(debug,"position is null "+(currPos == null));
 
-                    writeNewUser(Database.getDBauth.getCurrentUser().getEmail(),descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos.latitude, currPos.longitude, category, nbPeople);
+                    writeNewUser(descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos, category, nbPeople);
 
                     startActivity(new Intent(AddNeedActivity.this, MapsActivity.class));
 
@@ -169,9 +175,9 @@ public class AddNeedActivity extends AppCompatActivity {
 
     //method used to write in the DB
 
-    private void writeNewUser(String emitter, String descr, long ttl, double lat, double lon, Categories category, int nbPeopleNeeded) {
+    private void writeNewUser( String descr, long ttl, LatLng pos, Categories category, int nbPeopleNeeded) {
 
-        Need newNeed = new Need(emitter, descr, ttl, lat, lon, category, nbPeopleNeeded);
+        Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded);
         Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
