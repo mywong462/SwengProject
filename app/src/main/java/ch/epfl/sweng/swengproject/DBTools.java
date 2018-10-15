@@ -33,7 +33,7 @@ public class DBTools {
                 cos(toRadians(g1.getLatitude())) * cos(toRadians(g2.getLatitude())) * pow(sin((toRadians(g1.getLongitude()) - toRadians(g2.getLongitude()))/2), 2);
     }
 
-    private static double distanceBetween(GeoPoint g1, GeoPoint g2){
+    public static double distanceBetween(GeoPoint g1, GeoPoint g2){
         if(g1 == null || g2 == null){
             Log.d("Debug", "one of the two geopoint is null in distanceBetween()");
         }
@@ -46,7 +46,6 @@ public class DBTools {
 
 
     }
-
 
     public static ArrayList<Need> filterNeeds(GeoPoint here, int range, ArrayList<Categories> categories, List<Need> listNeeds){
 

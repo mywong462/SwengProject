@@ -35,6 +35,15 @@ public class DatabaseUnitTest {
 
 
     @Test
+    public void distanceIsCorrect(){
+        GeoPoint g1 = new GeoPoint(50, 5);
+        GeoPoint g2 = new GeoPoint(51, 6);
+
+        assertEquals(131.78, DBTools.distanceBetween(g1, g2), 1);
+    }
+
+
+    @Test
     public void correctlyFilterCategories(){
         ArrayList<Categories> l = new ArrayList<>();
         l.add(Categories.HELP);
