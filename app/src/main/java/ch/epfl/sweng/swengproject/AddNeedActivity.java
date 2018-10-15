@@ -63,8 +63,7 @@ public class AddNeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_need);
-      
-        currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this);
+
       
         //For categories
         Spinner spin = findViewById(R.id.spinnerCategories);
@@ -94,6 +93,7 @@ public class AddNeedActivity extends AppCompatActivity {
         }
         else {
             Log.d(MainActivity.LOGTAG,"Normal code section");
+            currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this);
             currLoc = currentLocation;
             Log.d(MainActivity.LOGTAG,"currloc is null ? : "+(currLoc == null));
         }
