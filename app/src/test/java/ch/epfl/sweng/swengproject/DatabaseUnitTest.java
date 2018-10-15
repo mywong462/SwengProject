@@ -1,6 +1,8 @@
 package ch.epfl.sweng.swengproject;
 
 
+import android.location.Location;
+
 import com.google.firebase.firestore.GeoPoint;
 
 import org.junit.Test;
@@ -15,18 +17,17 @@ public class DatabaseUnitTest {
 
 
     @Test(expected = NullPointerException.class)
-    public void badCategory(){
-        Database.getNeeds(new GeoPoint(12,34),200,null);
+    public void checkInputNull(){
+
+        DBTools.checkInput(null,13, null);
+
     }
 
-
-
     @Test(expected = IllegalArgumentException.class)
-    public void badRange(){
-        ArrayList<Categories> l = new ArrayList<>();
-        l.add(Categories.HELP);
+    public void checkInputRange(){
 
-        Database.getNeeds(new GeoPoint(12,34),-200, l);
+        DBTools.checkInput(null,-13, null);
+
     }
 
 
@@ -39,7 +40,7 @@ public class DatabaseUnitTest {
         long timeValid =  System.currentTimeMillis() + 100000;
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12));
 
-        ArrayList<Need> needList = Database.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
+        ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
 
         assertEquals(0,needList.size());
     }
@@ -53,7 +54,7 @@ public class DatabaseUnitTest {
         long timeValid =  System.currentTimeMillis() + 100000;
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12));
 
-        ArrayList<Need> needList = Database.filterNeeds(new GeoPoint(30,60), 2, l,listNeeds);
+        ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(30,60), 2, l,listNeeds);
 
         assertEquals(0,needList.size());
     }
@@ -67,7 +68,7 @@ public class DatabaseUnitTest {
         long timeValid =  System.currentTimeMillis() - 10000;
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12));
 
-        ArrayList<Need> needList = Database.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
+        ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
 
         assertEquals(0,needList.size());
     }
@@ -83,9 +84,10 @@ public class DatabaseUnitTest {
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12));
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.NEED, 12));
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.HELP, 12));
-        ArrayList<Need> needList = Database.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
+        ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
 
         assertEquals(2,needList.size());
     }
+
 
 }
