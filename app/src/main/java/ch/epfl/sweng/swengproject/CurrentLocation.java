@@ -55,6 +55,8 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
+    private final String DEBUG = "DEBUG";
+
 
     private LocationCallback mLocationCallback = new LocationCallback(){
         @Override
@@ -68,7 +70,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                 function.apply(null);
             }
 
-            Log.d("HELLO", "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
+            Log.d(DEBUG, "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
         }
 
         @Override
@@ -93,14 +95,14 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                     public void onFailure(@NonNull Exception e) {
                         activity.setContentView(R.layout.page_location_services_up_demand);
                         isLocationSettingsDemandDisplayed = true;
-                        Log.d("HELLO", "ask to enable location services");
+                        Log.d(DEBUG, "ask to enable location services");
                     }
                 });
 
             }else{
                 if(isLocationSettingsDemandDisplayed){
                     isLocationSettingsDemandDisplayed = false;
-                    Log.d("HELLO", "location services re-enabled");
+                    Log.d(DEBUG, "location services re-enabled");
                     activity.setContentView(R.layout.activity_maps);
                 }
             }
@@ -140,20 +142,20 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
 
 
         }else {
-            Log.d("HELLO", "CAJOUE");
+            Log.d(DEBUG, "permissions granted");
             createLocationRequest();
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d("HELLO", "je passe");
+        Log.d(DEBUG, "resquest permission result");
 
         if (requestCode == CurrentLocation.LOCATION_REQUEST_CODE) {
 
             //Request cancelled -> result array is empty
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("HELLO", "onRequestPermissionsResult_true");
+                Log.d(DEBUG, "onRequestPermissionsResult_true");
                 checkLocationPermission();
             } else {
                 //Explain why the app needs to access the location and re-ask for permission
@@ -192,7 +194,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Location settings are satisfied
-                Log.d("HELLO", "createLocationRequest_true");
+                Log.d(DEBUG, "createLocationRequest_true");
                     startLocationUpdates();
             }
         });
@@ -226,13 +228,13 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         // All required changes were successfully made
-                        Log.d("HELLO", "createLocationRequestAfterAskingViaDialog_true");
+                        Log.d(DEBUG, "createLocationRequestAfterAskingViaDialog_true");
                         startLocationUpdates();
 
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
-                        Log.d("HELLO", "USER REFUSED TO ENABLE LOCATION SERVICES");
+                        Log.d(DEBUG, "USER REFUSED TO ENABLE LOCATION SERVICES");
                         startLocationUpdates();
                         break;
                     default:
@@ -247,13 +249,13 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
     protected void startLocationUpdates(){
         try {
             if (isPermissionGranted()) {
-                Log.d("HELLO", "OK PERMISSION");
+                Log.d(DEBUG, "OK PERMISSION");
 
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
 
             } else {
-                Log.d("HELLO", "NO PERMISSION");
+                Log.d(DEBUG, "NO PERMISSION");
                 checkLocationPermission();
 
             }
@@ -262,7 +264,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
 
 
     public LatLng getLastLocation(){
-        Log.d("DEBUGSS", "pos : " + mLastKnownLocation.getLatitude() + " " + mLastKnownLocation.getLongitude());
+        Log.d(DEBUG, "pos : " + mLastKnownLocation.getLatitude() + " " + mLastKnownLocation.getLongitude());
         return new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
     }
 

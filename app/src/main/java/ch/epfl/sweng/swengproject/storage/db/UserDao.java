@@ -17,7 +17,7 @@ import ch.epfl.sweng.swengproject.MyApplication;
 import static android.content.Context.MODE_PRIVATE;
 
 @Dao
-public abstract class  UserDao {
+public abstract class UserDao {
 
     @Query("SELECT * FROM user")
     public abstract List<User> getAll();
