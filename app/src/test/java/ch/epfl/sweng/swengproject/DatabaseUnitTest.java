@@ -101,5 +101,13 @@ public class DatabaseUnitTest {
         assertEquals(2,needList.size());
     }
 
+    @Test(expected = NullPointerException.class)
+    public void checkBadGeoPoints(){
+
+        DBTools.checkPoints(null,new GeoPoint(23,45));
+
+    }
+
+
 
 }
