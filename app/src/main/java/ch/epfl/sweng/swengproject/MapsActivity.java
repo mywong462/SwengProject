@@ -151,7 +151,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void showAvailableNeeds() {
 
-        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range, null);
+        //arrayCategories while the user choosing them is not implemented
+        ArrayList<Categories> arrayCategories = new ArrayList<>();
+        arrayCategories.add(Categories.ALL);
+
+        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range, arrayCategories);
 
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
