@@ -184,11 +184,8 @@ public class AddNeedActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
 
                     Toast.makeText(AddNeedActivity.this,"Need Successfully added",Toast.LENGTH_SHORT).show();
-
-
                 }
                 else{
-
                     Toast.makeText(AddNeedActivity.this,"Error : Please verify your connection",Toast.LENGTH_SHORT).show();
                 }
             }
