@@ -1,4 +1,4 @@
-package ch.epfl.sweng.swengproject;
+/*package ch.epfl.sweng.swengproject;
 
 import android.support.test.runner.AndroidJUnit4;
 
@@ -80,4 +80,4 @@ public class LoginInstrumentedTest {
 
 
 
-}
+}*/

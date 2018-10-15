@@ -1,4 +1,4 @@
-package ch.epfl.sweng.swengproject;
+/*package ch.epfl.sweng.swengproject;
 
 
 import android.support.test.espresso.NoMatchingViewException;
@@ -131,4 +131,4 @@ public class RegistrationInstrumentedTest {
         Thread.sleep(1000);
     }
 
-}
+}*/
