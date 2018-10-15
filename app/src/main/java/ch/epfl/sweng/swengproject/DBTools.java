@@ -19,15 +19,18 @@ public class DBTools {
 
     private static final double R = 6371;
 
+
+
     private static double haversine(GeoPoint g1, GeoPoint g2){
+
+        checkPoints(g1,g2);
+  
         return pow(sin((toRadians(g1.getLatitude()) - toRadians(g2.getLatitude()))/2), 2) +
                 cos(toRadians(g1.getLatitude())) * cos(toRadians(g2.getLatitude())) * pow(sin((toRadians(g1.getLongitude()) - toRadians(g2.getLongitude()))/2), 2);
     }
 
     public static double distanceBetween(GeoPoint g1, GeoPoint g2){
-        if(g1 == null || g2 == null){
-            Log.d("Debug", "one of the two geopoint is null in distanceBetween()");
-        }
+        checkPoints(g1,g2);
 
         double a = haversine(g1, g2);
 
@@ -65,10 +68,16 @@ public class DBTools {
 
             throw new NullPointerException();
         }
-        if(range < 0){
+        else if(range < 0){
             throw new IllegalArgumentException();
         }
 
+    }
+
+    public static void checkPoints(GeoPoint g1, GeoPoint g2){
+        if(g1 == null || g2 == null){
+            throw new NullPointerException();
+        }
 
     }
 
