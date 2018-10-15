@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity implements LoginADListener 
                             public void onComplete(@NonNull Task<AuthResult> task) {
 
                                 if (task.isSuccessful() && auth.getCurrentUser().isEmailVerified()) {
-                                    //TODO: MAY WANT TO SENT THE PROFILE IN THE SERVER HERE
+                                    //TODO: MAY WANT TO SENT THE PROFILE IN THE SERVER  HERE
                                     finish();
                                     startActivity(new Intent(LoginActivity.this, MapsActivity.class));
                                 } else if(task.isSuccessful() && !auth.getCurrentUser().isEmailVerified()){
