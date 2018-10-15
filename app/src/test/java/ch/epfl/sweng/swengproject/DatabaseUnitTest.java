@@ -2,6 +2,7 @@ package ch.epfl.sweng.swengproject;
 
 
 import android.location.Location;
+import android.widget.ArrayAdapter;
 
 import com.google.firebase.firestore.GeoPoint;
 
@@ -25,8 +26,10 @@ public class DatabaseUnitTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void checkInputRange(){
+        ArrayList<Categories> l = new ArrayList<>();
+        l.add(Categories.HELP);
 
-        DBTools.checkInput(null,-13, null);
+        DBTools.checkInput(new GeoPoint(13, 42),-13, l);
 
     }
 
