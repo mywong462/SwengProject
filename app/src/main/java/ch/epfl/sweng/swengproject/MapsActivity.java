@@ -172,11 +172,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //  TODO: need to update this function when more fields from the needs are available
         //The field to be update
         TextView description = menuView.findViewById(R.id.needDescription);
+
         Need selectedNeed = null;
+
+        //arrayCategories while the user choosing them is not implemented
+        ArrayList<Categories> arrayCategories = new ArrayList<>();
+        arrayCategories.add(Categories.ALL);
 
 
         //Searching for the need
-        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo,range, null);
+        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo, range, arrayCategories);
         for (int i = 0; i < currentNeed.size(); i++){
             if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
                 selectedNeed = currentNeed.get(i);
@@ -231,7 +236,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Display the pop-up window
         pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
-
         return true;
     }
 
