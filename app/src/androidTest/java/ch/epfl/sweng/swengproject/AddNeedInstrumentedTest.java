@@ -4,6 +4,7 @@ package ch.epfl.sweng.swengproject;
 import android.content.Intent;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
@@ -27,6 +28,8 @@ import static junit.framework.TestCase.fail;
 @RunWith(AndroidJUnit4.class)
 public class AddNeedInstrumentedTest {
 
+    @Rule
+    public GrantPermissionRule grantPermissionRule  = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
     @Rule
     public final ActivityTestRule<AddNeedActivity> mActivityRule =

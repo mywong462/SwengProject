@@ -1,8 +1,6 @@
 package ch.epfl.sweng.swengproject;
 
-import android.arch.core.util.Function;
 import android.content.Intent;
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,14 +16,13 @@ import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
+
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -47,8 +44,6 @@ public class AddNeedActivity extends AppCompatActivity {
     protected static final int MAX_NB_PEOPLE = 50;
 
 
-    private final String debug = "DEBUG";
-
     private final String validityInterval = "between " + MIN_VALIDITY + " and " + MAX_VALIDITY;
     private final String peopleInterval = "between "+MIN_NB_PEOPLE+" and "+MAX_NB_PEOPLE;
 
@@ -57,6 +52,7 @@ public class AddNeedActivity extends AppCompatActivity {
     private Categories category = Categories.HELP;
 
     private Button create_btn;
+
 
     private LocationServer currLoc;
 
@@ -68,6 +64,7 @@ public class AddNeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_need);
 
+      
         //For categories
         Spinner spin = findViewById(R.id.spinnerCategories);
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -90,14 +87,15 @@ public class AddNeedActivity extends AppCompatActivity {
 
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
 
-        Log.d(debug,"got the Serializable : "+(loc == null));
+        Log.d(MainActivity.LOGTAG,"got the Serializable : "+(loc == null));
         if(loc != null){
             currLoc = loc;
         }
         else {
-            Log.d(debug,"Normal code section");
-            currLoc = new CurrentLocation(this.getApplicationContext(), this);
-            Log.d(debug,"currloc is null ? : "+(currLoc == null));
+            Log.d(MainActivity.LOGTAG,"Normal code section");
+            currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this);
+            currLoc = currentLocation;
+            Log.d(MainActivity.LOGTAG,"currloc is null ? : "+(currLoc == null));
         }
         //Update text fields with local variables
         TextView validity = findViewById(R.id.need_validity);
@@ -122,10 +120,10 @@ public class AddNeedActivity extends AppCompatActivity {
                 EditText description = findViewById(R.id.descr_txt);
                 EditText nbPeopleNeeded = findViewById(R.id.nbPeople_txt);
 
-                Log.d(debug, "VALUE IS : " + validity.getText() + " // null? " + validity.getText().length());
+                Log.d(MainActivity.LOGTAG, "VALUE IS : " + validity.getText() + " // null? " + validity.getText().length());
 
                 if(validity.getText().length() == 0 || description.getText().length() == 0 || nbPeopleNeeded.getText().length() == 0){
-                    Log.d(debug, "At least one field is NULL");
+                    Log.d(MainActivity.LOGTAG, "At least one field is NULL");
                     Toast.makeText(AddNeedActivity.this, "Incorrect input. Don't let anything blank !", Toast.LENGTH_LONG).show();
                     return ;
                 }
@@ -157,15 +155,14 @@ public class AddNeedActivity extends AppCompatActivity {
 
                 }else{  //try to do something for the concurrency bug
 
-
                     LatLng currPos = currLoc.getLastLocation();
 
-                    Log.d(debug,"position is null "+(currPos == null));
+                    Log.d(MainActivity.LOGTAG,"position is null "+(currPos == null));
 
                     writeNewUser(descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos, nbPeople);
 
-                    startActivity(new Intent(AddNeedActivity.this, MapsActivity.class));
 
+                    finish();
                 }
             }
         });
@@ -195,12 +192,24 @@ public class AddNeedActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        currLoc.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        currentLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        currLoc.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        currentLocation.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        currentLocation.callerOnPause();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        currentLocation.callerOnResume();
     }
 }

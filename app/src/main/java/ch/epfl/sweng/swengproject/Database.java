@@ -34,7 +34,6 @@ public final class Database {
         return needsRef.add(need);
     }
 
-    private static final String DEBUG_STRING = "Debug";
 
     //If there is no limitation in category, pass null into categories variable
     public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range, ArrayList<Categories> categories){
@@ -45,7 +44,8 @@ public final class Database {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if(e != null) {
-                    Log.d(DEBUG_STRING, "Got an exception querying the database");
+                    Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
+
                 }else{
 
                     //get the needs from the database
