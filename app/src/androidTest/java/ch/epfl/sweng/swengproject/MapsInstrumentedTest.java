@@ -35,8 +35,11 @@ public class MapsInstrumentedTest {
 
     @Test
     public void canSwitchActivity() {
+        try{
+            Thread.sleep(500);
+            onView(withId(R.id.create_need_btn)).perform(click());
+        }catch(InterruptedException e){}
 
-        onView(withId(R.id.create_need_btn)).perform(click());
     }
 
 }
