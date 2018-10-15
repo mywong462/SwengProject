@@ -142,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
                 }
             } else {
-                Log.d("ERROR", "NO UPDATEUI");
+                Log.d("ERROR", "NO PERMISSION TO UPDATEUI");
             }
         } catch (SecurityException e) {
         }
