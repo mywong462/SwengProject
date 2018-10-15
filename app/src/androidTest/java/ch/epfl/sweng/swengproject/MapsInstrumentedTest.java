@@ -3,6 +3,7 @@ package ch.epfl.sweng.swengproject;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -12,6 +13,7 @@ import org.junit.runner.RunWith;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.pressBack;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
@@ -24,14 +26,11 @@ public class MapsInstrumentedTest {
 
 
     @Rule
-    public final ActivityTestRule<MapsActivity> mActivityRule =
-            new ActivityTestRule<>(MapsActivity.class);
-
+    public final ActivityTestRule<MapsActivity> mActivityRule = new ActivityTestRule<>(MapsActivity.class);
 
     @Test
     public void dummyTest(){
-
-        return;
+        Log.d("HELLO", "dummydummy");
     }
 
     @Test

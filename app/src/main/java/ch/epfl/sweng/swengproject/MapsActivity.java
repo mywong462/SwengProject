@@ -64,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //TODO: get range in user settings
         range = 3000;
 
+
         launchCurrentLocation();
         bindAddNeedButton();
 
@@ -138,14 +139,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onResume() {
-        Log.d(MainActivity.LOGTAG, "onResume before super");
+        //Log.d(MainActivity.LOGTAG, "onResume before super");
         super.onResume();
-        Log.d(MainActivity.LOGTAG, "onResume after super");
-        launchCurrentLocation();
+        //Log.d(MainActivity.LOGTAG, "onResume after super");
+        if(!isOpening) {
+            launchCurrentLocation();
+        }
         currentLocation.callerOnResume();
-        Log.d(MainActivity.LOGTAG, "onResume before super");
-
-
+        //Log.d(MainActivity.LOGTAG, "onResume before super");
     }
 
 

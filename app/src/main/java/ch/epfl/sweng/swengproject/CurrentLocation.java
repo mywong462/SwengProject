@@ -122,6 +122,9 @@ public class CurrentLocation extends FragmentActivity{
         this.activity = Objects.requireNonNull(activity);
         this.function = function;
 
+        if(updatingLocation) {
+            mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        }
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
 
         checkLocationPermission();
