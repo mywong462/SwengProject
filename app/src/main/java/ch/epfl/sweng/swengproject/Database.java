@@ -3,7 +3,6 @@ package ch.epfl.sweng.swengproject;
 import android.location.Location;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -14,7 +13,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +34,15 @@ public final class Database {
         return needsRef.add(need);
     }
 
+    private static final String DEBUG_STRING = "Debug";
+
     //If there is no limitation in category, pass null into categories variable
     public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range, ArrayList<Categories> categories){
+
+        if(categories == null){
+            Log.d(DEBUG_STRING, "categories is null in getNeeds");
+            throw new NullPointerException();
+        }
 
         ArrayList<Need> availableNeeds = new ArrayList<>();
 
@@ -45,7 +50,7 @@ public final class Database {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if(e != null) {
-                    Log.d("Debug", "Got an exception querying the database");
+                    Log.d(DEBUG_STRING, "Got an exception querying the database");
                 }else{
 
                     //get the needs from the database
@@ -72,7 +77,7 @@ public final class Database {
 
             //If the need isn't in the desired range (range is in kilometer) and the need isn't outdated
             if (here.distanceTo(needLoc) <= (float) range * 1000 && need.getTimeToLive() > System.currentTimeMillis()) {
-                if (categories.contains(need.getCategory())){
+                if (categories.contains(Categories.ALL) || categories.contains(need.getCategory())){
                     availableNeeds.add(need);
                 }
             }
