@@ -25,6 +25,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -34,6 +36,7 @@ import com.google.firebase.firestore.GeoPoint;
 import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener{
@@ -46,11 +49,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 
+    private LocationServer currLoc;
+
     private int range; //in kilometers
 
     private FloatingActionButton createNeed_btn;
 
     private static final String KEY_LOCATION = "location";
+
+    private  ArrayList<Need> availableNeeds = null;
 
 
     @Override
@@ -64,7 +71,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //TODO: get range in user settings
         range = 3000;
 
-        launchCurrentLocation();
+        LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
+        if(loc != null){
+            currLoc = loc;
+            ArrayList<Need> needList = new ArrayList<>();
+            long ttl = System.currentTimeMillis() + 100000;
+            needList.add(new Need("hedi.sassi@epfl.ch", "my description", ttl, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ));
+            availableNeeds = needList;
+        }
+        else {
+            Log.d(MainActivity.LOGTAG,"Normal code section");
+            currLoc = currentLocation;
+            launchCurrentLocation();
+        }
+
         bindAddNeedButton();
 
 
@@ -138,14 +158,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onResume() {
-        Log.d(MainActivity.LOGTAG, "onResume before super");
+        //Log.d(MainActivity.LOGTAG, "onResume before super");
         super.onResume();
-        Log.d(MainActivity.LOGTAG, "onResume after super");
-        launchCurrentLocation();
+        //Log.d(MainActivity.LOGTAG, "onResume after super");
+        if(!isOpening) {
+            launchCurrentLocation();
+        }
         currentLocation.callerOnResume();
-        Log.d(MainActivity.LOGTAG, "onResume before super");
-
-
+        //Log.d(MainActivity.LOGTAG, "onResume before super");
     }
 
 
@@ -187,7 +207,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
                 }
             } else {
-                Log.d(MainActivity.LOGTAG, "NO UPDATEUI");
+                Log.d("ERROR", "NO PERMISSION TO UPDATEUI");
             }
         } catch (SecurityException e) {
         }
@@ -195,7 +215,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void showAvailableNeeds() {
-        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range);
+
+        //arrayCategories while the user choosing them is not implemented
+        ArrayList<Categories> arrayCategories = new ArrayList<>();
+        arrayCategories.add(Categories.ALL);
+        if(this.availableNeeds == null) {
+            this.availableNeeds = Database.getNeeds(mGeoPoint, range, arrayCategories);
+        }
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
@@ -204,21 +230,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             marker.setTag(need);
         }
 
-        mMap.setOnMarkerClickListener(this);
+         mMap.setOnMarkerClickListener(this);
     }
 
     private void displayOnMenu(View menuView, GeoPoint tempGeo) {
         //  TODO: need to update this function when more fields from the needs are available
         //The field to be update
         TextView description = menuView.findViewById(R.id.needDescription);
+
         Need selectedNeed = null;
+
+        //arrayCategories while the user choosing them is not implemented
+        ArrayList<Categories> arrayCategories = new ArrayList<>();
+        arrayCategories.add(Categories.ALL);
 
 
         //Searching for the need
-        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo, range);
-        for (int i = 0; i < currentNeed.size(); i++) {
 
-            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())) {
+        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo, range, arrayCategories);
+        for (int i = 0; i < currentNeed.size(); i++){
+            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
                 selectedNeed = currentNeed.get(i);
                 break;
             }
@@ -258,8 +289,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Clicking outside the window will close the window
         pw.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         pw.setTouchInterceptor(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+            public boolean onTouch(View view, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+
                     pw.dismiss();
                     return true;
                 }
@@ -270,7 +302,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Display the pop-up window
         pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
-
         return true;
     }
 
