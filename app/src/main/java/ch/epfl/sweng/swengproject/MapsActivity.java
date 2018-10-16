@@ -1,21 +1,16 @@
 package ch.epfl.sweng.swengproject;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.arch.core.util.Function;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
+
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
+
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.PopupWindow;
 import android.widget.Button;
 import android.view.LayoutInflater;
@@ -24,6 +19,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,11 +33,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.GeoPoint;
 
+import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener{
 
     private GeoPoint mGeoPoint;
 
@@ -55,26 +53,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private FloatingActionButton createNeed_btn;
 
-    private CurrentLocation currentLocation;
+    private static final String KEY_LOCATION = "location";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(MainActivity.LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_maps);
         isOpening = true;
-
         //TODO: get range in user settings
         range = 3000;
 
-        //button with listener to create new needs
-        createNeed_btn = findViewById(R.id.create_need_btn);
-        createNeed_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MapsActivity.this, AddNeedActivity.class));
-            }
-        });
+
+        launchCurrentLocation();
+        bindAddNeedButton();
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -84,12 +79,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    private void bindAddNeedButton(){
+        //button with listener to create new needs
+        createNeed_btn = findViewById(R.id.create_need_btn);
+        createNeed_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapsActivity.this, AddNeedActivity.class));
+            }
+        });
+    }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        mMap = googleMap;
-
+    private void launchCurrentLocation(){
         Function<Void, Void> function = new Function<Void, Void>() {
             @Override
             public Void apply(Void input) {
@@ -98,9 +99,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        currentLocation = new CurrentLocation(this.getApplicationContext(),
-                this,
-                function);
+        currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this, function);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mMap != null) {
+            Log.d(MainActivity.LOGTAG, "saving instance of map");
+            outState.putParcelable(KEY_LOCATION, lastLatLng);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            Log.d(MainActivity.LOGTAG, "getting old instance");
+            lastLatLng = savedInstanceState.getParcelable(KEY_LOCATION);
+        }
+    }
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        mMap = googleMap;
+
+
+        if (lastLatLng != null) {
+            updateUI();
+        }
+
+        currentLocation.callerActivityReady();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        currentLocation.callerOnPause();
+    }
+
+    @Override
+    protected void onResume() {
+        //Log.d(MainActivity.LOGTAG, "onResume before super");
+        super.onResume();
+        //Log.d(MainActivity.LOGTAG, "onResume after super");
+        if(!isOpening) {
+            launchCurrentLocation();
+        }
+        currentLocation.callerOnResume();
+        //Log.d(MainActivity.LOGTAG, "onResume before super");
     }
 
 
@@ -118,7 +167,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateUI() {
 
-        Log.d("DEBUG", "UPDATEUI");
+        Log.d(MainActivity.LOGTAG, "UPDATEUI");
 
         try {
             if (currentLocation.getLocationPermissionStatus()) {
@@ -168,15 +217,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          mMap.setOnMarkerClickListener(this);
     }
 
-    private void displayOnMenu(View menuView, GeoPoint tempGeo){
+    private void displayOnMenu(View menuView, GeoPoint tempGeo) {
         //  TODO: need to update this function when more fields from the needs are available
         //The field to be update
         TextView description = menuView.findViewById(R.id.needDescription);
+
         Need selectedNeed = null;
+
+        //arrayCategories while the user choosing them is not implemented
+        ArrayList<Categories> arrayCategories = new ArrayList<>();
+        arrayCategories.add(Categories.ALL);
 
 
         //Searching for the need
-        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo,range, null);
+
+        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo, range, arrayCategories);
         for (int i = 0; i < currentNeed.size(); i++){
             if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
                 selectedNeed = currentNeed.get(i);
@@ -185,10 +240,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         //Updating information on the screen
-        if (selectedNeed != null){
+        if (selectedNeed != null) {
             description.setText(selectedNeed.getDescription());
-        }
-        else  Log.d("ERROR", "System cannot find Need matched with the GeoPoint");
+        } else Log.d("ERROR", "System cannot find Need matched with the GeoPoint");
 
     }
 
@@ -202,12 +256,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int width = size.x;
         int height = size.y;
         LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.activity_pin_popup_window,null);
-        final PopupWindow pw = new PopupWindow(layout, (int)(width*0.8), (int)(height*0.7), true);
+        View layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
+        final PopupWindow pw = new PopupWindow(layout, (int) (width * 0.8), (int) (height * 0.7), true);
 
         //Get the marker information
-        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude,marker.getPosition().longitude);
-        displayOnMenu(layout,needRequest);
+        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
+        displayOnMenu(layout, needRequest);
 
         //Implemnent the close button
         layout.findViewById(R.id.declineBtn).setOnClickListener(new View.OnClickListener() {
@@ -221,6 +275,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         pw.setTouchInterceptor(new View.OnTouchListener() {
             public boolean onTouch(View view, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+
                     pw.dismiss();
                     return true;
                 }
@@ -231,7 +286,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Display the pop-up window
         pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
-
         return true;
     }
 

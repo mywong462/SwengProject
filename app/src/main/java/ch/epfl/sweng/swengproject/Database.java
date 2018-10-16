@@ -3,7 +3,6 @@ package ch.epfl.sweng.swengproject;
 import android.location.Location;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -14,7 +13,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +34,18 @@ public final class Database {
         return needsRef.add(need);
     }
 
+
     //If there is no limitation in category, pass null into categories variable
     public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range, ArrayList<Categories> categories){
 
-        ArrayList<Need> availableNeeds = new ArrayList<>();
+        DBTools.checkInput(mGeoPoint, range, categories);
 
         needsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if(e != null) {
-                    Log.d("Debug", "Got an exception querying the database");
+                    Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
+
                 }else{
 
                     //get the needs from the database
@@ -64,32 +64,8 @@ public final class Database {
             }
         });
 
-        //To remove the needs that aren't in the range
-        Location here = createAndSetLoc(mGeoPoint.getLatitude(),mGeoPoint.getLongitude());
-
-        for (Need need : listNeeds) {
-            Location needLoc = createAndSetLoc(need.getLatitude(),need.getLongitude());
-
-            //If the need isn't in the desired range (range is in kilometer) and the need isn't outdated
-            if (here.distanceTo(needLoc) <= (float) range * 1000 && need.getTimeToLive() > System.currentTimeMillis()) {
-                if (categories.contains(need.getCategory())){
-                    availableNeeds.add(need);
-                }
-            }
-
-
-        }
-
-        return availableNeeds;
+        return DBTools.filterNeeds(mGeoPoint,range,categories, listNeeds);
     }
 
-    private static Location createAndSetLoc(double lat, double lon){
-
-        Location loc = new Location("");
-        loc.setLatitude(lat);
-        loc.setLongitude(lon);
-
-        return loc;
-    }
 
 }
