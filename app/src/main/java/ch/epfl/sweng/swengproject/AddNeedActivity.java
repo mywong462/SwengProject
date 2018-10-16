@@ -43,6 +43,7 @@ public class AddNeedActivity extends AppCompatActivity {
     protected static final int MIN_NB_PEOPLE = 1;
     protected static final int MAX_NB_PEOPLE = 50;
 
+    private int REQUEST_LOCATION = 133;
 
     private final String validityInterval = "between " + MIN_VALIDITY + " and " + MAX_VALIDITY;
     private final String peopleInterval = "between "+MIN_NB_PEOPLE+" and "+MAX_NB_PEOPLE;
@@ -52,6 +53,8 @@ public class AddNeedActivity extends AppCompatActivity {
     private Categories category = Categories.HELP;
 
     private Button create_btn;
+    private Button chooseLocation_btn;
+
 
 
     private LocationServer currLoc;
@@ -64,6 +67,7 @@ public class AddNeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_need);
 
+        bindChooseLocationButton();
       
         //For categories
         Spinner spin = findViewById(R.id.spinnerCategories);
@@ -169,6 +173,18 @@ public class AddNeedActivity extends AppCompatActivity {
 
     }
 
+    private void bindChooseLocationButton(){
+        chooseLocation_btn = findViewById(R.id.choose_loc_btn);
+        chooseLocation_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(AddNeedActivity.this, ChooseLocationActivity.class), REQUEST_LOCATION);
+            }
+        });
+
+
+    }
+
 
     //method used to write in the DB
 
@@ -195,10 +211,13 @@ public class AddNeedActivity extends AppCompatActivity {
         currentLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        currentLocation.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
+            Toast.makeText(AddNeedActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
+        } else {
+            currentLocation.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override

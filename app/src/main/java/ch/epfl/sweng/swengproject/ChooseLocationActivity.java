@@ -30,11 +30,13 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     private String setLatLng_str;
     private float[] distance = new float[1]; // in meters
     private int max_distance;
+    private boolean isOpening;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_location);
+        isOpening = true;
 
         max_distance = 500;
         launchDefaultLocation();
@@ -52,6 +54,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         mMap_sl = googleMap;
         currentLocation.callerActivityReady();
         mMap_sl.setOnCameraIdleListener(onCameraIdleListener);
+        setDefaultLocation();
     }
 
     private void bindSaveLocationButton(){
@@ -66,7 +69,6 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                     Intent position = new Intent();
                     position.setData(Uri.parse(setLatLng_str));
                     setResult(RESULT_OK, position);
-                    Log.d(LOGTAG_sl, "sending data");
                     finish();
                 }
             }
@@ -117,7 +119,6 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         };
     }
 
-
     private boolean locationTooFar() {
         Location.distanceBetween(lastLatLng_sl.latitude, lastLatLng_sl.longitude,
                 setLatLng.latitude, setLatLng.longitude, distance);
@@ -129,6 +130,21 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         } else {
             return false;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        currentLocation.callerOnPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!isOpening) {
+            launchDefaultLocation();
+        }
+        currentLocation.callerOnResume();
     }
 
 

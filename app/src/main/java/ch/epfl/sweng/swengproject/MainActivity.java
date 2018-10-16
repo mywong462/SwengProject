@@ -30,7 +30,6 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout scrWelcome;
-    private int REQUEST_LOCATION;
 
     protected static final String LOGTAG = "HELLO";
     protected static final CurrentLocation currentLocation = new CurrentLocation();
@@ -42,32 +41,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         scrWelcome = findViewById(R.id.welcome_scr);
 
-        /**
-         scrWelcome.setOnTouchListener(new View.OnTouchListener() {
-
-        @Override
-        public boolean onTouch(View v, MotionEvent m) {
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.transition.slide_in_left, R.transition.slide_out_left);
-        return true;
-        }
-        });
-         */
-
         scrWelcome.setOnTouchListener(new View.OnTouchListener() {
-
             @Override
             public boolean onTouch(View v, MotionEvent m) {
-                startActivityForResult(new Intent(MainActivity.this, ChooseLocationActivity.class), REQUEST_LOCATION);
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.transition.slide_in_left, R.transition.slide_out_left);
                 return true;
             }
         });
+
+
+
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
-            Toast.makeText(MainActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
-        }
-    }
+
 }
