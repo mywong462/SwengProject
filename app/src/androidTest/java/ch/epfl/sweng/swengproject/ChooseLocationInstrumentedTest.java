@@ -32,15 +32,20 @@ public class ChooseLocationInstrumentedTest {
     public GrantPermissionRule grantPermissionRule  = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
     @Rule
-    public final ActivityTestRule<ChooseLocationActivity> mActivityRule =
+    public final ActivityTestRule<ChooseLocationActivity> aActivityRule =
             new ActivityTestRule<>(ChooseLocationActivity.class,false,false);
 
     @Rule
     public final ActivityTestRule<AddNeedActivity> bActivityRule =
             new ActivityTestRule<>(AddNeedActivity.class,false,false);
 
+    @Rule
+    public final ActivityTestRule<MainActivity> mActivityRule =
+            new ActivityTestRule<>(MainActivity.class);
+
     @Before
     public void create(){
+        //final CurrentLocation currentLocation = new CurrentLocation();
         bActivityRule.launchActivity(new Intent());
     }
 

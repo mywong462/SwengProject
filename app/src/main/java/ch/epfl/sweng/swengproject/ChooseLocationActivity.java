@@ -98,6 +98,8 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                 mMap_sl.clear(); // removes all markers, overlays... from the map
                 mMap_sl.setMyLocationEnabled(true); // while enabled, location is available
                 mMap_sl.getUiSettings().setMyLocationButtonEnabled(true);
+                Log.d(LOGTAG_sl, "in setDefaultLocation, lastLatLng = "+lastLatLng_sl);
+                Log.d(LOGTAG_sl, "in setDefaultLocation, setLatLng = "+setLatLng);
                 lastLatLng_sl = currentLocation.getLastLocation();
                 mMap_sl.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng_sl, 12));
             } else {
@@ -114,12 +116,15 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
             @Override
             public void onCameraIdle() {
                 setLatLng = mMap_sl.getCameraPosition().target;
-                Log.d(LOGTAG_sl, "in setLocation: "+setLatLng);
+                Log.d(LOGTAG_sl, "in setLocation, lastLatLng = "+lastLatLng_sl);
+                Log.d(LOGTAG_sl, "in setLocation, setLatLng = "+setLatLng);
             }
         };
     }
 
     private boolean locationTooFar() {
+        Log.d(LOGTAG_sl, "in locationTooFar, lastLatLng = "+lastLatLng_sl);
+        Log.d(LOGTAG_sl, "in locationTooFar, setLatLng = "+setLatLng);
         Location.distanceBetween(lastLatLng_sl.latitude, lastLatLng_sl.longitude,
                 setLatLng.latitude, setLatLng.longitude, distance);
         Log.d(LOGTAG_sl, "distance computed successfully");
