@@ -49,6 +49,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 
+    private LocationServer currLoc;
+
     private int range; //in kilometers
 
     private FloatingActionButton createNeed_btn;
@@ -67,8 +69,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //TODO: get range in user settings
         range = 3000;
 
+        LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
+        if(loc != null){
+            currLoc = loc;
+        }
+        else {
+            Log.d(MainActivity.LOGTAG,"Normal code section");
+            currLoc = currentLocation;
+            launchCurrentLocation();
+        }
 
-        launchCurrentLocation();
+
+
+
         bindAddNeedButton();
 
 
