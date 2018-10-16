@@ -34,6 +34,8 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.Objects;
 
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
+
 
 public class CurrentLocation extends FragmentActivity implements LocationServer{
 
@@ -73,7 +75,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                 function.apply(null);
             }
 
-            Log.d(MainActivity.LOGTAG, "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
+            Log.d(LOGTAG, "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
         }
 
         @Override
@@ -99,7 +101,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                         activity.setContentView(R.layout.page_location_services_up_demand);
                         isLocationSettingsDemandDisplayed = true;
 
-                        Log.d(MainActivity.LOGTAG, "ask to enable location services");
+                        Log.d(LOGTAG, "ask to enable location services");
 
                     }
                 });
@@ -108,7 +110,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                 if(isLocationSettingsDemandDisplayed){
                     isLocationSettingsDemandDisplayed = false;
 
-                    Log.d(MainActivity.LOGTAG, "location services re-enabled");
+                    Log.d(LOGTAG, "location services re-enabled");
 
                     activity.setContentView(R.layout.activity_maps);
                 }
@@ -136,7 +138,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
 
     protected void callerOnPause(){
         if(updatingLocation) {
-            Log.d(MainActivity.LOGTAG, "callerOnPause" + activity.getLocalClassName());
+            Log.d(LOGTAG, "callerOnPause" + activity.getLocalClassName());
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
     }
@@ -144,7 +146,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
     protected void callerOnResume(){
 
         if(updatingLocation) {
-            Log.d(MainActivity.LOGTAG, "callerOnResume" + activity.getLocalClassName());
+            Log.d(LOGTAG, "callerOnResume" + activity.getLocalClassName());
             startLocationUpdates();
         }
     }
@@ -164,7 +166,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
 
 
         }else {
-            Log.d(MainActivity.LOGTAG, "permissions granted");
+            Log.d(LOGTAG, "permissions granted");
             createLocationRequest();
         }
     }
@@ -177,14 +179,14 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
-        Log.d(MainActivity.LOGTAG, "resquest permission result");
+        Log.d(LOGTAG, "resquest permission result");
 
         if (requestCode == CurrentLocation.LOCATION_REQUEST_CODE) {
 
             //Request cancelled -> result array is empty
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                Log.d(MainActivity.LOGTAG, "onRequestPermissionsResult_true");
+                Log.d(LOGTAG, "onRequestPermissionsResult_true");
                 checkLocationPermission();
             } else {
                 //Explain why the app needs to access the location and re-ask for permission
@@ -224,7 +226,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Location settings are satisfied
 
-                Log.d(MainActivity.LOGTAG, "createLocationRequest_true");
+                Log.d(LOGTAG, "createLocationRequest_true");
                 startLocationUpdates();
             }
         });
@@ -258,13 +260,13 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         // All required changes were successfully made
-                        Log.d(MainActivity.LOGTAG, "createLocationRequestAfterAskingViaDialog_true");
+                        Log.d(LOGTAG, "createLocationRequestAfterAskingViaDialog_true");
                         startLocationUpdates();
 
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
-                        Log.d(MainActivity.LOGTAG, "USER REFUSED TO ENABLE LOCATION SERVICES");
+                        Log.d(LOGTAG, "USER REFUSED TO ENABLE LOCATION SERVICES");
 
                         startLocationUpdates();
                         break;
@@ -280,13 +282,13 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
     protected void startLocationUpdates(){
         try {
             if (isPermissionGranted()) {
-                Log.d(MainActivity.LOGTAG, "OK PERMISSION");
+                Log.d(LOGTAG, "OK PERMISSION");
 
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
 
             } else {
-                Log.d(MainActivity.LOGTAG, "NO PERMISSION");
+                Log.d(LOGTAG, "NO PERMISSION");
 
                 checkLocationPermission();
 
@@ -296,7 +298,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
 
 
     public LatLng getLastLocation(){
-        Log.d(MainActivity.LOGTAG, "pos : " + mLastKnownLocation.getLatitude() + " " + mLastKnownLocation.getLongitude());
+        Log.d(LOGTAG, "pos : " + mLastKnownLocation.getLatitude() + " " + mLastKnownLocation.getLongitude());
         return new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
     }
 

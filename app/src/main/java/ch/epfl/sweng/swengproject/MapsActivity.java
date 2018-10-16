@@ -33,7 +33,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.GeoPoint;
 
-import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
+import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
+
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -58,7 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(MainActivity.LOGTAG, "onCreate");
+        Log.d(LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
 
 
@@ -105,7 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (mMap != null) {
-            Log.d(MainActivity.LOGTAG, "saving instance of map");
+            Log.d(LOGTAG, "saving instance of map");
             outState.putParcelable(KEY_LOCATION, lastLatLng);
         }
         super.onSaveInstanceState(outState);
@@ -115,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            Log.d(MainActivity.LOGTAG, "getting old instance");
+            Log.d(LOGTAG, "getting old instance");
             lastLatLng = savedInstanceState.getParcelable(KEY_LOCATION);
         }
     }
@@ -167,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateUI() {
 
-        Log.d(MainActivity.LOGTAG, "UPDATEUI");
+        Log.d(LOGTAG, "UPDATEUI");
 
         try {
             if (currentLocation.getLocationPermissionStatus()) {

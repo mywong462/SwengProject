@@ -23,7 +23,12 @@ public class MyApplication extends Application {
         MyApplication.context = getApplicationContext();
     }
 
+    /*Return the global context of this application*/
     public static Context getAppContext() {
         return MyApplication.context;
     }
+
+    //some mystic stuff :)
+    protected static final String LOGTAG = "HELLO";
+    protected static final CurrentLocation currentLocation = new CurrentLocation();
 }
