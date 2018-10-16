@@ -49,11 +49,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 
+    private LocationServer currLoc;
+
     private int range; //in kilometers
 
     private FloatingActionButton createNeed_btn;
 
     private static final String KEY_LOCATION = "location";
+
+    private  ArrayList<Need> availableNeeds = null;
 
 
     @Override
@@ -67,8 +71,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //TODO: get range in user settings
         range = 3000;
 
+        LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
+        if(loc != null){
+            currLoc = loc;
+            ArrayList<Need> needList = new ArrayList<>();
+            long ttl = System.currentTimeMillis() + 100000;
+            needList.add(new Need("hedi.sassi@epfl.ch", "my description", ttl, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ));
+            availableNeeds = needList;
+        }
+        else {
+            Log.d(MainActivity.LOGTAG,"Normal code section");
+            currLoc = currentLocation;
+            launchCurrentLocation();
+        }
 
-        launchCurrentLocation();
         bindAddNeedButton();
 
 
@@ -203,9 +219,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //arrayCategories while the user choosing them is not implemented
         ArrayList<Categories> arrayCategories = new ArrayList<>();
         arrayCategories.add(Categories.ALL);
-
-        ArrayList<Need> availableNeeds = Database.getNeeds(mGeoPoint, range, arrayCategories);
-
+        if(this.availableNeeds == null) {
+            this.availableNeeds = Database.getNeeds(mGeoPoint, range, arrayCategories);
+        }
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
