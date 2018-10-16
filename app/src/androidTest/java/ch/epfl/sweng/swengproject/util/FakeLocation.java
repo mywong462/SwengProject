@@ -26,4 +26,9 @@ public class FakeLocation implements LocationServer {
 
     }
 
+    @Override
+    public boolean getLocationPermissionStatus(){
+        return true;
+    }
+
 }
