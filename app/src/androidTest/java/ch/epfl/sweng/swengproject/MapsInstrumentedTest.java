@@ -49,8 +49,7 @@ public class MapsInstrumentedTest {
     public void canSwitchActivity() {
 
         onView(withId(R.id.create_need_btn)).perform(click());
-
-        onView(withId(R.id.validity_txt)).perform(typeText("22")).perform(closeSoftKeyboard());
+        
 
     }
 
