@@ -82,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else {
             this.normalExec = true;
-            Log.d(MainActivity.LOGTAG,"Normal code section");
+            Log.d(LOGTAG,"Normal code section");
 
             currLoc = currentLocation;
             launchCurrentLocation();
