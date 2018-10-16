@@ -72,6 +72,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
         if(loc != null){
+            this.normalExec = false;
             currLoc = loc;
             ArrayList<Need> needList = new ArrayList<>();
             long ttl = System.currentTimeMillis() + 100000;
@@ -79,6 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             availableNeeds = needList;
         }
         else {
+            this.normalExec = true;
             Log.d(MainActivity.LOGTAG,"Normal code section");
             currLoc = currentLocation;
             launchCurrentLocation();
@@ -218,9 +220,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //arrayCategories while the user choosing them is not implemented
         ArrayList<Categories> arrayCategories = new ArrayList<>();
         arrayCategories.add(Categories.ALL);
-        if(this.availableNeeds == null || this.normalExec) {
+        if(this.normalExec) {
             Log.d("DEBUG","normal code");
-            this.normalExec = true;
             this.availableNeeds = Database.getNeeds(mGeoPoint, range, arrayCategories);
 
         }
