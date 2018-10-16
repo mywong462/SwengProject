@@ -1,5 +1,6 @@
 package ch.epfl.sweng.swengproject;
 
+import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -8,6 +9,8 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import ch.epfl.sweng.swengproject.controllers.MainActivity;
 
 import static junit.framework.TestCase.fail;
 
@@ -32,6 +35,7 @@ public class CurrentLocationInstrumentedTest {
     @Test
     public void setCurrentLocationParametersInvalidTest1() {
         try {
+            mActivityRule.launchActivity(new Intent());
             MyApplication.currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
         }catch(NullPointerException e){
             return;

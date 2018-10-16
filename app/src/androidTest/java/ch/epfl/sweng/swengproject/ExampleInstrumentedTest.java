@@ -1,13 +1,14 @@
 package ch.epfl.sweng.swengproject;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
+
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import ch.epfl.sweng.swengproject.controllers.MainActivity;
 
 import static org.junit.Assert.*;
 
