@@ -66,11 +66,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_LOCATION) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(MainActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
-            }
-
+        if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
+            Toast.makeText(MainActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
         }
     }
 }
