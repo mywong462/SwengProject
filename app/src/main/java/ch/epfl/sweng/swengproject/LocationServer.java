@@ -15,5 +15,5 @@ public interface LocationServer extends Serializable{
 
     void onActivityResult(int requestCode, int resultCode, Intent data);
 
-
+    boolean getLocationPermissionStatus();
 }

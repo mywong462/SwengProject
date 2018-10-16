@@ -25,8 +25,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 public class MapsInstrumentedTest {
 
-    @Rule
-    public GrantPermissionRule grantPermissionRule  = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
+   // @Rule
+    //public GrantPermissionRule grantPermissionRule  = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
     @Rule
     public final ActivityTestRule<MapsActivity> mActivityRule = new ActivityTestRule<>(MapsActivity.class,false,false);
@@ -51,7 +51,6 @@ public class MapsInstrumentedTest {
         onView(withId(R.id.create_need_btn)).perform(click());
 
         onView(withId(R.id.validity_txt)).perform(typeText("22")).perform(closeSoftKeyboard());
-
 
     }
 
