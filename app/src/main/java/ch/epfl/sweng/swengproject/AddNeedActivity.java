@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
+import static ch.epfl.sweng.swengproject.Database.currentLocation;
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 
@@ -28,11 +27,6 @@ import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 
 
 public class AddNeedActivity extends AppCompatActivity {

@@ -24,6 +24,7 @@ import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 public final class Database {
 
+    protected static final CurrentLocation currentLocation = new CurrentLocation();
     protected static List<Need> listNeeds = new ArrayList<>();
 
     public static final FirebaseAuth getDBauth = FirebaseAuth.getInstance();

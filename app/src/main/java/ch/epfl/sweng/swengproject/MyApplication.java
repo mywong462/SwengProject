@@ -30,5 +30,4 @@ public class MyApplication extends Application {
 
     //some mystic stuff :)
     protected static final String LOGTAG = "HELLO";
-    protected static final CurrentLocation currentLocation = new CurrentLocation();
 }

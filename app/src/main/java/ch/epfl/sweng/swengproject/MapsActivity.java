@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.PopupWindow;
-import android.widget.Button;
 import android.view.LayoutInflater;
 import android.view.Gravity;
 import android.view.Display;
@@ -25,20 +24,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.GeoPoint;
 
-import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
+import static ch.epfl.sweng.swengproject.Database.currentLocation;
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener{

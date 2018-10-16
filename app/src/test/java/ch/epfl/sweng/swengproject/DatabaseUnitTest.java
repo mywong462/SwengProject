@@ -14,7 +14,8 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class DatabaseUnitTest {
+public class
+DatabaseUnitTest {
 
 
     @Test(expected = NullPointerException.class)
