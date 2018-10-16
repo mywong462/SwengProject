@@ -55,7 +55,7 @@ public class ChooseLocationInstrumentedTest {
     @Test
     public void defaultLocationTest() {
         onView(withId(R.id.choose_loc_btn)).perform(click());
-        onView(withId(R.id.set_loc_btn));
+        onView(withId(R.id.set_loc_btn)).perform(click());
         onView(withId(R.id.choose_loc_btn)).perform(click());
 
     }
