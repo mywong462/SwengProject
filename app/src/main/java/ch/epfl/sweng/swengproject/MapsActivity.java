@@ -57,6 +57,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private  ArrayList<Need> availableNeeds = null;
 
+    private boolean normalExec = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
         if(loc != null){
+            this.normalExec = false;
             currLoc = loc;
             ArrayList<Need> needList = new ArrayList<>();
             long ttl = System.currentTimeMillis() + 100000;
@@ -78,7 +81,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             availableNeeds = needList;
         }
         else {
-            Log.d(LOGTAG,"Normal code section");
+            this.normalExec = true;
+            Log.d(MainActivity.LOGTAG,"Normal code section");
+
             currLoc = currentLocation;
             launchCurrentLocation();
         }
@@ -184,12 +189,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(LOGTAG, "UPDATEUI");
 
         try {
-            if (currentLocation.getLocationPermissionStatus()) {
+            if (currLoc.getLocationPermissionStatus()) {
                 mMap.clear();
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-                lastLatLng = currentLocation.getLastLocation();
+                lastLatLng = currLoc.getLastLocation();
 
                 mGeoPoint = new GeoPoint(lastLatLng.latitude, lastLatLng.longitude);
                 CircleOptions mCircleOptions = new CircleOptions()
@@ -217,8 +222,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //arrayCategories while the user choosing them is not implemented
         ArrayList<Categories> arrayCategories = new ArrayList<>();
         arrayCategories.add(Categories.ALL);
-        if(this.availableNeeds == null) {
+        if(this.normalExec) {
+            Log.d("DEBUG","normal code");
             this.availableNeeds = Database.getNeeds(mGeoPoint, range, arrayCategories);
+
         }
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()

@@ -46,9 +46,9 @@ public class DBTools {
         ArrayList<Need> availableNeeds = new ArrayList<>();
 
         for (Need need : listNeeds) {
-
             //If the need isn't in the desired range (range is in kilometer) and the need isn't outdated
             if (distanceBetween(here, need.getPos()) <= range && need.getTimeToLive() > System.currentTimeMillis()) {
+
                 if (categories.contains(Categories.ALL) || categories.contains(need.getCategory())){
                     availableNeeds.add(need);
                 }
