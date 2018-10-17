@@ -41,7 +41,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         setContentView(R.layout.activity_choose_location);
         isOpening = true;
         Log.d(LOGTAG_sl, "in onCreate");
-        max_distance = 500000000;
+        max_distance = 500;
         launchDefaultLocation();
         bindSaveLocationButton();
 
@@ -56,9 +56,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         mMap_sl = googleMap;
         currentLocation.callerActivityReady();
-        //mMap_sl.setOnCameraIdleListener(onCameraIdleListener);
         mMap_sl.setOnMapClickListener(onMapClickListener);
-        //setDefaultLocation();
     }
 
     private void bindSaveLocationButton(){
@@ -72,7 +70,9 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                 } else {
                     setLatLng_str = setLatLng.toString();
                     Intent position = new Intent();
-                    position.setData(Uri.parse(setLatLng_str));
+                    position.putExtra("lat_code", setLatLng.latitude);
+                    position.putExtra("lng_code", setLatLng.longitude);
+                    //position.setData(Uri.parse(setLatLng_str));
                     setResult(RESULT_OK, position);
                     finish();
                 }
@@ -129,15 +129,6 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                 Log.d(LOGTAG_sl, "in setLocation, setLatLng = "+setLatLng);
             }
         };
-        /*
-        onCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
-            @Override
-            public void onCameraIdle() {
-                setLatLng = mMap_sl.getCameraPosition().target;
-                Log.d(LOGTAG_sl, "in setLocation, lastLatLng = "+lastLatLng_sl);
-                Log.d(LOGTAG_sl, "in setLocation, setLatLng = "+setLatLng);
-            }
-        };*/
     }
 
     private boolean locationTooFar() {
