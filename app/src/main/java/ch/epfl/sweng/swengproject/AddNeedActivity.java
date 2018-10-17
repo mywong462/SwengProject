@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
 import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 
 import com.google.firebase.firestore.DocumentReference;
@@ -43,6 +44,7 @@ public class AddNeedActivity extends AppCompatActivity {
     protected static final int MIN_NB_PEOPLE = 1;
     protected static final int MAX_NB_PEOPLE = 50;
 
+    private int REQUEST_LOCATION = 133;
 
     private final String validityInterval = "between " + MIN_VALIDITY + " and " + MAX_VALIDITY;
     private final String peopleInterval = "between "+MIN_NB_PEOPLE+" and "+MAX_NB_PEOPLE;
@@ -52,7 +54,12 @@ public class AddNeedActivity extends AppCompatActivity {
     private Categories category = Categories.HELP;
 
     private Button create_btn;
+    private Button chooseLocation_btn;
 
+    private LatLng setLocation;
+    private String setLocation_str;
+    private Double lat;
+    private Double lng;
 
     private LocationServer currLoc;
 
@@ -64,6 +71,7 @@ public class AddNeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_need);
 
+        bindChooseLocationButton();
       
         //For categories
         Spinner spin = findViewById(R.id.spinnerCategories);
@@ -83,7 +91,6 @@ public class AddNeedActivity extends AppCompatActivity {
         ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listCategory);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin.setAdapter(aa);
-
 
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
 
@@ -154,8 +161,13 @@ public class AddNeedActivity extends AppCompatActivity {
                     Toast.makeText(AddNeedActivity.this, "Incorrect input. The number of people needed must be "+peopleInterval, Toast.LENGTH_LONG).show();
 
                 }else{  //try to do something for the concurrency bug
-
-                    LatLng currPos = currLoc.getLastLocation();
+                    LatLng currPos;
+                    if (setLocation != null) {
+                        Log.d("Tag_sl", "Setting user set location");
+                        currPos = setLocation;
+                    } else {
+                        currPos = currLoc.getLastLocation();
+                    }
 
                     Log.d(MainActivity.LOGTAG,"position is null "+(currPos == null));
 
@@ -166,6 +178,18 @@ public class AddNeedActivity extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    private void bindChooseLocationButton(){
+        chooseLocation_btn = findViewById(R.id.choose_loc_btn);
+        chooseLocation_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(AddNeedActivity.this, ChooseLocationActivity.class), REQUEST_LOCATION);
+            }
+        });
+
 
     }
 
@@ -195,10 +219,18 @@ public class AddNeedActivity extends AppCompatActivity {
         currentLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        currentLocation.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LOCATION && data != null) {
+            lat = data.getDoubleExtra("lat_code", 0.0);
+            lng = data.getDoubleExtra("lng_code", 0.0);
+            setLocation = new LatLng(lat, lng);
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(AddNeedActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            currentLocation.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
