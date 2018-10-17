@@ -1,6 +1,5 @@
 package ch.epfl.sweng.swengproject;
 
-import android.location.Location;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
@@ -28,10 +27,22 @@ public final class Database {
 
     private static final FirebaseFirestore needsDB = FirebaseFirestore.getInstance();
 
+    private static final CollectionReference userSettingsRef = needsDB.collection("userSettings");
+
     private static final CollectionReference needsRef = needsDB.collection("needs");
 
     public static Task<DocumentReference> saveNeed(Need need){
+        if(need == null){
+          throw new NullPointerException("need is null");
+        }
         return needsRef.add(need);
+    }
+
+    public static Task<DocumentReference> saveUserSettings(UserSettings userSettings){
+        if(userSettings == null){
+            throw new NullPointerException("userSettings is null");
+        }
+        return userSettingsRef.add(userSettings);
     }
 
 
