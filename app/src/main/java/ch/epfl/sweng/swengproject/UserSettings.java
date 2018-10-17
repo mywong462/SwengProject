@@ -11,6 +11,9 @@ public class UserSettings {
     List<Categories> categories;
 
     public UserSettings(List<Categories> categories, int range){
+        checkNonNull(categories);
+        validRange(range);
+
         this.categories = categories;
         this.range = range;
     }
@@ -21,16 +24,24 @@ public class UserSettings {
 
     //Setters
     public void setRange(int range){
-        if(range <= 0){
-            throw new IllegalArgumentException("range must be greater than 0");
-        }
+        validRange(range);
         this.range = range;
     }
     public void setCategories(List<Categories> categories){
-        if(categories == null){
-            throw new NullPointerException("list of categories is null");
-        }
+        checkNonNull(categories);
         this.categories = categories;
+    }
+
+    private void checkNonNull(List<Categories> categories){
+        if(categories == null){
+            throw new NullPointerException("categories is null");
+        }
+    }
+
+    private void validRange(int range){
+        if(range <= 0){
+            throw new IllegalArgumentException("range must be greater or equal than zero");
+        }
     }
 
 }
