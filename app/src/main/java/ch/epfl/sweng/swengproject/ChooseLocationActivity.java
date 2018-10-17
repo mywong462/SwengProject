@@ -67,7 +67,9 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                 } else {
                     setLatLng_str = setLatLng.toString();
                     Intent position = new Intent();
-                    position.setData(Uri.parse(setLatLng_str));
+                    position.putExtra("lat_code", setLatLng.latitude);
+                    position.putExtra("lng_code", setLatLng.longitude);
+                    //position.setData(Uri.parse(setLatLng_str));
                     setResult(RESULT_OK, position);
                     finish();
                 }

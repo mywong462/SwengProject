@@ -5,6 +5,7 @@ import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,9 +46,14 @@ public class ChooseLocationInstrumentedTest {
 
     @Before
     public void create(){
-        //final CurrentLocation currentLocation = new CurrentLocation();
+
+        //LocationServer ls = new FakeLocation();
+
+        //inject the mocked object in the activity
+        //bActivityRule.launchActivity(new Intent().putExtra("loc",ls));
         bActivityRule.launchActivity(new Intent());
     }
+
 
     @Test
     public void activityFlowTest() {

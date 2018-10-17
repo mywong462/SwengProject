@@ -55,7 +55,10 @@ public class AddNeedActivity extends AppCompatActivity {
     private Button create_btn;
     private Button chooseLocation_btn;
 
-
+    private LatLng setLocation;
+    private String setLocation_str;
+    private Double lat;
+    private Double lng;
 
     private LocationServer currLoc;
 
@@ -158,8 +161,13 @@ public class AddNeedActivity extends AppCompatActivity {
                     Toast.makeText(AddNeedActivity.this, "Incorrect input. The number of people needed must be "+peopleInterval, Toast.LENGTH_LONG).show();
 
                 }else{  //try to do something for the concurrency bug
-
-                    LatLng currPos = currLoc.getLastLocation();
+                    LatLng currPos;
+                    if (setLocation != null) {
+                        Log.d("Tag_sl", "Setting user set location");
+                        currPos = setLocation;
+                    } else {
+                        currPos = currLoc.getLastLocation();
+                    }
 
                     Log.d(MainActivity.LOGTAG,"position is null "+(currPos == null));
 
@@ -213,8 +221,13 @@ public class AddNeedActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
-            Toast.makeText(AddNeedActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
+        if (requestCode == REQUEST_LOCATION && data != null) {
+            lat = data.getDoubleExtra("lat_code", 0.0);
+            lng = data.getDoubleExtra("lng_code", 0.0);
+            setLocation = new LatLng(lat, lng);
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(AddNeedActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
+            }
         } else {
             currentLocation.onActivityResult(requestCode, resultCode, data);
         }
