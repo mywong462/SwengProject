@@ -36,9 +36,8 @@ public class CurrentLocationInstrumentedTest {
     @Test
     public void setCurrentLocationParametersInvalidTest1() {
         try {
-            CurrentLocation currentLocation = new CurrentLocation();
-            mActivityRule.launchActivity(new Intent());
-            currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
+
+            Database.currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
         }catch(NullPointerException e){
             return;
         }
