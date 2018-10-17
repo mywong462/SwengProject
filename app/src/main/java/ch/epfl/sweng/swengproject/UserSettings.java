@@ -8,7 +8,7 @@ import ch.epfl.sweng.swengproject.Categories;
 public class UserSettings {
 
     private int range = 0; //in kilometers
-    List<Categories> categories;
+    private List<Categories> categories;
 
     public UserSettings(List<Categories> categories, int range){
         checkNonNull(categories);
