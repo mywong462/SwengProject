@@ -3,6 +3,7 @@ package ch.epfl.sweng.swengproject;
 import android.location.Location;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
@@ -79,6 +80,37 @@ public class DBTools {
             throw new NullPointerException();
         }
 
+    }
+
+    /**
+     * @Brief Check if there is a matching need with a number of participants less thant the max
+     * @param needList the list of needs
+     * @param pos the position of the current marker
+     * @return true if the need is not full
+     */
+    public static boolean isNotFull(ArrayList<Need> needList, LatLng pos){
+        for (Need need: needList){
+            if(need.getPos().getLatitude() == pos.latitude && need.getPos().getLongitude() == pos.longitude && need.getParticipants().size() <= need.getNbPeopleNeeded() ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param needList
+     * @param pos
+     * @param part
+     * @return return true if the user as not yet accepted this need
+     */
+    public static boolean notAlreadyAccepted(ArrayList<Need> needList, LatLng pos, String part){
+        for (Need need: needList){
+            if(need.getPos().getLatitude() == pos.latitude && need.getPos().getLongitude() == pos.longitude && !need.getParticipants().contains(part) ){
+                return true;
+            }
+        }
+        return false;
     }
 
 

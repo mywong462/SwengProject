@@ -5,6 +5,8 @@ package ch.epfl.sweng.swengproject;
         import com.google.android.gms.maps.model.LatLng;	//for localization
         import com.google.firebase.firestore.GeoPoint;
 
+        import java.util.ArrayList;
+
 public class Need {
 
 
@@ -16,13 +18,13 @@ public class Need {
     private long timeToLive;
     private Categories category;
     private int nbPeopleNeeded;
-
+    private ArrayList<String> participants;
 
     public Need() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Need(String emitter, String descr, long ttl, double latitude, double longitude, Categories category, int nbPeopleNeeded) {
+    public Need(String emitter, String descr, long ttl, double latitude, double longitude, Categories category, int nbPeopleNeeded, ArrayList<String> part) {
         this.emitter = emitter;
         this.description = descr;
         this.longitude = longitude;
@@ -30,6 +32,7 @@ public class Need {
         this.timeToLive = ttl;
         this.category = category;
         this.nbPeopleNeeded = nbPeopleNeeded;
+        this.participants = part;
     }
 
 
@@ -51,7 +54,7 @@ public class Need {
     }
     public Categories getCategory() { return this.category; }
     public int getNbPeopleNeeded() { return this.nbPeopleNeeded; }
-
+    public ArrayList<String> getParticipants() {return this.participants; }
 
     //Used to return directly a GeoPoint
     public GeoPoint getPos(){ return new GeoPoint(this.latitude, this.longitude); }
@@ -71,4 +74,7 @@ public class Need {
     public void setTimeToLive(long timeToLive){ this.timeToLive = timeToLive; }
     public void setCategory(Categories category) { this.category = category; }
     public void setNbPeopleNeeded(int nbPeopleNeeded) { this.nbPeopleNeeded = nbPeopleNeeded; }
+    public void setParticipants(ArrayList<String> participants){this.participants = participants;}
+
+
 }

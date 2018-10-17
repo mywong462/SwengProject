@@ -3,6 +3,7 @@ package ch.epfl.sweng.swengproject;
 import android.location.Location;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -66,6 +67,31 @@ public final class Database {
 
         return DBTools.filterNeeds(mGeoPoint,range,categories, listNeeds);
     }
+
+    public static void addParticipant(LatLng pos){
+
+        final LatLng position = pos;
+
+        needsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                if(e != null){
+                    Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
+                }
+                else{   //add a new participant
+
+                    for(DocumentSnapshot need:queryDocumentSnapshots.getDocuments()){
+                        if(need.toObject(Need.class).getLatitude() == position.latitude &&  need.toObject(Need.class).getLongitude() == position.longitude ){
+                           Need found = need.toObject(Need.class);
+                           need.getReference().update(found.getEmitter(),found.getDescription(), found.getTimeToLive(), found.getLatitude(), found.getLongitude(), found.getCategory(), found.getNbPeopleNeeded(),found.getParticipants().add(getDBauth.getCurrentUser().getEmail()));
+                        }
+
+                    }
+            }
+        }});
+    }
+
 
 
 }
