@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
 import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 
 import com.google.firebase.firestore.DocumentReference;
@@ -87,7 +88,6 @@ public class AddNeedActivity extends AppCompatActivity {
         ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listCategory);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin.setAdapter(aa);
-
 
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
 
@@ -214,6 +214,10 @@ public class AddNeedActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
+            String lat = data.toString().substring(23, 31);
+            String longi = data.toString().substring(41, 48);
+            Log.d("onActivityResult", "lat: " + lat + " long: " + longi);
+            this.currLoc = Double.pa
             Toast.makeText(AddNeedActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
         } else {
             currentLocation.onActivityResult(requestCode, resultCode, data);

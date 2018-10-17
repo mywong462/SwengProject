@@ -16,13 +16,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 
 
 public class ChooseLocationActivity extends FragmentActivity implements OnMapReadyCallback {
     static final String LOGTAG_sl = "Tag_sl";
-    private GoogleMap.OnCameraIdleListener onCameraIdleListener;
+    //private GoogleMap.OnCameraIdleListener onCameraIdleListener;
+    private GoogleMap.OnMapClickListener onMapClickListener;
     private Button setLocation_btn;
     private GoogleMap mMap_sl;
     private LatLng lastLatLng_sl;
@@ -32,13 +34,14 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     private int max_distance;
     private boolean isOpening;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_location);
         isOpening = true;
-
-        max_distance = 500;
+        Log.d(LOGTAG_sl, "in onCreate");
+        max_distance = 500000000;
         launchDefaultLocation();
         bindSaveLocationButton();
 
@@ -53,8 +56,9 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         mMap_sl = googleMap;
         currentLocation.callerActivityReady();
-        mMap_sl.setOnCameraIdleListener(onCameraIdleListener);
-        setDefaultLocation();
+        //mMap_sl.setOnCameraIdleListener(onCameraIdleListener);
+        mMap_sl.setOnMapClickListener(onMapClickListener);
+        //setDefaultLocation();
     }
 
     private void bindSaveLocationButton(){
@@ -63,6 +67,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
             @Override
             public void onClick(View v) {
                 if (lastLatLng_sl == null || locationTooFar()) {
+                    Log.d(LOGTAG_sl, "in bindSaveLocationButton and sth went wrong");
                     setDefaultLocation();
                 } else {
                     setLatLng_str = setLatLng.toString();
@@ -95,7 +100,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
 
         try {
             if (currentLocation.getLocationPermissionStatus()) {
-                mMap_sl.clear(); // removes all markers, overlays... from the map
+                //mMap_sl.clear(); // removes all markers, overlays... from the map
                 mMap_sl.setMyLocationEnabled(true); // while enabled, location is available
                 mMap_sl.getUiSettings().setMyLocationButtonEnabled(true);
                 Log.d(LOGTAG_sl, "in setDefaultLocation, lastLatLng = "+lastLatLng_sl);
@@ -112,6 +117,19 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
 
 
     private void setLocation() {
+        onMapClickListener = new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                mMap_sl.clear();
+                MarkerOptions markerOptions =
+                        new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("MEET HERE");
+                mMap_sl.addMarker(markerOptions);
+                setLatLng = markerOptions.getPosition();
+                Log.d(LOGTAG_sl, "in setLocation, lastLatLng = "+lastLatLng_sl);
+                Log.d(LOGTAG_sl, "in setLocation, setLatLng = "+setLatLng);
+            }
+        };
+        /*
         onCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
@@ -119,17 +137,14 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                 Log.d(LOGTAG_sl, "in setLocation, lastLatLng = "+lastLatLng_sl);
                 Log.d(LOGTAG_sl, "in setLocation, setLatLng = "+setLatLng);
             }
-        };
+        };*/
     }
 
     private boolean locationTooFar() {
-        Log.d(LOGTAG_sl, "in locationTooFar, lastLatLng = "+lastLatLng_sl);
-        Log.d(LOGTAG_sl, "in locationTooFar, setLatLng = "+setLatLng);
         Location.distanceBetween(lastLatLng_sl.latitude, lastLatLng_sl.longitude,
                 setLatLng.latitude, setLatLng.longitude, distance);
-        Log.d(LOGTAG_sl, "distance computed successfully");
+
         if (distance[0] > max_distance) {
-            Log.d(LOGTAG_sl, "yes, location is too far");
             Toast.makeText(ChooseLocationActivity.this, "It's too far away, you can't get there in time!",Toast.LENGTH_LONG).show();
             return true;
         } else {
@@ -147,6 +162,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     protected void onResume() {
         super.onResume();
         if(!isOpening) {
+            Log.d(LOGTAG_sl, "inOnResume");
             launchDefaultLocation();
         }
         currentLocation.callerOnResume();

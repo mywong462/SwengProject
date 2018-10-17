@@ -31,14 +31,5 @@
         android:text="Set location"
         android:textColor="@android:color/holo_blue_light" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="53dp"
-        android:layout_height="59dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="222dp"
-        android:src="@drawable/pin" />
 
 </RelativeLayout>
