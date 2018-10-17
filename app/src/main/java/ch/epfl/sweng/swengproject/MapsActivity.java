@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.GeoPoint;
 
+import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
 import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 
 import java.util.ArrayList;
@@ -293,7 +294,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //enable the button only if the need is not full and we haven't yet accepted this need
         findViewById(R.id.acceptBtn).setEnabled(DBTools.notAlreadyAccepted(this.availableNeeds,marker.getPosition(), Database.getDBauth.getCurrentUser().getEmail()) && DBTools.isNotFull(this.availableNeeds, marker.getPosition()));
 
-
+        Log.d(LOGTAG,"checks have passes now ready to query DB on click");
         //Implement the accept button
         (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

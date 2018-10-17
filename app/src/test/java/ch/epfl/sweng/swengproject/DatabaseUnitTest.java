@@ -4,6 +4,7 @@ package ch.epfl.sweng.swengproject;
 import android.location.Location;
 import android.widget.ArrayAdapter;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.GeoPoint;
 
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class DatabaseUnitTest {
         ArrayList<Need> listNeeds = new ArrayList<>();
 
         long timeValid =  System.currentTimeMillis() + 100000;
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
 
         ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
 
@@ -64,7 +65,7 @@ public class DatabaseUnitTest {
         ArrayList<Need> listNeeds = new ArrayList<>();
 
         long timeValid =  System.currentTimeMillis() + 100000;
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
 
         ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(30,60), 2, l,listNeeds);
 
@@ -78,7 +79,7 @@ public class DatabaseUnitTest {
         ArrayList<Need> listNeeds = new ArrayList<>();
 
         long timeValid =  System.currentTimeMillis() - 10000;
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
 
         ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
 
@@ -93,9 +94,9 @@ public class DatabaseUnitTest {
         ArrayList<Need> listNeeds = new ArrayList<>();
 
         long timeValid =  System.currentTimeMillis() + 100000;
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12));
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.NEED, 12));
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.HELP, 12));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.NEED, 12,new ArrayList<String>()));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.HELP, 12,new ArrayList<String>()));
         ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
 
         assertEquals(2,needList.size());
@@ -109,5 +110,63 @@ public class DatabaseUnitTest {
     }
 
 
+    @Test
+    public void checkEmptyNeed(){
+
+        ArrayList<Need> listNeeds = new ArrayList<>();
+
+        long timeValid =  System.currentTimeMillis() + 100000;
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
+
+        assertTrue(DBTools.isNotFull(listNeeds,new LatLng(12,34)));
+
+    }
+
+    @Test
+    public void checkFullNeed(){
+
+        ArrayList<Need> listNeeds = new ArrayList<>();
+        ArrayList<String> participants = new ArrayList<>();
+        participants.add("hedi.sassi96@gmail.com");
+        participants.add("jean-claude@epfl.ch");
+
+        long timeValid =  System.currentTimeMillis() + 100000;
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 2, participants));
+
+        assertFalse(DBTools.isNotFull(listNeeds,new LatLng(12,34)));
+
+    }
+
+    @Test
+    public void alreadyAccepted(){
+
+        ArrayList<Need> listNeeds = new ArrayList<>();
+        ArrayList<String> participants = new ArrayList<>();
+
+        participants.add("email@hotmail.ch");
+
+        long timeValid =  System.currentTimeMillis() + 100000;
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12,participants ));
+
+        assertFalse(DBTools.notAlreadyAccepted(listNeeds,new LatLng(12,34),"email@hotmail.ch"));
+
+
+    }
+
+
+    @Test
+    public void notAlreadyAccepted(){
+
+        ArrayList<Need> listNeeds = new ArrayList<>();
+        ArrayList<String> participants = new ArrayList<>();
+
+        participants.add("email@hotmail.ch");
+
+        long timeValid =  System.currentTimeMillis() + 100000;
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12,participants ));
+
+        assertTrue(DBTools.notAlreadyAccepted(listNeeds,new LatLng(12,34),"Simon"));
+
+    }
 
 }

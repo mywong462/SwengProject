@@ -90,7 +90,9 @@ public class DBTools {
      */
     public static boolean isNotFull(ArrayList<Need> needList, LatLng pos){
         for (Need need: needList){
-            if(need.getPos().getLatitude() == pos.latitude && need.getPos().getLongitude() == pos.longitude && need.getParticipants().size() <= need.getNbPeopleNeeded() ){
+            if(need.getPos().getLatitude() == pos.latitude &&
+                    need.getPos().getLongitude() == pos.longitude &&
+                    need.getParticipants().size() < need.getNbPeopleNeeded() ){
                 return true;
             }
         }
@@ -106,7 +108,9 @@ public class DBTools {
      */
     public static boolean notAlreadyAccepted(ArrayList<Need> needList, LatLng pos, String part){
         for (Need need: needList){
-            if(need.getPos().getLatitude() == pos.latitude && need.getPos().getLongitude() == pos.longitude && !need.getParticipants().contains(part) ){
+            if(need.getPos().getLatitude() == pos.latitude &&
+                    need.getPos().getLongitude() == pos.longitude &&
+                    !need.getParticipants().contains(part) ){
                 return true;
             }
         }
