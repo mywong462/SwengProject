@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
     protected static final String LOGTAG = "HELLO";
     protected static final CurrentLocation currentLocation = new CurrentLocation();
 
-    private ConstraintLayout scrWelcome;
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
