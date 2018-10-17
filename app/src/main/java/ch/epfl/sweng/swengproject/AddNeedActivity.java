@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
 import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 
 import com.google.firebase.firestore.DocumentReference;
@@ -26,10 +28,17 @@ import com.google.firebase.firestore.DocumentReference;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
+import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 
 public class AddNeedActivity extends AppCompatActivity {
 
     //constant used for input checks
+    
+    private int REQUEST_LOCATION = 133;
 
     protected static final int MIN_VALIDITY = 1;
     protected static final int MAX_VALIDITY = 30;
@@ -46,7 +55,11 @@ public class AddNeedActivity extends AppCompatActivity {
     private Categories category = Categories.HELP;
 
     private Button create_btn;
-
+    private Button chooseLocation_btn;
+    private LatLng setLocation;
+    private String setLocation_str;
+    private Double lat;
+    private Double lng;
 
     private LocationServer currLoc;
 
@@ -58,7 +71,8 @@ public class AddNeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_need);
 
-      
+        bindChooseLocationButton();
+        
         //For categories
         Spinner spin = findViewById(R.id.spinnerCategories);
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -148,9 +162,15 @@ public class AddNeedActivity extends AppCompatActivity {
                     Toast.makeText(AddNeedActivity.this, "Incorrect input. The number of people needed must be "+peopleInterval, Toast.LENGTH_LONG).show();
 
                 }else{  //try to do something for the concurrency bug
-
-                    LatLng currPos = currLoc.getLastLocation();
-
+                    
+                    LatLng currPos;
+                    if (setLocation != null) {
+                        Log.d("Tag_sl", "Setting user set location");
+                        currPos = setLocation;
+                    } else {
+                        currPos = currLoc.getLastLocation();
+                    }
+                   
                     Log.d(MainActivity.LOGTAG,"position is null "+(currPos == null));
 
                     writeNewNeed(descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos, nbPeople);
@@ -160,6 +180,16 @@ public class AddNeedActivity extends AppCompatActivity {
                 }
             }
         });
+        
+        private void bindChooseLocationButton(){
+        chooseLocation_btn = findViewById(R.id.choose_loc_btn);
+        chooseLocation_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(AddNeedActivity.this, ChooseLocationActivity.class), REQUEST_LOCATION);
+            }
+        });
+    }
 
     }
 
@@ -192,7 +222,16 @@ public class AddNeedActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        currentLocation.onActivityResult(requestCode, resultCode, data);
+         if (requestCode == REQUEST_LOCATION && data != null) {
+            lat = data.getDoubleExtra("lat_code", 0.0);
+            lng = data.getDoubleExtra("lng_code", 0.0);
+            setLocation = new LatLng(lat, lng);
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(AddNeedActivity.this, "Got the location!", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            currentLocation.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
