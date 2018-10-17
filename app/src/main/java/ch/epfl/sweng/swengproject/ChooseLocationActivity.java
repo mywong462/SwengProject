@@ -125,7 +125,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                         new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("MEET HERE");
                 mMap_sl.addMarker(markerOptions);
                 setLatLng = markerOptions.getPosition();
-                Log.d(LOGTAG_sl, "in setLocation, lastLatLng = "+lastLatLng_sl);
+                Log.d(LOGTAG_sl, "n setLocation, lastLatLng = "+lastLatLng_sl);
                 Log.d(LOGTAG_sl, "in setLocation, setLatLng = "+setLatLng);
             }
         };
