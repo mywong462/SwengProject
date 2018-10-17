@@ -3,6 +3,7 @@ package ch.epfl.sweng.swengproject;
 import android.location.Location;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
@@ -78,6 +79,137 @@ public class DBTools {
         if(g1 == null || g2 == null){
             throw new NullPointerException();
         }
+
+    }
+
+    /**
+     * @Brief Check if there is a matching need with a number of participants less thant the max
+     * @param needList the list of needs
+     * @param pos the position of the current marker
+     * @return true if the need is not full
+     */
+    public static boolean isNotFull(ArrayList<Need> needList, LatLng pos){
+        for (Need need: needList){
+            if(need.getPos().getLatitude() == pos.latitude &&
+                    need.getPos().getLongitude() == pos.longitude &&
+                    computeNumber(need.getParticipants()) < need.getNbPeopleNeeded() ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param needList
+     * @param pos
+     * @param part
+     * @return return true if the user as not yet accepted this need
+     */
+    public static boolean notAlreadyAccepted(ArrayList<Need> needList, LatLng pos, String part){
+        for (Need need: needList){
+            if(need.getPos().getLatitude() == pos.latitude &&
+                    need.getPos().getLongitude() == pos.longitude &&
+                    !need.getParticipants().contains(part) ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * @Brief compute the number of data in a csv-formatted string
+     * @param csv
+     * @return
+     */
+    public static int computeNumber(String csv){
+
+        if(csv.isEmpty()){
+            return 0;
+        }
+
+        char[] tab = csv.toCharArray();
+
+        int length = 0;
+
+        for(int i = 0; i < tab.length; ++i){
+            if(tab[i] == ',') {
+                length++;
+            }
+
+        }
+        return length + 1;
+    }
+
+    /**
+     * @Brief Convert a string in cvs format into an arraylist of string
+     * @param csv
+     * @return
+     */
+
+    public static ArrayList<String> convertCsvToArray(String csv){
+
+
+        ArrayList<String> array = new ArrayList<>();
+
+        char[] tab = csv.toCharArray();
+
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 0; i < tab.length; ++i){
+
+            if(tab[i] == ','){
+                array.add(sb.toString());
+                sb = new StringBuilder();
+            }
+            else{
+                sb.append(tab[i]);
+            }
+        }
+        array.add(sb.toString());
+
+        return reverseArray(array);
+    }
+
+    /**
+     * @Brief Reverse a given arraylist
+     * @param array
+     * @return
+     */
+
+    public static <T> ArrayList<T> reverseArray(ArrayList<T> array){
+
+        ArrayList<T> result = new ArrayList<>();
+
+        for(T s:array){
+
+            result.add(s);
+
+        }
+
+        return result;
+    }
+
+
+    public static Categories convertStringToCat(String s){
+
+        Categories c ;
+
+        switch(s){
+
+            case "HELP" : c = Categories.HELP;
+                break;
+            case"MEET" : c = Categories.MEET;
+                break;
+            case "NEED" : c = Categories.NEED;
+                break;
+            default : c = Categories.ALL;
+                break;
+
+        }
+
+        return c;
 
     }
 
