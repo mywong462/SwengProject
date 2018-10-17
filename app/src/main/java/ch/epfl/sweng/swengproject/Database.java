@@ -25,11 +25,11 @@ public final class Database {
 
     protected static final FirebaseAuth getDBauth = FirebaseAuth.getInstance();
 
-    private static final FirebaseFirestore needsDB = FirebaseFirestore.getInstance();
+    private static final FirebaseFirestore instanceDB = FirebaseFirestore.getInstance();
 
-    private static final CollectionReference userSettingsRef = needsDB.collection("userSettings");
+    private static final CollectionReference userSettingsRef = instanceDB.collection("userSettings");
 
-    private static final CollectionReference needsRef = needsDB.collection("needs");
+    private static final CollectionReference needsRef = instanceDB.collection("needs");
 
     public static Task<DocumentReference> saveNeed(Need need){
         if(need == null){
