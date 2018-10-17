@@ -23,13 +23,13 @@ public class NeedUnitTest {
     @Test
     public void canCreateNeed(){
 
-        Need test = new Need(mail,description,ttl,lat,lo, category, nbPeopleNeeded, new ArrayList<String>());
+        Need test = new Need(mail,description,ttl,lat,lo, category, nbPeopleNeeded, "");
         assertEquals(mail,test.getEmitter());
         assertEquals(description,test.getDescription());
         assertEquals(lat,test.getLatitude(),0.001);
         assertEquals(lo,test.getLongitude(),0.001);
         assertEquals(ttl,test.getTimeToLive());
-        assertEquals(0, test.getParticipants().size());
+        assertEquals(0, DBTools.computeNumber(test.getParticipants()));
 
     }
 
@@ -45,7 +45,7 @@ public class NeedUnitTest {
         test.setTimeToLive(ttl);
         test.setCategory(category);
         test.setNbPeopleNeeded(nbPeopleNeeded);
-        test.setParticipants(new ArrayList<String>());
+        test.setParticipants("");
 
         assertEquals(mail,test.getEmitter());
         assertEquals(description,test.getDescription());
@@ -54,7 +54,7 @@ public class NeedUnitTest {
         assertEquals(ttl,test.getTimeToLive());
         assertEquals(category, test.getCategory());
         assertEquals(nbPeopleNeeded, test.getNbPeopleNeeded());
-        assertEquals(0, test.getParticipants().size());
+        assertEquals(0, DBTools.computeNumber(test.getParticipants()));
     }
 
     @Test

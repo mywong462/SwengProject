@@ -92,7 +92,7 @@ public class DBTools {
         for (Need need: needList){
             if(need.getPos().getLatitude() == pos.latitude &&
                     need.getPos().getLongitude() == pos.longitude &&
-                    need.getParticipants().size() < need.getNbPeopleNeeded() ){
+                    computeNumber(need.getParticipants()) < need.getNbPeopleNeeded() ){
                 return true;
             }
         }
@@ -115,6 +115,102 @@ public class DBTools {
             }
         }
         return false;
+    }
+
+
+    /**
+     * @Brief compute the number of data in a csv-formatted string
+     * @param csv
+     * @return
+     */
+    public static int computeNumber(String csv){
+
+        if(csv.isEmpty()){
+            return 0;
+        }
+
+        char[] tab = csv.toCharArray();
+
+        int length = 0;
+
+        for(int i = 0; i < tab.length; ++i){
+            if(tab[i] == ',') {
+                length++;
+            }
+
+        }
+        return length + 1;
+    }
+
+    /**
+     * @Brief Convert a string in cvs format into an arraylist of string
+     * @param csv
+     * @return
+     */
+
+    public static ArrayList<String> convertCsvToArray(String csv){
+
+
+        ArrayList<String> array = new ArrayList<>();
+
+        char[] tab = csv.toCharArray();
+
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 0; i < tab.length; ++i){
+
+            if(tab[i] == ','){
+                array.add(sb.toString());
+                sb = new StringBuilder();
+            }
+            else{
+                sb.append(tab[i]);
+            }
+        }
+        array.add(sb.toString());
+
+        return reverseArray(array);
+    }
+
+    /**
+     * @Brief Reverse a given arraylist
+     * @param array
+     * @return
+     */
+
+    public static <T> ArrayList<T> reverseArray(ArrayList<T> array){
+
+        ArrayList<T> result = new ArrayList<>();
+
+        for(T s:array){
+
+            result.add(s);
+
+        }
+
+        return result;
+    }
+
+
+    public static Categories convertStringToCat(String s){
+
+        Categories c ;
+
+        switch(s){
+
+            case "HELP" : c = Categories.HELP;
+                break;
+            case"MEET" : c = Categories.MEET;
+                break;
+            case "NEED" : c = Categories.NEED;
+                break;
+            default : c = Categories.ALL;
+                break;
+
+        }
+
+        return c;
+
     }
 
 

@@ -168,7 +168,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
     private void writeNewNeed(String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
 
-        Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, new ArrayList<String>());
+        Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded,"");
         Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {

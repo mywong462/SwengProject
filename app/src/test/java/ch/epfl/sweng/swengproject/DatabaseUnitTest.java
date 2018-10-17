@@ -51,7 +51,7 @@ public class DatabaseUnitTest {
         ArrayList<Need> listNeeds = new ArrayList<>();
 
         long timeValid =  System.currentTimeMillis() + 100000;
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, ""));
 
         ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
 
@@ -65,7 +65,7 @@ public class DatabaseUnitTest {
         ArrayList<Need> listNeeds = new ArrayList<>();
 
         long timeValid =  System.currentTimeMillis() + 100000;
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, ""));
 
         ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(30,60), 2, l,listNeeds);
 
@@ -79,7 +79,7 @@ public class DatabaseUnitTest {
         ArrayList<Need> listNeeds = new ArrayList<>();
 
         long timeValid =  System.currentTimeMillis() - 10000;
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12,""));
 
         ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
 
@@ -94,9 +94,9 @@ public class DatabaseUnitTest {
         ArrayList<Need> listNeeds = new ArrayList<>();
 
         long timeValid =  System.currentTimeMillis() + 100000;
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.NEED, 12,new ArrayList<String>()));
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.HELP, 12,new ArrayList<String>()));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12,""));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.NEED, 12,""));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.HELP, 12,""));
         ArrayList<Need> needList = DBTools.filterNeeds(new GeoPoint(12,34), 200, l,listNeeds);
 
         assertEquals(2,needList.size());
@@ -116,7 +116,7 @@ public class DatabaseUnitTest {
         ArrayList<Need> listNeeds = new ArrayList<>();
 
         long timeValid =  System.currentTimeMillis() + 100000;
-        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, new ArrayList<String>()));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12, ""));
 
         assertTrue(DBTools.isNotFull(listNeeds,new LatLng(12,34)));
 
@@ -126,9 +126,7 @@ public class DatabaseUnitTest {
     public void checkFullNeed(){
 
         ArrayList<Need> listNeeds = new ArrayList<>();
-        ArrayList<String> participants = new ArrayList<>();
-        participants.add("hedi.sassi96@gmail.com");
-        participants.add("jean-claude@epfl.ch");
+        String participants = "hedi.sassi96@gmail.com,jean-claude@epfl.ch";
 
         long timeValid =  System.currentTimeMillis() + 100000;
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 2, participants));
@@ -141,9 +139,7 @@ public class DatabaseUnitTest {
     public void alreadyAccepted(){
 
         ArrayList<Need> listNeeds = new ArrayList<>();
-        ArrayList<String> participants = new ArrayList<>();
-
-        participants.add("email@hotmail.ch");
+        String participants = "email@hotmail.ch";
 
         long timeValid =  System.currentTimeMillis() + 100000;
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12,participants ));
@@ -158,9 +154,7 @@ public class DatabaseUnitTest {
     public void notAlreadyAccepted(){
 
         ArrayList<Need> listNeeds = new ArrayList<>();
-        ArrayList<String> participants = new ArrayList<>();
-
-        participants.add("email@hotmail.ch");
+        String participants = "email@hotmail.ch";
 
         long timeValid =  System.currentTimeMillis() + 100000;
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid, 12, 34,Categories.MEET, 12,participants ));
@@ -169,4 +163,40 @@ public class DatabaseUnitTest {
 
     }
 
+
+    @Test
+    public void convertString(){
+
+        String test = "email@truc,qwertz@machin,bidule@hotmail.com";
+
+        ArrayList<String> result = DBTools.convertCsvToArray(test);
+
+        assertEquals(result.get(0), "email@truc");
+        assertEquals(result.get(1), "qwertz@machin");
+        assertEquals(result.get(2), "bidule@hotmail.com");
+    }
+
+    @Test
+    public void canComputeNbrParticipants(){
+
+        String test = "email@truc,qwertz@machin,bidule@hotmail.com";
+
+        assertEquals(3,DBTools.computeNumber(test));
+
+    }
+
+    @Test
+    public void canConvertCat(){
+
+        String s1 = "HELP";
+        String s2 = "ALL";
+        String s3 = "NEED";
+        String s4 = "MEET";
+
+        assertEquals(Categories.HELP,DBTools.convertStringToCat(s1));
+        assertEquals(Categories.ALL,DBTools.convertStringToCat(s2));
+        assertEquals(Categories.NEED,DBTools.convertStringToCat(s3));
+        assertEquals(Categories.MEET,DBTools.convertStringToCat(s4));
+
+    }
 }
