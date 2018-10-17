@@ -29,7 +29,6 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     private GoogleMap mMap_sl;
     private LatLng lastLatLng_sl;
     private LatLng setLatLng;
-    private String setLatLng_str;
     private float[] distance = new float[1]; // in meters
     private int max_distance;
     private boolean isOpening;
@@ -68,7 +67,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                     Log.d(LOGTAG_sl, "in bindSaveLocationButton and sth went wrong");
                     setDefaultLocation();
                 } else {
-                    setLatLng_str = setLatLng.toString();
+                    //setLatLng_str = setLatLng.toString();
                     Intent position = new Intent();
                     position.putExtra("lat_code", setLatLng.latitude);
                     position.putExtra("lng_code", setLatLng.longitude);

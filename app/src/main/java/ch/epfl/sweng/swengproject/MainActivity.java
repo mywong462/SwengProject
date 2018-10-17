@@ -39,8 +39,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        scrWelcome = findViewById(R.id.welcome_scr);
 
+
+        ((MyApplication) this.getApplication()).setUser_need_ttl_OnStart(0L);
+
+        scrWelcome = findViewById(R.id.welcome_scr);
         scrWelcome.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent m) {

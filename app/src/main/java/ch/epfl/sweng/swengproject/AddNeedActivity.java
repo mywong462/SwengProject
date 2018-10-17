@@ -54,10 +54,16 @@ public class AddNeedActivity extends AppCompatActivity {
     private Categories category = Categories.HELP;
 
     private Button create_btn;
-    private Button chooseLocation_btn;
 
+    // Boolean to prevent a user creating multiple needs
+    static final String LOGTAG_nn = "Tag_nn";
+    private long ttl;
+    private boolean need_created;
+    private Need user_need;
+
+    // Variables to allow user to set his own location for his need
+    private Button chooseLocation_btn;
     private LatLng setLocation;
-    private String setLocation_str;
     private Double lat;
     private Double lng;
 
@@ -71,8 +77,9 @@ public class AddNeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_need);
 
+        // To set the location for the need
         bindChooseLocationButton();
-      
+
         //For categories
         Spinner spin = findViewById(R.id.spinnerCategories);
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -181,6 +188,43 @@ public class AddNeedActivity extends AppCompatActivity {
 
     }
 
+
+    //method used to write in the DB
+    private void writeNewUser( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
+        if (canAddNewNeed(((MyApplication) this.getApplication()).getUser_need_ttl())) {
+            Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded);
+            ((MyApplication) this.getApplication()).setUser_need_ttl(ttl);
+            Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentReference> task) {
+                    if (task.isSuccessful()) {
+                        //need_created = true;
+                        Toast.makeText(AddNeedActivity.this, "Need Successfully added", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(AddNeedActivity.this, "Error : Please verify your connection", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+    private boolean canAddNewNeed(long user_need_ttl) {
+        ttl = user_need_ttl-System.currentTimeMillis();
+        Log.d(LOGTAG_nn, "Time alive left = "+ttl);
+        if (ttl > 0) {
+            Toast.makeText(AddNeedActivity.this, "You can't add another need while you have one alive!", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        currentLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    // To set the location for the need
     private void bindChooseLocationButton(){
         chooseLocation_btn = findViewById(R.id.choose_loc_btn);
         chooseLocation_btn.setOnClickListener(new View.OnClickListener() {
@@ -189,36 +233,9 @@ public class AddNeedActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(AddNeedActivity.this, ChooseLocationActivity.class), REQUEST_LOCATION);
             }
         });
-
-
     }
 
-
-    //method used to write in the DB
-
-    private void writeNewUser( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
-
-        Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded);
-        Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentReference> task) {
-                if(task.isSuccessful()){
-
-                    Toast.makeText(AddNeedActivity.this,"Need Successfully added",Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(AddNeedActivity.this,"Error : Please verify your connection",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        currentLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
+    // Call back when ChooseLocationActivity is finished
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_LOCATION && data != null) {

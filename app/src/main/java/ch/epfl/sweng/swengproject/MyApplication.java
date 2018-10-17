@@ -15,6 +15,19 @@ public class MyApplication extends Application {
      * application/package is created.
      * https://developer.android.com/reference/android/app/Application
      */
+    // Variable to keep track of the last need created by the user and allowing him to create only one
+    // It is initialized at 0L, so I think we should delete the needs of a user that closes the app
+    // This makes sense in an app where needs have very short lifespan
+    private long user_need_ttl;
+    public long getUser_need_ttl() {
+        return user_need_ttl;
+    }
+    public void setUser_need_ttl(Long user_need_ttl) {
+        this.user_need_ttl = user_need_ttl;
+    }
+    public void setUser_need_ttl_OnStart(Long user_need_ttl) {
+        this.user_need_ttl = user_need_ttl;
+    }
 
     private static Context context;
 
