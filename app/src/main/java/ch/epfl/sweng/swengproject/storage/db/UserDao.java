@@ -76,6 +76,7 @@ public abstract class UserDao {
         editor.putString("my_email", me.email());
         editor.apply();
         insertUsers(me);
+        System.out.println("My own profile was saved in the Hard Disk");
     }
 
     /**

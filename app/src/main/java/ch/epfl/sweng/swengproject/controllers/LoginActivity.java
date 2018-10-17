@@ -23,6 +23,7 @@ import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.ResetPasswordActivity;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginADListener;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginAlertDialog;
+import ch.epfl.sweng.swengproject.storage.StorageHelper;
 
 // TO DO: import the method checkInfo ect from Registration activity to call them here
 // (code repetition)
@@ -75,8 +76,12 @@ public class LoginActivity extends AppCompatActivity implements LoginADListener 
             @Override
             public void onClick(View v) {
 
-                String email = checkInput(inputEmail.getText().toString());
-                String password = checkInput(inputPassword.getText().toString());
+                String email = inputEmail.getText().toString();
+                String password = inputPassword.getText().toString();
+
+                if(!inputAreCorrect(email, password)){
+                    return;
+                }
 
                 auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>(){
@@ -85,7 +90,7 @@ public class LoginActivity extends AppCompatActivity implements LoginADListener 
                             public void onComplete(@NonNull Task<AuthResult> task) {
 
                                 if (task.isSuccessful() && auth.getCurrentUser().isEmailVerified()) {
-                                    //TODO: MAY WANT TO SENT THE PROFILE IN THE SERVER  HERE
+                                    StorageHelper.getOrSendMyProfileToServer();
                                     finish();
                                     startActivity(new Intent(LoginActivity.this, MapsActivity.class));
                                 } else if(task.isSuccessful() && !auth.getCurrentUser().isEmailVerified()){
@@ -108,11 +113,16 @@ public class LoginActivity extends AppCompatActivity implements LoginADListener 
     public void onLoginDialogPositivClick(DialogFragment dialog) {
         auth.getCurrentUser().sendEmailVerification();
     }
-    private String checkInput(String in){
-        if(in.isEmpty()){
+
+    private boolean inputAreCorrect(String email, String password){
+
+        if(email.isEmpty() || password.isEmpty()){
             Toast.makeText(getApplicationContext(), "Please fill all the fields", Toast.LENGTH_SHORT).show();
+            return false;
         }
-        return in;
+        return true;
     }
+
+
 
 }

@@ -1,6 +1,5 @@
 package ch.epfl.sweng.swengproject.controllers;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import java.lang.ref.WeakReference;
 
 import ch.epfl.sweng.swengproject.Database;
 import ch.epfl.sweng.swengproject.MapsActivity;
-import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
@@ -30,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private final FirebaseAuth auth = Database.getDBauth;
     private User me = null;
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private void tryAutomaticLogin() {
         String email = me.email();
         String password = me.password();
-        System.out.println("Try to login automatically with email " + email + "and password " + password + " fetched from HD");
+        System.out.println("Trying to login automatically with email " + email + " and password " + password + " fetched from HD");
 
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
@@ -127,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         finish();
         startActivity(new Intent(this, LoginActivity.class)
                 .putExtra("email_to_propose", emailToPropose));
-
     }
 
     private void goToMapsActivity() {

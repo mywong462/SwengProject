@@ -152,7 +152,6 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
         //TODO: change this useless test!
         ConnectivityManager conMan = (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
         NetworkInfo info = conMan.getActiveNetworkInfo();
-
         if (info == null || !info.isConnected()) { //check if the error was caused by network connectivity problems
             Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network", Toast.LENGTH_LONG).show();
             userCanInteract = true;
@@ -173,7 +172,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                     meToSend.setPassword(pswEditText.getText().toString());
                     meToSend.setFirstName(firstNameEditText.getText().toString());
                     meToSend.setLastName(lastNameEditText.getText().toString());
-                    //TODO: don't set the empty picture here!
+                    //TODO: should not save the default empty picture in the user. Check it before
                     Bitmap bm = ((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap();
                     meToSend.setPicture(bm);
 
@@ -210,7 +209,6 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
             User me = users[0];
             UserDao userDao = AppDatabase.getDatabase().userDao();
             userDao.storeMyOwnProfile(me);
-            System.out.println("my own profile was stored with the email : "+ me.email());
             return null;
         }
     }
@@ -244,7 +242,6 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
 
                         if(user.isEmailVerified()){
                             StorageHelper.sendMyProfileToTheServer();
-                            sendMyProfileToTheServer();
                             finish();
                             startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
                         }else{
@@ -279,10 +276,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                 .putExtra("email_to_propose",  emailEditText.getText().toString()));
     }
 
-    private void sendMyProfileToTheServer(){
-        //TODO: implement me!
-        //use meToSend attribute of this classs
-    }
+
 }
 
 

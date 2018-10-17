@@ -29,14 +29,16 @@ public class CurrentLocationInstrumentedTest {
 
     @Test
     public void setCurrentLocationParametersValidTest(){
-        Database.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity());
+        CurrentLocation currentLocation = new CurrentLocation();
+        currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity());
     }
 
     @Test
     public void setCurrentLocationParametersInvalidTest1() {
         try {
+            CurrentLocation currentLocation = new CurrentLocation();
             mActivityRule.launchActivity(new Intent());
-            Database.currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
+            currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
         }catch(NullPointerException e){
             return;
         }
@@ -46,7 +48,8 @@ public class CurrentLocationInstrumentedTest {
     @Test
     public void setCurrentLocationParametersInvalidTest2() {
         try {
-            Database.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), null);
+            CurrentLocation currentLocation = new CurrentLocation();
+            currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), null);
         }catch(NullPointerException e){
             return;
         }
