@@ -33,6 +33,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     private float[] distance = new float[1]; // in meters
     private int max_distance;
     private boolean isOpening;
+    private LocationServer currLoc;
 
 
     @Override
@@ -42,7 +43,18 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         isOpening = true;
         Log.d(LOGTAG_sl, "in onCreate");
         max_distance = 500;
-        launchDefaultLocation();
+
+        LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
+
+        Log.d(MainActivity.LOGTAG, "got the Serializable : " + (loc == null));
+        if (loc != null) {
+            currLoc = loc;
+
+        } else {
+            currLoc = currentLocation;
+            launchDefaultLocation();
+        }
+
         bindSaveLocationButton();
 
         SupportMapFragment mapFragment_loc = (SupportMapFragment) getSupportFragmentManager()
@@ -99,13 +111,13 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         Log.d(LOGTAG_sl, "in setDefaultLocation");
 
         try {
-            if (currentLocation.getLocationPermissionStatus()) {
+            if (currLoc.getLocationPermissionStatus()) {
                 //mMap_sl.clear(); // removes all markers, overlays... from the map
                 mMap_sl.setMyLocationEnabled(true); // while enabled, location is available
                 mMap_sl.getUiSettings().setMyLocationButtonEnabled(true);
                 Log.d(LOGTAG_sl, "in setDefaultLocation, lastLatLng = "+lastLatLng_sl);
                 Log.d(LOGTAG_sl, "in setDefaultLocation, setLatLng = "+setLatLng);
-                lastLatLng_sl = currentLocation.getLastLocation();
+                lastLatLng_sl = currLoc.getLastLocation();
                 mMap_sl.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng_sl, 12));
             } else {
                 Log.d("ERROR", "CAN'T SET LOCATION");

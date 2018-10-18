@@ -48,7 +48,7 @@ public class User {
      * Save the picture of the user in the filesystem
      * @return true if the picture can have been saved, else false
      */
-    boolean savePicture(){
+    public boolean savePicture(){
         if(picture != null){
             return BitMapStorage.saveImage(picture, pathToPicture());
         }else{
@@ -61,7 +61,7 @@ public class User {
      * @return true if the picture doesn't exist in the file system at
      *       the end of the invocation of this method, else false
      */
-    boolean deletePicture(){
+    public boolean deletePicture(){
         return Generic.deleteFile(pathToPicture());
     }
 
@@ -88,6 +88,9 @@ public class User {
         this.inscriptionDate = inscriptionDate;
     }
     public void setPicture(Bitmap picture) {
+        if(picture == null){
+            throw new NullPointerException();
+        }
         this.picture = picture;
     }
 
