@@ -47,6 +47,7 @@ public class LogOutAlertDialog extends DialogFragment {
             @Override
             public void onShow(DialogInterface arg0) {
                 ad.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
+                ad.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(Color.BLUE);
             }
         });
 

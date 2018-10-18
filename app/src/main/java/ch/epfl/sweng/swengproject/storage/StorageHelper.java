@@ -2,10 +2,6 @@ package ch.epfl.sweng.swengproject.storage;
 
 import android.os.AsyncTask;
 
-import java.lang.ref.WeakReference;
-
-import ch.epfl.sweng.swengproject.MyApplication;
-import ch.epfl.sweng.swengproject.controllers.MainActivity;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
@@ -17,7 +13,7 @@ public class StorageHelper {
      * Delete all data that might be stored in the disk!
      */
     public static void deleteAllDataStoredLocally(){
-        UserDao userDao = AppDatabase.getDatabase().userDao();
+        UserDao userDao = AppDatabase.getInstance().userDao();
         userDao.deleteAll();
         System.out.println("Normally everything must have been delete from the local storage of the phone now! ");
     }
@@ -30,7 +26,7 @@ public class StorageHelper {
 
         new AsyncTask<Void, Void, Void>() {
 
-            final UserDao userDao = AppDatabase.getDatabase().userDao();
+            final UserDao userDao = AppDatabase.getInstance().userDao();
             User me = null;
 
             @Override
@@ -57,7 +53,7 @@ public class StorageHelper {
     public static void sendMyProfileToTheServer(){
         new AsyncTask<Void, Void, Void>() {
 
-            final UserDao userDao = AppDatabase.getDatabase().userDao();
+            final UserDao userDao = AppDatabase.getInstance().userDao();
             User me = null;
 
             @Override

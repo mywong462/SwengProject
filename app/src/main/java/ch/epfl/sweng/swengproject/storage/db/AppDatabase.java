@@ -43,7 +43,7 @@ public abstract class AppDatabase extends RoomDatabase {
      *
      * @return the database instance that interact with the device hard disk for this application
      */
-    public static AppDatabase getDatabase() {
+    public static AppDatabase getInstance() {
         Context context = MyApplication.getAppContext();
         if (INSTANCE == null) {
             INSTANCE =

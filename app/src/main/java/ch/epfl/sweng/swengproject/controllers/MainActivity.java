@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static class GetMyProfileTask extends AsyncTask<Void, Void, Void> {
 
-        final UserDao userDao = AppDatabase.getDatabase().userDao();
+        final UserDao userDao = AppDatabase.getInstance().userDao();
         User me = null;
 
         private final WeakReference<MainActivity> activityReference;

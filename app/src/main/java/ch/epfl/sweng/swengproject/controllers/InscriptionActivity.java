@@ -210,7 +210,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
     private static class StoreMyProfileTask extends AsyncTask<User, Void, Void> {
 
-        UserDao userDao = AppDatabase.getDatabase().userDao();
+        UserDao userDao = AppDatabase.getInstance().userDao();
 
         @Override
         protected Void doInBackground(User... users) {
@@ -218,7 +218,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
             StorageHelper.deleteAllDataStoredLocally();
 
             User me = users[0];
-            UserDao userDao = AppDatabase.getDatabase().userDao();
+            UserDao userDao = AppDatabase.getInstance().userDao();
             userDao.storeMyOwnProfile(me);
             return null;
         }
