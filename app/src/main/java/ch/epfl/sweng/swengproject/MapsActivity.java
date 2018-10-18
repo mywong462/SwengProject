@@ -116,7 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this, function);
+        currentLocation.setCurrentLocationParameters(this, function);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onPause() {
         super.onPause();
-        currentLocation.callerOnPause();
+        currLoc.callerOnPause();
     }
 
     @Override
@@ -162,10 +162,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Log.d(MainActivity.LOGTAG, "onResume before super");
         super.onResume();
         //Log.d(MainActivity.LOGTAG, "onResume after super");
-        if(!isOpening) {
+        if(!isOpening || !currLoc.getLocationPermissionStatus()) {
             launchCurrentLocation();
+            currLoc.callerOnResume();
         }
-        currentLocation.callerOnResume();
         //Log.d(MainActivity.LOGTAG, "onResume before super");
     }
 

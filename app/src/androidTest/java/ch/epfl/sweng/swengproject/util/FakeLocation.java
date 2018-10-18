@@ -31,4 +31,10 @@ public class FakeLocation implements LocationServer {
         return true;
     }
 
+    @Override
+    public void callerOnPause(){}
+
+    @Override
+    public void callerOnResume(){}
+
 }

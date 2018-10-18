@@ -1,8 +1,14 @@
 package ch.epfl.sweng.swengproject;
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.content.Context;
+import android.content.DialogInterface;
+
+import java.util.Objects;
 
 public class MyApplication extends Application {
     /**
@@ -26,4 +32,25 @@ public class MyApplication extends Application {
     public static Context getAppContext() {
         return MyApplication.context;
     }
+
+    public static void showCustomAlert2Buttons(String title, String message, String neutralButtonText, String positiveButtonText, final Function<Void, Void> callOnNeutralClick, final Function<Void, Void> callOnPositiveClick, Activity activity){
+        new AlertDialog.Builder(activity)
+                .setTitle(Objects.requireNonNull(title))
+                .setMessage(Objects.requireNonNull(message))
+                .setNeutralButton(Objects.requireNonNull(neutralButtonText), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        callOnNeutralClick.apply(null);
+                    }
+                })
+                .setPositiveButton(Objects.requireNonNull(positiveButtonText), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        callOnPositiveClick.apply(null);
+                    }
+                })
+                .create()
+                .show();
+    }
+
 }

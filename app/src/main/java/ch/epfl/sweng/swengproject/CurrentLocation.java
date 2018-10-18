@@ -17,7 +17,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.common.data.DataBufferObserver;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
@@ -34,12 +33,14 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.Objects;
 
+import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
 
-public class CurrentLocation extends FragmentActivity implements LocationServer{
 
-    protected static final int LOCATION_REQUEST_CODE = 99;
+public class CurrentLocation implements LocationServer, ActivityCompat.OnRequestPermissionsResultCallback{
 
-    protected static final int REQUEST_CHECK_SETTINGS = 555;
+    private static final int LOCATION_REQUEST_CODE = 99;
+
+    private static final int REQUEST_CHECK_SETTINGS = 555;
 
     private LocationRequest mLocationRequest;
 
@@ -51,7 +52,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
 
     private boolean updatingLocation = false;
 
-    private Context ctx;
+    private Context context = MyApplication.getAppContext();
 
     private Activity activity;
 
@@ -73,7 +74,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                 function.apply(null);
             }
 
-            Log.d(MainActivity.LOGTAG, "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
+            Log.d(LOGTAG, "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
         }
 
         @Override
@@ -99,7 +100,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                         activity.setContentView(R.layout.page_location_services_up_demand);
                         isLocationSettingsDemandDisplayed = true;
 
-                        Log.d(MainActivity.LOGTAG, "ask to enable location services");
+                        Log.d(LOGTAG, "ask to enable location services");
 
                     }
                 });
@@ -108,7 +109,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                 if(isLocationSettingsDemandDisplayed){
                     isLocationSettingsDemandDisplayed = false;
 
-                    Log.d(MainActivity.LOGTAG, "location services re-enabled");
+                    Log.d(LOGTAG, "location services re-enabled");
 
                     activity.setContentView(R.layout.activity_maps);
                 }
@@ -117,12 +118,11 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
     };
 
 
-    public void setCurrentLocationParameters(Context context, Activity activity){
-        this.setCurrentLocationParameters(context, activity, null);
+    public void setCurrentLocationParameters(Activity activity){
+        this.setCurrentLocationParameters(activity, null);
     }
 
-    public void setCurrentLocationParameters(Context context, Activity activity, Function<Void, Void> function){
-        this.ctx = Objects.requireNonNull(context);
+    public void setCurrentLocationParameters(Activity activity, Function<Void, Void> function){
         this.activity = Objects.requireNonNull(activity);
         this.function = function;
 
@@ -130,41 +130,81 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
-
+        updatingLocation = true;
         checkLocationPermission();
     }
 
-    protected void callerOnPause(){
-        if(updatingLocation) {
-            Log.d(MainActivity.LOGTAG, "callerOnPause" + activity.getLocalClassName());
+    @Override
+    public void callerOnPause(){
+        if(isPermissionGranted()) {
+            Log.d(LOGTAG, "callerOnPause" + activity.getLocalClassName());
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
     }
 
-    protected void callerOnResume(){
+    @Override
+    public void callerOnResume(){
 
-        if(updatingLocation) {
-            Log.d(MainActivity.LOGTAG, "callerOnResume" + activity.getLocalClassName());
+        if(isPermissionGranted()) {
+            Log.d(LOGTAG, "callerOnResume" + activity.getLocalClassName());
             startLocationUpdates();
         }
     }
 
-    protected boolean isPermissionGranted(){
-        return ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION)
+    private boolean isPermissionGranted(){
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
     }
 
+    private void explainForPermission(){
+        Function<Void, Void> done = new Function<Void, Void>() {
+            @Override
+            public Void apply(Void input) {
+                checkLocationPermission();
+                return null;
+            }
+        };
 
-    protected void checkLocationPermission(){
+        Function<Void, Void> bringMeToManagement = new Function<Void, Void>() {
+            @Override
+            public Void apply(Void input) {
+                activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_SETTINGS));
+                return null;
+            }
+        };
+
+        MyApplication.showCustomAlert2Buttons("SwengProject needs your location to continue :(",
+                "To allow SwengProject to TRACKK U please go to the settings and allow" +
+                        " SwngProject to use your location",
+                "Settings","Done !",
+                bringMeToManagement, done, activity);
+    }
+
+
+    private void checkLocationPermission(){
 
         if(!isPermissionGranted()){
+            //Permission not granted
 
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+            //Should the app give an explanation?
+            if(ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)){
+
+                Log.d(LOGTAG, "explain the need for location");
+                explainForPermission();
+
+            }else{
+
+                //Just request permission, callback method is onRequestPermissionResult
+                Log.d(LOGTAG, "Ask without explanation");
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+            }
 
 
         }else {
-            Log.d(MainActivity.LOGTAG, "permissions granted");
+
+            //Permission has already benn granted
+            Log.d(LOGTAG, "permissions granted");
             createLocationRequest();
         }
     }
@@ -177,38 +217,28 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
-        Log.d(MainActivity.LOGTAG, "resquest permission result");
+        Log.d(LOGTAG, "resquest permission result");
 
-        if (requestCode == CurrentLocation.LOCATION_REQUEST_CODE) {
-
-            //Request cancelled -> result array is empty
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                Log.d(MainActivity.LOGTAG, "onRequestPermissionsResult_true");
-                checkLocationPermission();
-            } else {
-                //Explain why the app needs to access the location and re-ask for permission
-                new AlertDialog.Builder(this)
-                        .setTitle("Why the app needs your location")
-                        .setMessage("The app need to know your location in order to allow you to create Demands and reply to others' Demands")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ActivityCompat.requestPermissions(activity,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, CurrentLocation.LOCATION_REQUEST_CODE);
-                            }
-                        })
-                        .create()
-                        .show();
-
+        switch (requestCode){
+            case LOCATION_REQUEST_CODE:{
+                // If request is cancelled, the result arrays are empty
+                if(grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //Permission was granted, go on
+                    createLocationRequest();
+                }else{
+                    Log.d(LOGTAG, "Permission denied, asking again");
+                    explainForPermission();
+                }
+                return;
             }
-
         }
+
     }
 
 
 
-    protected void createLocationRequest() {
+    private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(500);
         mLocationRequest.setFastestInterval(500);
@@ -224,7 +254,7 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Location settings are satisfied
 
-                Log.d(MainActivity.LOGTAG, "createLocationRequest_true");
+                Log.d(LOGTAG, "createLocationRequest_true");
                 startLocationUpdates();
             }
         });
@@ -258,13 +288,13 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         // All required changes were successfully made
-                        Log.d(MainActivity.LOGTAG, "createLocationRequestAfterAskingViaDialog_true");
+                        Log.d(LOGTAG, "createLocationRequestAfterAskingViaDialog_true");
                         startLocationUpdates();
 
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
-                        Log.d(MainActivity.LOGTAG, "USER REFUSED TO ENABLE LOCATION SERVICES");
+                        Log.d(LOGTAG, "USER REFUSED TO ENABLE LOCATION SERVICES");
 
                         startLocationUpdates();
                         break;
@@ -277,16 +307,16 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
 
 
 
-    protected void startLocationUpdates(){
+    private void startLocationUpdates(){
         try {
             if (isPermissionGranted()) {
-                Log.d(MainActivity.LOGTAG, "OK PERMISSION");
+                Log.d(LOGTAG, "OK PERMISSION");
 
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
 
             } else {
-                Log.d(MainActivity.LOGTAG, "NO PERMISSION");
+                Log.d(LOGTAG, "NO PERMISSION");
 
                 checkLocationPermission();
 
@@ -294,14 +324,14 @@ public class CurrentLocation extends FragmentActivity implements LocationServer{
         }catch(SecurityException e){}
     }
 
-
+    @Override
     public LatLng getLastLocation(){
-        Log.d(MainActivity.LOGTAG, "pos : " + mLastKnownLocation.getLatitude() + " " + mLastKnownLocation.getLongitude());
+        Log.d(LOGTAG, "pos : " + mLastKnownLocation.getLatitude() + " " + mLastKnownLocation.getLongitude());
         return new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
     }
 
 
-
+    @Override
     public boolean getLocationPermissionStatus(){
         return isPermissionGranted();
     }

@@ -100,7 +100,7 @@ public class AddNeedActivity extends AppCompatActivity {
         }
         else {
             Log.d(MainActivity.LOGTAG,"Normal code section");
-            currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this);
+            currentLocation.setCurrentLocationParameters(this);
             currLoc = currentLocation;
             Log.d(MainActivity.LOGTAG,"currloc is null ? : "+(currLoc == null));
         }

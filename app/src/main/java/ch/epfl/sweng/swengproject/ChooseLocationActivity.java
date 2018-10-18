@@ -91,7 +91,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
             }
         };
 
-        currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this, function_sl);
+        currentLocation.setCurrentLocationParameters(this, function_sl);
 
     }
 
