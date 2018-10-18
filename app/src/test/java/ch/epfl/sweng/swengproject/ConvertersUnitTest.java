@@ -26,15 +26,4 @@ public class ConvertersUnitTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void wrongInputs(){
-        Converters.dateToTimestamp(new Date(-12));
-
-    }
-    @Test(expected = IllegalArgumentException.class)
-    public void wrongInputs2(){
-        Converters.fromTimestamp((long)-12);
-
-    }
-
 }

@@ -8,18 +8,13 @@ import java.util.Date;
 public class Converters {
     @TypeConverter
     public static Date fromTimestamp(Long value) {
-        if(value < 0){
-            throw new IllegalArgumentException();
-        }
-        return new Date(value);
+
+        return value == null ? null : new Date(value);
     }
 
     @TypeConverter
     public static Long dateToTimestamp(Date date) {
-        if(date.getTime() < 0){
-            throw new IllegalArgumentException();
-        }
-        return date.getTime();
+        return date == null ? null : date.getTime();
     }
 }
 
