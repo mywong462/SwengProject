@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (!task.isSuccessful()) {
-                            System.out.println("After fetching a profile from the HD, the automatic login failed, so we send the user to the Inscription Activity");
+                            System.out.println("After fetching a profile from the HD, the automatic login failed, so we send the user to the Inscription Activity. This is due to" +  task.getException().toString());
                             goToInscriptionActivity();
                         } else {
                             System.out.println("After fetching a profile from the HD, the automatic login succeeded, it's time to check if the user verified his email already");

@@ -200,6 +200,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                         Toast.makeText(MyApplication.getAppContext(), "Your inscription failed ! We are sorry for that, please try later", Toast.LENGTH_LONG).show();
                         userCanInteract = true;
                         registerButton.setEnabled(true);
+                        System.out.println("The inscription failed because : " + exception.toString());
                     }
                 }
             }

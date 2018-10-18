@@ -195,17 +195,17 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
     }
 
     private void hideOrShowUpdateButton(){
-        System.out.println("Actually checking");
+
         if(meBeforeAnyChange == null){
             return;
         }
-        if(emailEditText.getText().toString() != meBeforeAnyChange.email()
-                || pswEditText.getText().toString() != meBeforeAnyChange.password()
-                || firstNameEditText.getText().toString() != meBeforeAnyChange.firstName()
-                ||lastNameEditText.getText().toString() != meBeforeAnyChange.lastName()
+        if(!emailEditText.getText().toString().equals(meBeforeAnyChange.email())
+                || !pswEditText.getText().toString().equals(meBeforeAnyChange.password())
+                || !firstNameEditText.getText().toString().equals(meBeforeAnyChange.firstName())
+                ||!lastNameEditText.getText().toString().equals(meBeforeAnyChange.lastName())
+                || !((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap().
+                            sameAs(meBeforeAnyChange.picture())
                 ){
-            //|| !((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap().
-            //                sameAs(meBeforeAnyChange.picture())
             updateProfile.setVisibility(View.VISIBLE);
         }else{
             updateProfile.setVisibility(View.GONE);
