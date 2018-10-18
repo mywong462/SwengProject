@@ -1,10 +1,13 @@
 package ch.epfl.sweng.swengproject.controllers;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +38,8 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
     private EditText lastNameEditText;
     private Button updateProfile;
 
+    private User meBeforeAnyChange = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +60,7 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
         firstNameEditText = findViewById(R.id.activity_my_profile_first_name);
         lastNameEditText = findViewById(R.id.activity_my_profile_last_name);
         updateProfile = findViewById(R.id.activity_my_profile_update_button);
+        updateProfile.setVisibility(View.GONE);
 
         new ShowMyProfileTask(this).execute();
 
@@ -68,15 +74,23 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
                 }
             }
         });
-
     }
 
     private void automaticallyFillTheInfos(User me){
+        meBeforeAnyChange = me;
         profilePictureButton.setImageBitmap(me.picture());
         emailEditText.setText(me.email(), TextView.BufferType.EDITABLE);
         pswEditText.setText(me.password(), TextView.BufferType.EDITABLE);
         firstNameEditText.setText(me.firstName(), TextView.BufferType.EDITABLE);
         lastNameEditText.setText(me.lastName(), TextView.BufferType.EDITABLE);
+        setWidgetsListeners();
+    }
+
+    private void setWidgetsListeners(){
+        emailEditText.addTextChangedListener(new myTextWatcher());
+        pswEditText.addTextChangedListener(new myTextWatcher());
+        firstNameEditText.addTextChangedListener(new myTextWatcher());
+        lastNameEditText.addTextChangedListener(new myTextWatcher());
     }
 
 
@@ -161,4 +175,40 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
             }
         }
     }
-}
+
+    private class myTextWatcher implements TextWatcher{
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            hideOrShowUpdateButton();
+        }
+    }
+
+    private void hideOrShowUpdateButton(){
+        System.out.println("Actually checking");
+        if(meBeforeAnyChange == null){
+            return;
+        }
+        if(emailEditText.getText().toString() != meBeforeAnyChange.email()
+                || pswEditText.getText().toString() != meBeforeAnyChange.password()
+                || firstNameEditText.getText().toString() != meBeforeAnyChange.firstName()
+                ||lastNameEditText.getText().toString() != meBeforeAnyChange.lastName()
+                ){
+            //|| !((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap().
+            //                sameAs(meBeforeAnyChange.picture())
+            updateProfile.setVisibility(View.VISIBLE);
+        }else{
+            updateProfile.setVisibility(View.GONE);
+        }
+    }
+};
