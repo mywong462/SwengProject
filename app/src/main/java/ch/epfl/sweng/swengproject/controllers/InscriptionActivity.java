@@ -52,6 +52,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
     private EditText pswEditText;
     private EditText firstNameEditText;
     private EditText lastNameEditText;
+    private  Button registerButton;
 
 
     private boolean userCanInteract = true;
@@ -81,7 +82,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
         pswEditText = findViewById(R.id.inscription_activity_password);
         firstNameEditText = findViewById(R.id.inscription_activity_first_name);
         lastNameEditText = findViewById(R.id.inscription_activity_last_name);
-        Button registerButton = findViewById(R.id.inscription_activity_register_button);
+        registerButton = findViewById(R.id.inscription_activity_register_button);
         Button goToLogginButton = findViewById(R.id.inscription_activity_go_to_login_activity);
 
         profilePictureButton.setOnClickListener(new View.OnClickListener() {
@@ -94,6 +95,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                registerButton.setEnabled(false);
                 userCanInteract = false;
                 checkBeforeRegister();
             }
@@ -144,6 +146,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
             register();
         }else{
             userCanInteract = true;
+            registerButton.setEnabled(true);
         }
     }
 
@@ -155,6 +158,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
         if (info == null || !info.isConnected()) { //check if the error was caused by network connectivity problems
             Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network", Toast.LENGTH_LONG).show();
             userCanInteract = true;
+            registerButton.setEnabled(true);
             return;
         }
 
@@ -189,6 +193,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                     }else{
                         Toast.makeText(MyApplication.getAppContext(), "Your inscription failed ! We are sorry for that, please try later", Toast.LENGTH_LONG).show();
                         userCanInteract = true;
+                        registerButton.setEnabled(true);
                     }
                 }
             }
@@ -260,12 +265,14 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
         new DeleteAllOnDisk().execute();
         auth.getCurrentUser().delete();
         userCanInteract = true;
+        registerButton.setEnabled(true);
     }
 
     @Override
     public void onEmailAlExDialogPositiveClick(DialogFragment dialog) {
         //user want to change his email
         userCanInteract = true;
+        registerButton.setEnabled(true);
     }
 
     @Override

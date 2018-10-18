@@ -53,7 +53,8 @@ public class MyProfileActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            StorageHelper.deleteAllDataStoredLocally();
+            //TODO: DECOMMENT ME!!!
+            //StorageHelper.deleteAllDataStoredLocally();
             return null;
         }
 
