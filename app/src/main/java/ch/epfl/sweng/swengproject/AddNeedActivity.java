@@ -27,24 +27,22 @@ import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-
 public class AddNeedActivity extends AppCompatActivity {
 
     //constant used for input checks
-
     protected static final int MIN_VALIDITY = 1;
     protected static final int MAX_VALIDITY = 30;
     protected static final int MIN_DESCR_L = 10;
     protected static final int MIN_NB_PEOPLE = 1;
     protected static final int MAX_NB_PEOPLE = 50;
 
-    private int REQUEST_LOCATION = 133;
 
     private final String validityInterval = "between " + MIN_VALIDITY + " and " + MAX_VALIDITY;
     private final String peopleInterval = "between "+MIN_NB_PEOPLE+" and "+MAX_NB_PEOPLE;
@@ -55,13 +53,12 @@ public class AddNeedActivity extends AppCompatActivity {
 
     private Button create_btn;
 
-    // Boolean to prevent a user creating multiple needs
+    // Variables to prevent a user creating multiple needs
     static final String LOGTAG_nn = "Tag_nn";
     private long ttl;
-    private boolean need_created;
-    private Need user_need;
 
     // Variables to allow user to set his own location for his need
+    private int REQUEST_LOCATION = 133;
     private Button chooseLocation_btn;
     private LatLng setLocation;
     private Double lat;
@@ -90,7 +87,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                return ;
+                return;
             }
         });
         //Adapt the array for the spinner
@@ -99,27 +96,27 @@ public class AddNeedActivity extends AppCompatActivity {
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin.setAdapter(aa);
 
+
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
 
-        Log.d(MainActivity.LOGTAG,"got the Serializable : "+(loc == null));
-        if(loc != null){
+        Log.d(MainActivity.LOGTAG, "got the Serializable : " + (loc == null));
+        if (loc != null) {
             currLoc = loc;
-        }
-        else {
-            Log.d(MainActivity.LOGTAG,"Normal code section");
+        } else {
+            Log.d(MainActivity.LOGTAG, "Normal code section");
             currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this);
             currLoc = currentLocation;
-            Log.d(MainActivity.LOGTAG,"currloc is null ? : "+(currLoc == null));
+            Log.d(MainActivity.LOGTAG, "currloc is null ? : " + (currLoc == null));
         }
         //Update text fields with local variables
         TextView validity = findViewById(R.id.need_validity);
-        validity.setText("Validity ("+validityInterval+") :");
+        validity.setText("Validity (" + validityInterval + ") :");
 
         TextView description = findViewById(R.id.need_descr);
-        description.setText("Description (at least "+MIN_DESCR_L+" characters) :");
+        description.setText("Description (at least " + MIN_DESCR_L + " characters) :");
 
         TextView nbPeopleNeeded = findViewById(R.id.need_nbPeople);
-        nbPeopleNeeded.setText("Number of people needed ("+peopleInterval+") :");
+        nbPeopleNeeded.setText("Number of people needed (" + peopleInterval + ") :");
 
 
         //configure what happens when the create button is clicked
@@ -136,38 +133,38 @@ public class AddNeedActivity extends AppCompatActivity {
 
                 Log.d(MainActivity.LOGTAG, "VALUE IS : " + validity.getText() + " // null? " + validity.getText().length());
 
-                if(validity.getText().length() == 0 || description.getText().length() == 0 || nbPeopleNeeded.getText().length() == 0){
+                if (validity.getText().length() == 0 || description.getText().length() == 0 || nbPeopleNeeded.getText().length() == 0) {
                     Log.d(MainActivity.LOGTAG, "At least one field is NULL");
                     Toast.makeText(AddNeedActivity.this, "Incorrect input. Don't let anything blank !", Toast.LENGTH_LONG).show();
-                    return ;
+                    return;
                 }
 
 
                 String descr = description.getText().toString();
                 int valid = 0;
                 int nbPeople = 0;
-                try{
+                try {
                     valid = Integer.parseInt(validity.getText().toString());
                     nbPeople = Integer.parseInt(nbPeopleNeeded.getText().toString());
-                }catch(NumberFormatException e){
+                } catch (NumberFormatException e) {
                     Toast.makeText(AddNeedActivity.this, "The validity and the number of people needed must be numbers", Toast.LENGTH_LONG).show();
-                    return ;
+                    return;
                 }
-
 
 
                 //Perform checks
 
                 if (valid < MIN_VALIDITY || valid > MAX_VALIDITY || description.length() < MIN_DESCR_L) {
 
-                    Toast.makeText(AddNeedActivity.this, "Incorrect input. Validity must be "+validityInterval + " and the description must be at least 10 characters long", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AddNeedActivity.this, "Incorrect input. Validity must be " + validityInterval + " and the description must be at least 10 characters long", Toast.LENGTH_LONG).show();
 
 
-                }else if(nbPeople < MIN_NB_PEOPLE || nbPeople > MAX_NB_PEOPLE){
+                } else if (nbPeople < MIN_NB_PEOPLE || nbPeople > MAX_NB_PEOPLE) {
 
-                    Toast.makeText(AddNeedActivity.this, "Incorrect input. The number of people needed must be "+peopleInterval, Toast.LENGTH_LONG).show();
+                    Toast.makeText(AddNeedActivity.this, "Incorrect input. The number of people needed must be " + peopleInterval, Toast.LENGTH_LONG).show();
 
-                }else{  //try to do something for the concurrency bug
+                } else {  //try to do something for the concurrency bug
+
                     LatLng currPos;
                     if (setLocation != null) {
                         Log.d("Tag_sl", "Setting user set location");
@@ -176,23 +173,24 @@ public class AddNeedActivity extends AppCompatActivity {
                         currPos = currLoc.getLastLocation();
                     }
 
-                    Log.d(MainActivity.LOGTAG,"position is null "+(currPos == null));
+                    Log.d(MainActivity.LOGTAG, "position is null " + (currPos == null));
 
-                    writeNewUser(descr,(long)(valid*MILLS_IN_MINUTES) + System.currentTimeMillis() , currPos, nbPeople);
+                    writeNewNeed(descr, (long) (valid * MILLS_IN_MINUTES) + System.currentTimeMillis(), currPos, nbPeople);
 
 
                     finish();
                 }
             }
         });
-
     }
 
 
+
+
     //method used to write in the DB
-    private void writeNewUser( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
+    private void writeNewNeed( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
         if (canAddNewNeed(((MyApplication) this.getApplication()).getUser_need_ttl())) {
-            Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded);
+            Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
             ((MyApplication) this.getApplication()).setUser_need_ttl(ttl);
             Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
@@ -238,7 +236,7 @@ public class AddNeedActivity extends AppCompatActivity {
     // Call back when ChooseLocationActivity is finished
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_LOCATION && data != null) {
+         if (requestCode == REQUEST_LOCATION && data != null) {
             lat = data.getDoubleExtra("lat_code", 0.0);
             lng = data.getDoubleExtra("lng_code", 0.0);
             setLocation = new LatLng(lat, lng);

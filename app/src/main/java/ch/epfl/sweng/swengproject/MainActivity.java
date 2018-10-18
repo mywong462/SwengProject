@@ -28,9 +28,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 
 public class MainActivity extends AppCompatActivity {
-
-    private ConstraintLayout scrWelcome;
-
+    
+     private ConstraintLayout scrWelcome;
+    
     protected static final String LOGTAG = "HELLO";
     protected static final CurrentLocation currentLocation = new CurrentLocation();
 
@@ -40,11 +40,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         ((MyApplication) this.getApplication()).setUser_need_ttl_OnStart(0L);
 
         scrWelcome = findViewById(R.id.welcome_scr);
         scrWelcome.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
             public boolean onTouch(View v, MotionEvent m) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -53,10 +53,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-
-
     }
-
-
 }
