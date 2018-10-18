@@ -55,7 +55,7 @@ public class ChooseLocationInstrumentedTest {
 
         onView(withId(R.id.map_ch_loc)).perform(click());
 
-        onView(withId(R.id.set_loc_btn)).perform(click());
+        //onView(withId(R.id.set_loc_btn)).perform(click());
 
     }
 
