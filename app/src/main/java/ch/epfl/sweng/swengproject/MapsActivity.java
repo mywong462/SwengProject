@@ -36,6 +36,8 @@ import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 import java.util.ArrayList;
 
+import ch.epfl.sweng.swengproject.controllers.MyProfileActivity;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener{
 
@@ -95,6 +97,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
+
+
+         FloatingActionButton goToProfButton = findViewById(R.id.goToProfile);
+        goToProfButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapsActivity.this, MyProfileActivity.class));
+            }
+        });
+
 
     }
 

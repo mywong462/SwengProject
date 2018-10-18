@@ -87,16 +87,16 @@ Android:layout_weight. C'est un attribut spécifique aux enfants d'un LinearLayo
     android:textColor="@color/colorPrimaryDark"
     android:textSize="20sp" />
 
-<Button
-    android:id="@+id/activity_my_profile_logout_button"
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_margin="5dp"
-    android:layout_weight="1"
-    android:background="@android:color/white"
-    android:text="Already registered? Sign up here!"
-    android:textColor="#000000"
-    android:textSize="15sp" />
+    <Button
+        android:id="@+id/activity_my_profile_logout_button"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:text="Log Out"
+        android:textColor="@color/fui_bgEmail"
+        android:textSize="15sp" />
 
 
 </LinearLayout>
