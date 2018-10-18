@@ -2,6 +2,7 @@ package ch.epfl.sweng.swengproject.controllers;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,9 @@ import java.lang.ref.WeakReference;
 
 import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.R;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.AlertDialogGenericListener;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.LogOutAlertDialog;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginAlertDialog;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
@@ -18,7 +22,7 @@ import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
-public class MyProfileActivity extends AppCompatActivity {
+public class MyProfileActivity extends AppCompatActivity implements AlertDialogGenericListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,22 @@ public class MyProfileActivity extends AppCompatActivity {
 
 
     private void logOutButtonPressed(){
+        DialogFragment df = new LogOutAlertDialog();
+        df.show(getSupportFragmentManager(), "want_logout");
+    }
+
+    @Override
+    public void onPositiveClick(DialogFragment dialog) {
+
+    }
+
+    @Override
+    public void onNeutralClick(DialogFragment dialog) {
+
+    }
+
+    @Override
+    public void onNegativeClick(DialogFragment dialog) {
         new LogOutTask(this).execute();
     }
 
