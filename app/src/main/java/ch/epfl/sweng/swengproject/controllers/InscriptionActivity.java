@@ -34,9 +34,8 @@ import ch.epfl.sweng.swengproject.Database;
 import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
-import ch.epfl.sweng.swengproject.helpers.alertdialog.EmailAlExADListener;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.AlertDialogGenericListener;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.EmailAlreadyExistAlertDialog;
-import ch.epfl.sweng.swengproject.helpers.alertdialog.InscriptionADListener;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.InscriptionAlertDialog;
 import ch.epfl.sweng.swengproject.helpers.inputvalidation.InscriptionValidator;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
@@ -44,7 +43,7 @@ import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
-public class InscriptionActivity extends AppCompatActivity implements InscriptionADListener,EmailAlExADListener, View.OnClickListener {
+public class InscriptionActivity extends AppCompatActivity implements AlertDialogGenericListener, View.OnClickListener {
 
     //widgets:
     private ImageButton profilePictureButton;
@@ -107,6 +106,11 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                 goToLoginActivity();
             }
         });
+
+        String emailFromInscription  = getIntent().getStringExtra("email_to_propose");
+        if(emailFromInscription != null){
+            emailEditText.setText(emailFromInscription, TextView.BufferType.EDITABLE);
+        }
     }
 
     private void pickImage() {
@@ -136,8 +140,10 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
     }
 
     private void goToLoginActivity() {
+        String emailToPropose = emailEditText.getText().toString();
         finish();
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivity(new Intent(this, LoginActivity.class)
+                .putExtra("email_to_propose", emailToPropose));
     }
 
     private void checkBeforeRegister() {
@@ -227,63 +233,53 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
     }
 
 
-
-
-
-    // The dialog fragment receives a reference to this Activity through the
-    // Fragment.onAttach() callback, which it uses to call the following methods
-    // defined by the NoticeDialogFragment.NoticeDialogListener interface
     @Override
-    public void onInscriptionDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's positive button
+    public void onPositiveClick(DialogFragment dialog) {
+        if(dialog instanceof InscriptionAlertDialog){
+            auth.getCurrentUser()
+                    .reload()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
 
-        auth.getCurrentUser()
-                .reload()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            FirebaseUser user = auth.getCurrentUser();
 
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        FirebaseUser user = auth.getCurrentUser();
-
-                        if(user.isEmailVerified()){
-                            StorageHelper.sendMyProfileToTheServer();
-                            finish();
-                            startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
-                        }else{
-                            DialogFragment df = new InscriptionAlertDialog();
-                            df.show(getSupportFragmentManager(), "validate_email");
+                            if(user.isEmailVerified()){
+                                StorageHelper.sendMyProfileToTheServer();
+                                finish();
+                                startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
+                            }else{
+                                DialogFragment df = new InscriptionAlertDialog();
+                                df.show(getSupportFragmentManager(), "validate_email");
+                            }
                         }
-                    }
-                });
-    }
+                    });
+        }else if(dialog instanceof EmailAlreadyExistAlertDialog){
+            userCanInteract = true;
+            registerButton.setEnabled(true);
+        }
 
-
-
-    @Override
-    public void onInscriptionDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's negative button
-        new DeleteAllOnDisk().execute();
-        auth.getCurrentUser().delete();
-        userCanInteract = true;
-        registerButton.setEnabled(true);
     }
 
     @Override
-    public void onEmailAlExDialogPositiveClick(DialogFragment dialog) {
-        //user want to change his email
-        userCanInteract = true;
-        registerButton.setEnabled(true);
+    public void onNeutralClick(DialogFragment dialog) {
+
     }
 
     @Override
-    public void onEmailAlExNegativeClick(DialogFragment dialog) {
-        //user want to login with this email
-        finish();
-        startActivity(new Intent(this, LoginActivity.class)
-                .putExtra("email_to_propose",  emailEditText.getText().toString()));
+    public void onNegativeClick(DialogFragment dialog) {
+        if(dialog instanceof InscriptionAlertDialog){
+            new DeleteAllOnDisk().execute();
+            auth.getCurrentUser().delete();
+            userCanInteract = true;
+            registerButton.setEnabled(true);
+        } else  if(dialog instanceof EmailAlreadyExistAlertDialog) {
+
+            finish();
+            startActivity(new Intent(this, LoginActivity.class)
+                    .putExtra("email_to_propose", emailEditText.getText().toString()));
+        }
     }
-
-
 }
 
 

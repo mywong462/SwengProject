@@ -10,7 +10,7 @@ import android.support.v4.app.DialogFragment;
 public class EmailAlreadyExistAlertDialog extends DialogFragment  {
 
     // Use this instance of the interface to deliver action events
-    private EmailAlExADListener mListener;
+    private AlertDialogGenericListener mListener;
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override
@@ -19,10 +19,10 @@ public class EmailAlreadyExistAlertDialog extends DialogFragment  {
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (EmailAlExADListener) context;
+            mListener = (AlertDialogGenericListener) context;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(context.getClass().getName() + " must implement EmailAlExADListener");
+            throw new ClassCastException(context.getClass().getName() + " must implement AlertDialogGenericListener");
         }
     }
 
@@ -34,12 +34,12 @@ public class EmailAlreadyExistAlertDialog extends DialogFragment  {
                 .setMessage("If you want to use an other email address, please click the \"Change Email\" button below. If you want to use this address, please login with it")
                 .setPositiveButton("Change Email", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onEmailAlExDialogPositiveClick(EmailAlreadyExistAlertDialog.this);
+                        mListener.onPositiveClick(EmailAlreadyExistAlertDialog.this);
                     }
                 })
                 .setNegativeButton("Login with this email", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onEmailAlExNegativeClick(EmailAlreadyExistAlertDialog.this);
+                        mListener.onNegativeClick(EmailAlreadyExistAlertDialog.this);
                     }
                 });
         // Create the AlertDialog object and return it

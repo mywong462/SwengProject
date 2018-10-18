@@ -16,6 +16,8 @@ import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 public class MyProfileActivity extends AppCompatActivity {
 
     @Override
@@ -39,8 +41,10 @@ public class MyProfileActivity extends AppCompatActivity {
     }
 
     private void leave(){
-        finish();
-        startActivity(new Intent(MyProfileActivity.this, MainActivity.class));
+        Intent i = new Intent(MyProfileActivity.this, MainActivity.class);
+        //https://tips.androidhive.info/2013/10/how-to-clear-all-activity-stack-in-android/
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
     }
 
     private static class LogOutTask extends AsyncTask<Void, Void, Void> {
@@ -53,8 +57,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            //TODO: DECOMMENT ME!!!
-            //StorageHelper.deleteAllDataStoredLocally();
+            StorageHelper.deleteAllDataStoredLocally();
             return null;
         }
 

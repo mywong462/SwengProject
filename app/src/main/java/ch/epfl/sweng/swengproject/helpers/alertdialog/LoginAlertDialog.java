@@ -10,7 +10,7 @@ import android.support.v4.app.DialogFragment;
 public class LoginAlertDialog extends DialogFragment {
 
     // Use this instance of the interface to deliver action events
-    private LoginADListener mListener;
+    private AlertDialogGenericListener mListener;
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override
@@ -19,7 +19,7 @@ public class LoginAlertDialog extends DialogFragment {
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (LoginADListener) context;
+            mListener = (AlertDialogGenericListener) context;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.getClass().getName() + " must implement LoginADListener");
@@ -35,7 +35,7 @@ public class LoginAlertDialog extends DialogFragment {
                 .setNeutralButton("Ok", null)
                 .setPositiveButton("Send me an email again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onLoginDialogPositivClick(LoginAlertDialog.this);
+                        mListener.onPositiveClick(LoginAlertDialog.this);
                     }
                 });
         // Create the AlertDialog object and return it
