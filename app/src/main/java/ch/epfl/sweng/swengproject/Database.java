@@ -35,7 +35,14 @@ public final class Database {
 
     private static CollectionReference needsRef = needsDB.collection("needs");
 
+    //For testing
+    public static void setReference(CollectionReference collRef){
+        Log.d("HELLO", "in setReference : " + collRef);
+        needsRef = collRef;
+    }
+
     public static Task<DocumentReference> saveNeed(Need need){
+        Log.d("HELLO", "in saveNeed with : " + needsRef);
         return needsRef.add(need);
     }
 

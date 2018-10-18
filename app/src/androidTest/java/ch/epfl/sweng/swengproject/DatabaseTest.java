@@ -2,6 +2,7 @@ package ch.epfl.sweng.swengproject;
 
 
 import android.app.Activity;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -37,6 +38,9 @@ public class DatabaseTest {
     private CollectionReference collRef = mock(CollectionReference.class);
 
     @Mock
+    private DocumentReference docRef = mock(DocumentReference.class);
+
+    @Mock
     private FirebaseAuth authInstance = auth.getInstance();
 
     @Mock
@@ -46,82 +50,6 @@ public class DatabaseTest {
     private AuthResult authResult = mock(AuthResult.class);
 
 
-    @Test
-    public void testSignInEmailNotVerified(){
-        when(user.isEmailVerified()).thenReturn(false);
-        when(auth.getCurrentUser()).thenReturn(user);
-        when(authResult.getUser()).thenReturn(user);
-        when(auth.signInWithEmailAndPassword("benoitknuchel@gmail.com", "123456")).thenReturn(new Task<AuthResult>() {
-            @Override
-            public boolean isComplete() {
-                return true;
-            }
-
-            @Override
-            public boolean isSuccessful() {
-                return true;
-            }
-
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
-
-            @Nullable
-            @Override
-            public AuthResult getResult() {
-                return authResult;
-            }
-
-            @Nullable
-            @Override
-            public <X extends Throwable> AuthResult getResult(@NonNull Class<X> aClass) throws X {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Exception getException() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<AuthResult> addOnSuccessListener(@NonNull OnSuccessListener<? super AuthResult> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<AuthResult> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super AuthResult> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<AuthResult> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super AuthResult> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<AuthResult> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<AuthResult> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<AuthResult> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-        });
-    }
 
     @Test
     public void testSaveNeed(){
@@ -197,12 +125,86 @@ public class DatabaseTest {
                 return null;
             }
         });
+        Database.setReference(collRef);
+        Database.saveNeed(need);
     }
 
-    /*
+/*
     @Test
     public void testGetNeed(){
         Need need = new Need("emit", "desr", 1, 1.0, 1.0, Categories.HELP, 1, "");
+        when(fbFirestore.collection("needs")).thenReturn(collRef);
+        when(collRef.add(need)).thenReturn(new Task<DocumentReference>() {
+            @Override
+            public boolean isComplete() {
+                return true;
+            }
+
+            @Override
+            public boolean isSuccessful() {
+                return true;
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+
+            @Nullable
+            @Override
+            public DocumentReference getResult() {
+                return docRef;
+            }
+
+            @Nullable
+            @Override
+            public <X extends Throwable> DocumentReference getResult(@NonNull Class<X> aClass) throws X {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Exception getException() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentReference> addOnSuccessListener(@NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentReference> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentReference> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentReference> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentReference> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentReference> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+        });
+        when(collRef.addSnapshotListener())
     }*/
 
 }
