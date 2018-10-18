@@ -1,19 +1,34 @@
 package ch.epfl.sweng.swengproject.controllers;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import ch.epfl.sweng.swengproject.MapsActivity;
@@ -67,11 +82,14 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
         profilePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(updateProfile.getVisibility() == View.GONE){
-                    updateProfile.setVisibility(View.VISIBLE);
-                }else{
-                    updateProfile.setVisibility(View.GONE);
-                }
+                pickImage();
+            }
+        });
+
+        updateProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateButtonClicked();
             }
         });
     }
@@ -91,6 +109,33 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
         pswEditText.addTextChangedListener(new myTextWatcher());
         firstNameEditText.addTextChangedListener(new myTextWatcher());
         lastNameEditText.addTextChangedListener(new myTextWatcher());
+    }
+
+    private void pickImage() {
+        //https://www.youtube.com/watch?v=Mm1dMWZWQ6w
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_PICK);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                Uri uri = data.getData();
+                try {
+                    InputStream stream = getContentResolver().openInputStream(uri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(stream);
+                    profilePictureButton.setImageBitmap(bitmap);
+                    hideOrShowUpdateButton();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 
@@ -211,4 +256,81 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
             updateProfile.setVisibility(View.GONE);
         }
     }
-};
+
+    private void updateButtonClicked(){
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(meBeforeAnyChange.email(), meBeforeAnyChange.password());
+
+        user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            changeProfileNow(user);
+                        }else{
+                            Toast.makeText(MyProfileActivity.this, "Sorry, service not available for the moment",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
+    private void changeProfileNow(FirebaseUser user){
+        changeEmailNow(user);
+    }
+
+    private void changeEmailNow(FirebaseUser user){
+        final FirebaseUser u = user;
+        //update email
+        if(!meBeforeAnyChange.email().equals(emailEditText.getText().toString())){
+            user.updateEmail(emailEditText.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                changePswNow(u);
+                            }else{
+                                Toast.makeText(MyProfileActivity.this, "Unable to change your email, sorry",Toast.LENGTH_LONG).show();
+                                System.out.println(task.getException().toString());
+                            }
+                        }
+                    });
+        }else{
+            changePswNow(u);
+        }
+    }
+
+    private void changePswNow(FirebaseUser user){
+        if(!meBeforeAnyChange.password().equals(pswEditText.getText().toString())){
+            user.updatePassword(pswEditText.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                updateRest();
+                            }else{
+                                Toast.makeText(MyProfileActivity.this, "Unable to change your password, sorry",Toast.LENGTH_LONG).show();
+                                System.out.println(task.getException().toString());
+                            }
+                        }
+                    });
+        }else{
+            updateRest();
+        }
+    }
+
+    private void updateRest(){
+        User meNew = new User();
+        meNew.setEmail(emailEditText.getText().toString());
+        meNew.setPassword(pswEditText.getText().toString());
+        meNew.setFirstName(firstNameEditText.getText().toString());
+        meNew.setLastName(lastNameEditText.getText().toString());
+        meNew.setPicture(((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap());
+        StorageHelper.saveThisUserAsMe(meNew);
+        StorageHelper.sendMyProfileToTheServer(meNew);
+        meBeforeAnyChange = meNew;
+        hideOrShowUpdateButton();
+    }
+}

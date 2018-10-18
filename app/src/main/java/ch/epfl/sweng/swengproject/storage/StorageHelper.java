@@ -2,6 +2,8 @@ package ch.epfl.sweng.swengproject.storage;
 
 import android.os.AsyncTask;
 
+import java.util.Objects;
+
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
@@ -88,5 +90,20 @@ public class StorageHelper {
         //TODO: Implement me
         //must be asyncrone !!!!!
         System.out.println("Normally we must get now the profile from the server");
+    }
+
+
+    public static void saveThisUserAsMe(User me){
+        Objects.requireNonNull(me);
+     new AsyncTask<User, Void, Void>() {
+            @Override
+            protected Void doInBackground(User... users) {
+                UserDao udao = AppDatabase.getInstance().userDao();
+                User meOld = udao.getMyOwnProfile();
+                udao.delete(meOld);
+                udao.storeMyOwnProfile(users[0]);
+                return null;
+            }
+        }.execute(me);
     }
 }
