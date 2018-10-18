@@ -334,11 +334,9 @@ public class DBTools {
             throw new IllegalArgumentException("List is empty. Cannot compute closes Need");
         }
 
-        Need closest;
+        Need closest = new Need();
 
         for(int i = 0; i < list.size(); ++i){
-
-            double currDist = DBTools.distanceBetween(pos,closest.getPos()
 
             Need curr = list.get(i);
 
@@ -346,6 +344,9 @@ public class DBTools {
                 closest = curr;
             }
             else{
+
+                double currDist = DBTools.distanceBetween(pos,closest.getPos());
+
                 if(DBTools.distanceBetween(pos,curr.getPos()) < currDist){
                     closest = curr;
                 }
