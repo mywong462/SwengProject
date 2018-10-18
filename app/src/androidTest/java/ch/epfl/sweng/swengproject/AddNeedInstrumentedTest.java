@@ -155,7 +155,7 @@ public class AddNeedInstrumentedTest {
 
         onView(withId(R.id.choose_loc_btn)).perform(click());
 
-        onView(withId(R.id.map_ch_loc)).perform(click());
+        //onView(withId(R.id.map_ch_loc)).perform(click());
 
 
     }
