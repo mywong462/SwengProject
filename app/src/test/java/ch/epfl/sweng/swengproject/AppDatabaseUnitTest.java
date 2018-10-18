@@ -25,4 +25,9 @@ public class AppDatabaseUnitTest {
 
     }
 
+    @Test(expected = NullPointerException.class)
+    public void wrongInput(){
+        AppDatabase apDatabase = AppDatabase.getInMemoryDatabase(null);
+    }
+
 }
