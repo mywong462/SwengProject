@@ -13,6 +13,9 @@ public class Generic {
     private static Context context =  MyApplication.getAppContext();
 
     public static void setContext(Context c){
+        if(c == null){
+            throw new NullPointerException();
+        }
         context = c;
     }
 
@@ -23,6 +26,10 @@ public class Generic {
      * the end of the invocation of this method, else false
      */
     public static boolean deleteFile(String atRelativePath){
+
+        if(atRelativePath == null || atRelativePath.isEmpty()){
+            throw new NullPointerException();
+        }
 
         File f = new File(context.getFilesDir(), atRelativePath);
         if(f.exists() && f.isDirectory()){
@@ -41,6 +48,10 @@ public class Generic {
      * the end of the invocation of this method, else false
      */
     public static boolean deleteFolder(String atRelativePath){
+
+        if(atRelativePath == null || atRelativePath.isEmpty()){
+            throw new NullPointerException();
+        }
 
         File f = new File(context.getFilesDir(), atRelativePath);
         if(f.exists() && f.isFile()){
