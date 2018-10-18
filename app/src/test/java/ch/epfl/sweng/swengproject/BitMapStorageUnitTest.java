@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import org.junit.Test;
 import java.io.File;
 import ch.epfl.sweng.swengproject.storage.filesystem.BitMapStorage;
+
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,7 +25,7 @@ public class BitMapStorageUnitTest {
         Bitmap b = mock(Bitmap.class);
 
 
-        BitMapStorage.saveImage(b,"/");
+        assertTrue(BitMapStorage.saveImage(b,"/"));
         BitMapStorage.getImage("/");
 
     }
