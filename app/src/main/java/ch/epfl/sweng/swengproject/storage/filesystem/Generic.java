@@ -10,6 +10,11 @@ import ch.epfl.sweng.swengproject.MyApplication;
 public class Generic {
     private Generic(){}
 
+    private static Context context =  MyApplication.getAppContext();
+
+    public static void setContext(Context c){
+        context = c;
+    }
 
     /**
      * Delete a file at the path atRelativePath in the private folder of the application
@@ -18,7 +23,7 @@ public class Generic {
      * the end of the invocation of this method, else false
      */
     public static boolean deleteFile(String atRelativePath){
-        Context context = MyApplication.getAppContext();
+
         File f = new File(context.getFilesDir(), atRelativePath);
         if(f.exists() && f.isDirectory()){
             return false;
@@ -36,7 +41,7 @@ public class Generic {
      * the end of the invocation of this method, else false
      */
     public static boolean deleteFolder(String atRelativePath){
-        Context context = MyApplication.getAppContext();
+
         File f = new File(context.getFilesDir(), atRelativePath);
         if(f.exists() && f.isFile()){
             return false;
