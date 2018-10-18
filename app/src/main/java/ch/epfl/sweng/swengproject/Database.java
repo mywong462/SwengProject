@@ -37,36 +37,35 @@ public final class Database {
 
     //For testing
     public static void setReference(CollectionReference collRef){
-        Log.d("HELLO", "in setReference : " + collRef);
+        Log.d("tamer", "in setReference : " + collRef);
         needsRef = collRef;
     }
 
     public static Task<DocumentReference> saveNeed(Need need){
-        Log.d("HELLO", "in saveNeed with : " + needsRef);
+        Log.d("tamer", "in saveNeed with : " + needsRef);
         return needsRef.add(need);
     }
 
 
     //If there is no limitation in category, pass null into categories variable
     public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range, ArrayList<Categories> categories){
+        Log.d("tamer", "testGetNeeds comes here3");
 
         DBTools.checkInput(mGeoPoint, range, categories);
 
-        needsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        needsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(e != null) {
-                    Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                }else{
-
+                if(task.isSuccessful()){
                     ArrayList<Need> temp = new ArrayList<>();
 
                     Log.d(MainActivity.LOGTAG, "Fetch from DB");
                     //get the needs from the database
 
+                    Log.d("tamer", "testGetNeeds comes here2");
 
-                    for(DocumentSnapshot dS: queryDocumentSnapshots.getDocuments()){
+                    for(DocumentSnapshot dS: task.getResult().getDocuments()){
                         Need current = new Need();
 
                         current.setLongitude((double)dS.get("longitude"));
@@ -81,21 +80,29 @@ public final class Database {
                         current.setNbPeopleNeeded(people);
                         current.setParticipants(dS.get("participants").toString());
 
+                        Log.d("tamer", "testGetNeeds comes here");
+
                         temp.add(current);
                     }
 
                     //remove old needs from the database
 
-                    for(DocumentSnapshot old:queryDocumentSnapshots.getDocuments()){
+                    for(DocumentSnapshot old: task.getResult().getDocuments()){
                         if((long)old.get("timeToLive") < System.currentTimeMillis()){
                             old.getReference().delete();
                         }
                     }
 
                     listNeeds = temp;
+                }else{
+                    Log.d("tamer", "testGetNeeds comes here4");
+                    Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
                 }
             }
         });
+
+
+        Log.d("tamer", "testGetNeeds comes here5");
 
         return DBTools.filterNeeds(mGeoPoint,range,categories, listNeeds);
     }

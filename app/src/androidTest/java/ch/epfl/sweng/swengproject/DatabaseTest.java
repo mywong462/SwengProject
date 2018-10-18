@@ -6,6 +6,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -55,11 +56,86 @@ public class DatabaseTest {
     private ListenerRegistration listReg = mock(ListenerRegistration.class);
 
     @Mock
+    private OnCompleteListener onCompleteListener = mock(OnCompleteListener.class);
+
+    @Mock
     private QuerySnapshot queryDocumentSnapshots = mock(QuerySnapshot.class);
 
     @Mock
     private DocumentSnapshot docSnap = mock(DocumentSnapshot.class);
     private List<DocumentSnapshot> listDocSnap = new ArrayList<>();
+
+    @Mock
+    private Task<QuerySnapshot> taskQuerySnapshot = new Task<QuerySnapshot>() {
+        @Override
+        public boolean isComplete() {
+            return true;
+        }
+
+        @Override
+        public boolean isSuccessful() {
+            return true;
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Nullable
+        @Override
+        public QuerySnapshot getResult() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public <X extends Throwable> QuerySnapshot getResult(@NonNull Class<X> aClass) throws X {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Exception getException() {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<QuerySnapshot> addOnSuccessListener(@NonNull OnSuccessListener<? super QuerySnapshot> onSuccessListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<QuerySnapshot> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super QuerySnapshot> onSuccessListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<QuerySnapshot> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super QuerySnapshot> onSuccessListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<QuerySnapshot> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<QuerySnapshot> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<QuerySnapshot> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
+            return null;
+        }
+    };
 
 
 
@@ -221,6 +297,80 @@ public class DatabaseTest {
         Database.setReference(collRef);
         Database.saveNeed(need);
 
+        //TODO: I DON'T KNOW WHAT IM DOING IN THE 3 NEXT LINES
+        when(collRef.get()).thenReturn(taskQuerySnapshot);
+        onCompleteListener.onComplete(taskQuerySnapshot);
+        when(taskQuerySnapshot.addOnCompleteListener(onCompleteListener)).thenReturn(new Task() {
+            @Override
+            public boolean isComplete() {
+                return true;
+            }
+
+            @Override
+            public boolean isSuccessful() {
+                return true;
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+
+            @Nullable
+            @Override
+            public Object getResult() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Object getResult(@NonNull Class aClass) throws Throwable {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Exception getException() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task addOnSuccessListener(@NonNull OnSuccessListener onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+        });
+
         listDocSnap.add(docSnap);
         when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
 
@@ -234,9 +384,6 @@ public class DatabaseTest {
         when(docSnap.get("participants")).thenReturn("");
         when(docSnap.getReference()).thenReturn(docRef);
 
-
-        when(collRef.addSnapshotListener(eveList)).thenReturn(listReg);
-        fireExcep = null;
 
         ArrayList<Categories> listCat = new ArrayList<>();
         listCat.add(Categories.ALL);
