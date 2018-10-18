@@ -1,6 +1,5 @@
 package ch.epfl.sweng.swengproject;
 
-import android.location.Location;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
@@ -18,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 
 public final class Database {
@@ -44,7 +45,7 @@ public final class Database {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if(e != null) {
-                    Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
+                    Log.d(LOGTAG, "Got an exception querying the database");
 
                 }else{
 

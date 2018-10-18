@@ -15,7 +15,6 @@ import static junit.framework.TestCase.fail;
 public class CurrentLocationInstrumentedTest {
 
 
-
     @Rule
     public GrantPermissionRule grantPermissionRule  = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -26,13 +25,13 @@ public class CurrentLocationInstrumentedTest {
 
     @Test
     public void setCurrentLocationParametersValidTest(){
-        mActivityRule.getActivity().currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity());
+        MyApplication.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity());
     }
 
     @Test
     public void setCurrentLocationParametersInvalidTest1() {
         try {
-            mActivityRule.getActivity().currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
+            MyApplication.currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
         }catch(NullPointerException e){
             return;
         }
@@ -42,7 +41,7 @@ public class CurrentLocationInstrumentedTest {
     @Test
     public void setCurrentLocationParametersInvalidTest2() {
         try {
-            mActivityRule.getActivity().currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), null);
+            MyApplication.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), null);
         }catch(NullPointerException e){
             return;
         }

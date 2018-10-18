@@ -5,14 +5,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.arch.core.util.Function;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -33,7 +31,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.Objects;
 
-import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 
 public class CurrentLocation implements LocationServer, ActivityCompat.OnRequestPermissionsResultCallback{
@@ -52,7 +50,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private boolean updatingLocation = false;
 
-    private Context context = MyApplication.getAppContext();
+    private Context context;
 
     private Activity activity;
 
@@ -118,11 +116,33 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     };
 
 
-    public void setCurrentLocationParameters(Activity activity){
-        this.setCurrentLocationParameters(activity, null);
+    private Function<Void, Void> done = new Function<Void, Void>() {
+        @Override
+        public Void apply(Void input) {
+            checkLocationPermission();
+            return null;
+        }
+    };
+
+    private Function<Void, Void> bringMeToManagement = new Function<Void, Void>() {
+        @Override
+        public Void apply(Void input) {
+            activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_SETTINGS));
+            return null;
+        }
+    };
+
+    private AlertDialog permissionDialog;
+
+    private boolean dialogUp = false;
+
+
+    public void setCurrentLocationParameters(Context context, Activity activity){
+        this.setCurrentLocationParameters(context, activity, null);
     }
 
-    public void setCurrentLocationParameters(Activity activity, Function<Void, Void> function){
+    public void setCurrentLocationParameters(Context context, Activity activity, Function<Void, Void> function){
+        this.context = Objects.requireNonNull(context);
         this.activity = Objects.requireNonNull(activity);
         this.function = function;
 
@@ -130,7 +150,8 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
-        updatingLocation = true;
+        updatingLocation = false;
+
         checkLocationPermission();
     }
 
@@ -145,39 +166,28 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     @Override
     public void callerOnResume(){
 
-        if(isPermissionGranted()) {
-            Log.d(LOGTAG, "callerOnResume" + activity.getLocalClassName());
+        Log.d(LOGTAG, "callerOnResume" + activity.getLocalClassName());
+        if(updatingLocation) {
             startLocationUpdates();
         }
+
+        if(dialogUp && isPermissionGranted()){
+            permissionDialog.dismiss();
+            dialogUp = false;
+        }
+    }
+
+    private AlertDialog getNewPermissionDialog(){
+        return permissionDialog = MyApplication.showCustomAlert2Buttons("SwengProject needs your location to continue :(",
+                "To allow SwengProject to TRACKK U please go to the settings and allow" +
+                        " SwngProject to use your location",
+                "Settings","Done !",
+                bringMeToManagement, done, activity);
     }
 
     private boolean isPermissionGranted(){
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void explainForPermission(){
-        Function<Void, Void> done = new Function<Void, Void>() {
-            @Override
-            public Void apply(Void input) {
-                checkLocationPermission();
-                return null;
-            }
-        };
-
-        Function<Void, Void> bringMeToManagement = new Function<Void, Void>() {
-            @Override
-            public Void apply(Void input) {
-                activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_SETTINGS));
-                return null;
-            }
-        };
-
-        MyApplication.showCustomAlert2Buttons("SwengProject needs your location to continue :(",
-                "To allow SwengProject to TRACKK U please go to the settings and allow" +
-                        " SwngProject to use your location",
-                "Settings","Done !",
-                bringMeToManagement, done, activity);
     }
 
 
@@ -190,7 +200,9 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             if(ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)){
 
                 Log.d(LOGTAG, "explain the need for location");
-                explainForPermission();
+
+                getNewPermissionDialog().show();
+                dialogUp = true;
 
             }else{
 
@@ -209,7 +221,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         }
     }
 
-    protected void callerActivityReady(){
+    public void callerActivityReady(){
         callerActivityReady = true;
     }
 
@@ -228,7 +240,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                     createLocationRequest();
                 }else{
                     Log.d(LOGTAG, "Permission denied, asking again");
-                    explainForPermission();
+                    //explainForPermission();
                 }
                 return;
             }

@@ -3,7 +3,6 @@ package ch.epfl.sweng.swengproject;
 import android.arch.core.util.Function;
 import android.content.Intent;
 import android.location.Location;
-import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +17,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
+import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
 
 
 public class ChooseLocationActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -91,7 +90,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
             }
         };
 
-        currentLocation.setCurrentLocationParameters(this, function_sl);
+        currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this, function_sl);
 
     }
 
