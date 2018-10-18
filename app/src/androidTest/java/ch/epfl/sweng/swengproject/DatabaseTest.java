@@ -15,11 +15,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.EventListener;
 import java.util.concurrent.Executor;
 
 import static org.mockito.Mockito.mock;
@@ -27,7 +31,7 @@ import static org.mockito.Mockito.when;
 
 public class DatabaseTest {
 
-    //All mocked objects
+    //ALL MOCKED OBJECTS
     @Mock
     private FirebaseAuth auth = mock(FirebaseAuth.class);
 
@@ -41,16 +45,17 @@ public class DatabaseTest {
     private DocumentReference docRef = mock(DocumentReference.class);
 
     @Mock
-    private FirebaseAuth authInstance = auth.getInstance();
+    private com.google.firebase.firestore.EventListener eveList = mock(com.google.firebase.firestore.EventListener.class);
 
     @Mock
-    private FirebaseUser user = mock(FirebaseUser.class);
+    private ListenerRegistration listReg = mock(ListenerRegistration.class);
 
     @Mock
-    private AuthResult authResult = mock(AuthResult.class);
+    private QuerySnapshot queryDocumentSnapshots = mock(QuerySnapshot.class);
 
 
 
+    //TESTS
     @Test
     public void testSaveNeed(){
         Need need = new Need();
@@ -129,9 +134,9 @@ public class DatabaseTest {
         Database.saveNeed(need);
     }
 
-/*
+
     @Test
-    public void testGetNeed(){
+    public void testGetNeeds(){
         Need need = new Need("emit", "desr", 1, 1.0, 1.0, Categories.HELP, 1, "");
         when(fbFirestore.collection("needs")).thenReturn(collRef);
         when(collRef.add(need)).thenReturn(new Task<DocumentReference>() {
@@ -204,7 +209,9 @@ public class DatabaseTest {
                 return null;
             }
         });
-        when(collRef.addSnapshotListener())
-    }*/
+        when(collRef.addSnapshotListener(eveList)).thenReturn(listReg);
+        when(eveList.onEvent(queryDocumentSnapshots, throw new FirebaseFirestoreException()));
+        when(listReg.);
+    }
 
 }
