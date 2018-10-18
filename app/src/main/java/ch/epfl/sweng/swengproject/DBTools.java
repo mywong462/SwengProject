@@ -214,4 +214,164 @@ public class DBTools {
     }
 
 
+    // -------------------------------Statistics And queries on ArrayList<Need>--------------------------------
+
+
+    /**
+     * @brief function used to check if someone participate to a need
+     * @param list
+     * @param user
+     * @return
+     */
+    public boolean participateToNeed(ArrayList<Need> list, String user){
+
+        if(list == null || user == null || user.isEmpty()){
+
+            throw new NullPointerException();
+        }
+
+        for(Need n: list){
+
+            ArrayList<String> participants = DBTools.convertCsvToArray(n.getParticipants());
+
+            if(participants.contains(user)){
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+
+    /**
+     * @brief compute the number of needs to which the user participates
+     * @param list
+     * @param user
+     * @return
+     */
+    public int numberOfParticipation(ArrayList<Need> list, String user){
+
+        if(list == null || user == null || user.isEmpty()){
+
+            throw new NullPointerException();
+        }
+
+        int count = 0;
+
+        for(Need n: list){
+
+            ArrayList<String> participants = DBTools.convertCsvToArray(n.getParticipants());
+
+            if(participants.contains(user)){
+                count++;
+            }
+        }
+
+        return count;
+
+    }
+
+    /**
+     * @brief Compute the proportion of each category in the list
+     * @param list
+     * @return
+     */
+    public int[] proportionOfCategories(ArrayList<Need> list){
+
+        if(list == null){
+            throw new NullPointerException();
+        }
+
+        int[] proportion = new int[CategoriesInfo.size];
+
+        for(int i = 0; i < CategoriesInfo.size; ++i){
+            proportion[i] = 0;
+        }
+
+        for(Need n : list){
+
+            proportion[CategoriesInfo.convert(n.getCategory())] +=1;
+        }
+
+        return proportion;
+
+    }
+
+    /**
+     * @brief Compute the total number of participants of all available needs
+     * @param list
+     * @return
+     */
+    public int totalNbrParticipants(ArrayList<Need> list){
+
+        if(list == null){
+            throw new NullPointerException();
+        }
+
+        int total = 0;
+
+        for(Need n : list){
+
+            total += computeNumber(n.getParticipants());
+        }
+
+        return total;
+    }
+
+    /**
+     * @brief Method used to compute the closes Need
+     * @param list
+     * @param pos
+     * @return
+     */
+    public Need findClosest(ArrayList<Need> list, GeoPoint pos){
+
+        if(list == null){
+            throw new NullPointerException();
+        }
+        if(list.isEmpty()){
+            throw new IllegalArgumentException("List is empty. Cannot compute closes Need");
+        }
+
+        Need closest;
+
+        for(int i = 0; i < list.size(); ++i){
+
+            double currDist = DBTools.distanceBetween(pos,closest.getPos()
+
+            Need curr = list.get(i);
+
+            if(i == 0){
+                closest = curr;
+            }
+            else{
+                if(DBTools.distanceBetween(pos,curr.getPos()) < currDist){
+                    closest = curr;
+                }
+            }
+        }
+
+        return closest;
+
+    }
+
+    /**
+     * @Brief Compute the average number of people per need
+     * @param list
+     * @return
+     */
+    public double averageNbrParticipants(ArrayList<Need> list){
+        if(list == null){
+            throw new NullPointerException();
+        }
+        if(list.isEmpty()){
+            throw new IllegalArgumentException("List is empty. Cannot compute average");
+        }
+
+        return totalNbrParticipants(list) / list.size();
+
+    }
+
+
 }
