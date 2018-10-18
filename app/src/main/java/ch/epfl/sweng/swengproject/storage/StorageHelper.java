@@ -19,6 +19,7 @@ public class StorageHelper {
     public static void deleteAllDataStoredLocally(){
         UserDao userDao = AppDatabase.getDatabase().userDao();
         userDao.deleteAll();
+        System.out.println("Normally everything must have been delete from the local storage of the phone now! ");
     }
 
     /**

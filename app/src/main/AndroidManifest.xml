@@ -19,7 +19,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".controllers.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,17 +53,19 @@
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".controllers.LoginActivity" />
-        <activity android:name=".UserProfileActivity"></activity>
+        <activity android:name=".UserProfileActivity" />
         <activity android:name=".AddNeedActivity" />
-
         <activity
             android:name=".controllers.InscriptionActivity"
-            android:label="Inscription"
-            android:exported="true"></activity>
+            android:exported="true"
+            android:label="Inscription" />
 
         <!-- to fix the bug of Maps activity that crashes -->
-        <uses-library android:name="org.apache.http.legacy" android:required="false" />
-        <!-- end of bug fixes-->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+        <!-- end of bug fixes -->
+        <activity android:name=".controllers.MyProfileActivity"></activity>
     </application>
 
 </manifest>
