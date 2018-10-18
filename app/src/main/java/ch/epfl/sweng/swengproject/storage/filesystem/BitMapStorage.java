@@ -16,6 +16,11 @@ public class BitMapStorage {
     private BitMapStorage() {
     }
 
+    private static Context c;
+
+    public static void setContext(Context cont){
+        c = cont;
+    }
 
     /**
      * Store a Bitmap on disk in the private folder of the application
