@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -35,9 +36,6 @@ import static org.mockito.Mockito.when;
 public class DatabaseTest {
 
     //ALL MOCKED OBJECTS
-    @Mock
-    private FirebaseAuth auth = mock(FirebaseAuth.class);
-
     @Mock
     private FirebaseFirestore fbFirestore = mock(FirebaseFirestore.class);
 
@@ -144,7 +142,7 @@ public class DatabaseTest {
         Database.saveNeed(need);
     }
 
-/*
+
     @Test
     public void testGetNeeds(){
         //Save a need
@@ -223,14 +221,27 @@ public class DatabaseTest {
         Database.setReference(collRef);
         Database.saveNeed(need);
 
+        listDocSnap.add(docSnap);
+        when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
+
+        when(docSnap.get("longitude")).thenReturn(1.0);
+        when(docSnap.get("latitude")).thenReturn(1.0);
+        when(docSnap.get("emitter")).thenReturn("emit");
+        when(docSnap.get("description")).thenReturn("descr");
+        when(docSnap.get("nbPeopleNeeded")).thenReturn(1);
+        when(docSnap.get("timeToLive")).thenReturn(1);
+        when(docSnap.get("category")).thenReturn(Categories.HELP);
+        when(docSnap.get("participants")).thenReturn("");
+        when(docSnap.getReference()).thenReturn(docRef);
+
 
         when(collRef.addSnapshotListener(eveList)).thenReturn(listReg);
         fireExcep = null;
-        when(eveList.onEvent(queryDocumentSnapshots, fireExcep));
 
+        ArrayList<Categories> listCat = new ArrayList<>();
+        listCat.add(Categories.ALL);
+        Database.getNeeds(new GeoPoint(1.0, 1.0), 1000, listCat);
 
-        listDocSnap.add(docSnap);
-        when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
-    }*/
+    }
 
 }
