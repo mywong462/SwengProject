@@ -1,5 +1,8 @@
 package ch.epfl.sweng.swengproject.util;
 
+import android.app.Activity;
+import android.arch.core.util.Function;
+import android.content.Context;
 import android.content.Intent;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -31,4 +34,18 @@ public class FakeLocation implements LocationServer {
         return true;
     }
 
+    @Override
+    public void callerOnPause(){}
+
+    @Override
+    public void callerOnResume(){}
+
+    @Override
+    public void setCurrentLocationParameters(Context context, Activity activity, Function<Void, Void> function){}
+
+    @Override
+    public void setCurrentLocationParameters(Context context, Activity activity){}
+
+    @Override
+    public void callerActivityReady(){}
 }
