@@ -64,8 +64,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private FirebaseAuth auth = Database.getDBauth;
 
+    private boolean test;
+
     public void setAuth(FirebaseAuth fAuth){
         this.auth = fAuth;
+        this.test = true;
     }
 
 
@@ -291,20 +294,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         boolean canAccept = DBTools.notAlreadyAccepted(this.availableNeeds,marker.getPosition(), this.auth.getCurrentUser().getEmail())
                 && DBTools.isNotFull(this.availableNeeds, marker.getPosition());
 
-        layout.findViewById(R.id.acceptBtn).setClickable(canAccept);
-        layout.findViewById(R.id.acceptBtn).setEnabled(canAccept);
+        if(!test) {
+            layout.findViewById(R.id.acceptBtn).setClickable(canAccept);
+            layout.findViewById(R.id.acceptBtn).setEnabled(canAccept);
 
-        Log.d(LOGTAG,"checks have passes now ready to query DB on click");
-        //Implement the accept button
-        (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            //Implement the accept button
+            (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
 
-                Database.addParticipant(marker.getPosition());  //add the participant to the need. the need now contains participants in CSV format.
+                    Database.addParticipant(marker.getPosition());  //add the participant to the need. the need now contains participants in CSV format.
                     pw.dismiss();
 
-            }
-        });
-
+                }
+            });
+        }
         //Clicking outside the window will close the window
         pw.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         pw.setTouchInterceptor(new View.OnTouchListener() {
@@ -319,10 +322,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         pw.setOutsideTouchable(true);
 
-
-        //Display the pop-up window
-        pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
-
+        if(!test) {
+            //Display the pop-up window
+            pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+        }
 
         return true;
     }
@@ -336,24 +339,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-        LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
+        View layout = null;
+        if(!test){
+            LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
+        }
+
         final PopupWindow pw = new PopupWindow(layout, (int) (width * 0.8), (int) (height * 0.7), true);
 
         //Get the marker information
         GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
-        displayOnMenu(layout, needRequest);
+        if(!test) {
 
-        //Implement the close button
-        (layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                pw.dismiss();
-            }
-        });
+            displayOnMenu(layout, needRequest);
+
+            //Implement the close button
+            (layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    pw.dismiss();
+                }
+            });
+        }
 
         Log.d(LOGTAG,"before check");
 
-        return new Pair<View,PopupWindow>(layout, pw);
+        return new Pair<>(layout, pw);
 
     }
 

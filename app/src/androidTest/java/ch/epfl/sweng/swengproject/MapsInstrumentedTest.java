@@ -106,7 +106,7 @@ public class MapsInstrumentedTest {
         when(fAuth.getCurrentUser()).thenReturn(fUser);
         mActivityRule.getActivity().setAuth(fAuth);
 
-        mActivityRule.getActivity().popUp(new Marker(new zzt() {
+        mActivityRule.getActivity().onMarkerClick(new Marker(new zzt() {
             @Override
             public void remove() throws RemoteException {
 
