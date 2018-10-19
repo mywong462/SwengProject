@@ -101,6 +101,9 @@ public abstract class UserDao {
     }
 
     private void deleteMyOwnProfile(){//tested
-        delete(getMyOwnProfile());
+        User meToDel = getMyOwnProfile();
+        if(meToDel != null){
+            delete(meToDel);
+        }
     }
 }

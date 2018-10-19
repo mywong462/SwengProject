@@ -6,7 +6,9 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,27 +29,34 @@ public class UserTests {
     //TODO: Test how the system handle the pictures of the users !
 
 
-    private UserDao userDao;
-    private AppDatabase dataBase;
+    private static UserDao userDao;
+    private static AppDatabase dataBase;
+
+    @BeforeClass
+    public static void doBeforeAll(){
+        AppDatabase.setUnderTest(true);
+        dataBase = AppDatabase.getInstance();
+        //Context context = InstrumentationRegistry.getTargetContext();
+        //Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
+        userDao = dataBase.userDao();
+    }
+
+    @AfterClass
+    public static void doAfterAll() {
+        AppDatabase.setUnderTest(false);
+        dataBase.close();
+        AppDatabase.destroyInstance();
+    }
 
     @Before
     public void createDb() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        dataBase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
-        userDao = dataBase.userDao();
         userDao.deleteAll();
-    }
-
-    @After
-    public void closeDb() {
-        dataBase.close();
     }
 
 
     @Test
     public void storeAndFetchAll() {
         List<User> usersToStore = UserTestUtil.randomUsers();
-        userDao.deleteAll();
         userDao.insertUsers(usersToStore.toArray(new User[0]));
         List<User> fetchedUsers = userDao.getAll();
         assertEquals(usersToStore.size(), fetchedUsers.size());
@@ -56,7 +65,6 @@ public class UserTests {
     @Test
     public void deleteAll() {
         List<User> usersToStore = UserTestUtil.randomUsers();
-        userDao.deleteAll();
         userDao.insertUsers(usersToStore.toArray(new User[0]));
         userDao.deleteAll();
         List<User> fetchedUsers = userDao.getAll();
@@ -66,7 +74,6 @@ public class UserTests {
     @Test
     public void getByEmail() {
         List<User> usersToStore = UserTestUtil.randomUsers();
-        userDao.deleteAll();
         userDao.insertUsers(usersToStore.toArray(new User[0]));
 
         for (int i = 0; i < 10; i++) {
@@ -78,7 +85,6 @@ public class UserTests {
     @Test
     public void loadByEmails() {
         List<User> usersToStore = UserTestUtil.randomUsers();
-        userDao.deleteAll();
         userDao.insertUsers(usersToStore.toArray(new User[0]));
 
         for (int i = 0; i < 10; i++) {
@@ -95,7 +101,6 @@ public class UserTests {
     public void findUserByName() {
 
         List<User> usersToStore = UserTestUtil.randomUsers();
-        userDao.deleteAll();
         userDao.insertUsers(usersToStore.toArray(new User[0]));
 
         for (int i = 0; i < 10; i++) {
@@ -109,7 +114,6 @@ public class UserTests {
     public void deleteUsers() {
 
         List<User> usersToStore = UserTestUtil.randomUsers();
-        userDao.deleteAll();
         userDao.insertUsers(usersToStore.toArray(new User[0]));
 
         for (int i = 0; i < 10; i++) {
@@ -124,7 +128,6 @@ public class UserTests {
     public void updateUsers() {
 
         List<User> usersToStore = UserTestUtil.randomUsers();
-        userDao.deleteAll();
         userDao.insertUsers(usersToStore.toArray(new User[0]));
 
         for (int i = 0; i < 10; i++) {
@@ -139,12 +142,9 @@ public class UserTests {
 
     @Test
     public void myProfile() {
-        List<User> randomUsers = UserTestUtil.randomUsers();
-        userDao.deleteAll();
-        User me = randomUsers.get(0);
+        User me = UserTestUtil.randomUser();
         userDao.storeMyOwnProfile(me);
         User me2 = userDao.getMyOwnProfile();
         assertEquals(me.email(), me2.email());
     }
-
 }
