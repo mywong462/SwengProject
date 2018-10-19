@@ -39,6 +39,12 @@ public class DatabaseTest {
 
     //EVERY MOCKED OBJECTS
     @Mock
+    private FirebaseAuth dbAuth = mock(FirebaseAuth.class);
+
+    @Mock
+    private FirebaseUser user = mock(FirebaseUser.class);
+
+    @Mock
     private FirebaseFirestore fbFirestore = mock(FirebaseFirestore.class);
 
     @Mock
@@ -230,6 +236,7 @@ public class DatabaseTest {
     public void testDefineTaskAddParticipant1(){
         listDocSnap.add(docSnap);
         when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
+        Database.setDbAuth(dbAuth);
 
         when(docSnap.get("longitude")).thenReturn(0.0);
         when(docSnap.get("latitude")).thenReturn(0.0);
@@ -241,6 +248,80 @@ public class DatabaseTest {
         when(docSnap.get("participants")).thenReturn("");
         when(docSnap.getReference()).thenReturn(docRef);
 
+        when(docSnap.getReference()).thenReturn(docRef);
+        when(dbAuth.getCurrentUser()).thenReturn(user);
+        when(user.getEmail()).thenReturn("benoitknuchel@gmail.com");
+
+        when(docRef.update("participants", dbAuth.getCurrentUser().getEmail())).thenReturn(new Task<Void>() {
+            @Override
+            public boolean isComplete() {
+                return true;
+            }
+
+            @Override
+            public boolean isSuccessful() {
+                return true;
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+
+            @Nullable
+            @Override
+            public Void getResult() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public <X extends Throwable> Void getResult(@NonNull Class<X> aClass) throws X {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Exception getException() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnSuccessListener(@NonNull OnSuccessListener<? super Void> onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super Void> onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super Void> onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+        });
 
         Database.defineTaskAddParticipant(taskQuerySnapshot, new LatLng(0.0, 0.0));
     }
@@ -249,6 +330,7 @@ public class DatabaseTest {
     public void testDefineTaskAddParticipant2(){
         listDocSnap.add(docSnap);
         when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
+        Database.setDbAuth(dbAuth);
 
         when(docSnap.get("longitude")).thenReturn(0.0);
         when(docSnap.get("latitude")).thenReturn(0.0);
@@ -260,6 +342,80 @@ public class DatabaseTest {
         when(docSnap.get("participants")).thenReturn("benoitknuchel@gmail.com");
         when(docSnap.getReference()).thenReturn(docRef);
 
+        when(docSnap.getReference()).thenReturn(docRef);
+        when(dbAuth.getCurrentUser()).thenReturn(user);
+        when(user.getEmail()).thenReturn("benoitknuchel@gmail.com");
+
+        when(docRef.update("participants", dbAuth.getCurrentUser().getEmail())).thenReturn(new Task<Void>() {
+            @Override
+            public boolean isComplete() {
+                return true;
+            }
+
+            @Override
+            public boolean isSuccessful() {
+                return true;
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+
+            @Nullable
+            @Override
+            public Void getResult() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public <X extends Throwable> Void getResult(@NonNull Class<X> aClass) throws X {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Exception getException() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnSuccessListener(@NonNull OnSuccessListener<? super Void> onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super Void> onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super Void> onSuccessListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<Void> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+        });
 
         Database.defineTaskAddParticipant(taskQuerySnapshot, new LatLng(0.0, 0.0));
     }

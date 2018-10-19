@@ -29,7 +29,7 @@ public final class Database {
 
     protected static List<Need> listNeeds = new ArrayList<>();
 
-    protected static final FirebaseAuth getDBauth = FirebaseAuth.getInstance();
+    protected static FirebaseAuth getDBauth = FirebaseAuth.getInstance();
 
     private static final FirebaseFirestore needsDB = FirebaseFirestore.getInstance();
 
@@ -38,6 +38,9 @@ public final class Database {
     //For testing
     public static void setReference(CollectionReference collRef){
         needsRef = collRef;
+    }
+    public static void setDbAuth(FirebaseAuth auth){
+        getDBauth = auth;
     }
 
     public static Task<DocumentReference> saveNeed(Need need){
