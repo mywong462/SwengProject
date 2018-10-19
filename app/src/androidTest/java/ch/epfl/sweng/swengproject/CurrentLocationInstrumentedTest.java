@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -128,7 +129,7 @@ public class CurrentLocationInstrumentedTest {
 
     private boolean finished2 = false;
 
-    @Test
+    @Ignore
     public void checkLocationTest(){
         synchronized (lock2) {
             if(!finished2) {
