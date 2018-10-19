@@ -62,7 +62,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            if (locationResult == null) {
+            if (locationResult.getLastLocation() == null) {
                 return;
             }
             mLastKnownLocation = locationResult.getLastLocation();
