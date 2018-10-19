@@ -2,6 +2,7 @@ package ch.epfl.sweng.swengproject;
 
 
 import android.support.test.espresso.NoMatchingViewException;
+import android.support.test.espresso.PerformException;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Ignore;
@@ -27,7 +28,7 @@ public class RegistrationInstrumentedTest {
     public final ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(MainActivity.class);
 
-    @Test
+    @Test(expected = PerformException.class)
     public void testRandomRegisteredUser() throws InterruptedException {
 
         String mail = mailName +Math.random()+mailDomain;
@@ -41,11 +42,11 @@ public class RegistrationInstrumentedTest {
         onView(withId(R.id.password2)).perform(typeText(pswd)).perform(closeSoftKeyboard());
         onView(withId(R.id.register_btn2)).perform(click());
 
-        //will exit because email is not registered
+        //will exit bcause email is not registered
         Thread.sleep(3000);
     }
 
-    @Test(expected = NoMatchingViewException.class)
+    @Test(expected = PerformException.class)
     public void testWrongEmailInput() throws InterruptedException {
 
         String mail = mailName +Math.random();  //the mail doesn't contains @something.domain
@@ -65,7 +66,7 @@ public class RegistrationInstrumentedTest {
         Thread.sleep(1000);
     }
 
-    @Test(expected = NoMatchingViewException.class)
+    @Test(expected = PerformException.class)
     public void testSmallPasswordInput() throws InterruptedException {
 
         String mail = mailName +Math.random();
