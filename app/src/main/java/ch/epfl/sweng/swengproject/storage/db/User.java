@@ -30,8 +30,6 @@ public class User {
     @Ignore
     private Bitmap picture = null;
 
-
-
     private String pathToPicture(){
         return PICTURES_FOLDER + File.pathSeparator + email + ".jpeg";
     }
@@ -114,5 +112,4 @@ public class User {
         }
         return picture;
     }
-
 }

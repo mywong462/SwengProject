@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,12 +19,18 @@ import android.support.test.rule.ActivityTestRule;
 
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
+import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
+import ch.epfl.sweng.swengproject.storage.db.User;
+import ch.epfl.sweng.swengproject.util.UserTestUtil;
 
 
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTests {
 
-
+    @BeforeClass
+   public static void doBeforeAll(){
+        AppDatabase.setUnderTest(true);
+    }
 
     @Rule
     public final ActivityTestRule<MainActivity> mainActivity =
@@ -31,8 +38,12 @@ public class MainActivityTests {
 
     @Test
     public void noProfileInHDExist() throws InterruptedException{
-
+        Thread.sleep(5000);
         StorageHelper.deleteAllDataStoredLocally();
+        User me = UserTestUtil.randomUser();
+        StorageHelper.saveThisUserAsMe(me);
+        Thread.sleep(5000);
+
         /*Instrumentation.ActivityMonitor aM =  new Instrumentation.ActivityMonitor();
 
 
@@ -44,7 +55,7 @@ public class MainActivityTests {
 
         //mainActivity.finishActivity();
         mainActivity.launchActivity(new Intent());
-        Thread.sleep(5000);
+        //Thread.sleep(5000);
         boolean passed = true;
         try { //the activity should not have changed => login_btn isn't on the view and should return an error
             onView(withId(R.id.inscription_src)).perform(click());

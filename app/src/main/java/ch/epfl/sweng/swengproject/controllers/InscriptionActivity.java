@@ -75,6 +75,8 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
 
+        System.out.println("---WELCOME IN INSCRIPTION ACTIVITY---");
+
         //connect the widgets to the code
         profilePictureButton = findViewById(R.id.activity_main_profile_image_input);
         emailEditText = findViewById(R.id.inscription_activity_email);

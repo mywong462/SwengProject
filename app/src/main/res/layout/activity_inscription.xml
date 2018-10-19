@@ -29,7 +29,7 @@ Android:layout_weight. C'est un attribut spécifique aux enfants d'un LinearLayo
         android:layout_weight="9"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
-        android:src="@drawable/emptyprofile"/>
+       android:src="@drawable/emptyprofile"/>
 
     <EditText
         android:id="@+id/inscription_activity_email"

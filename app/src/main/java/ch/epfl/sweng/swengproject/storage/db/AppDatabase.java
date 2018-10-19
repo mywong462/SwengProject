@@ -67,8 +67,10 @@ public abstract class AppDatabase extends RoomDatabase {
             HD_INSTANCE =
                     Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class,"MyDataBase")
                             .build();
+            System.out.println("AppDatabase just created and is returning a real database that will persist on disk");
+        }else{
+            System.out.println("AppDatabase is returning a real database that will persist on disk that was previously created");
         }
-        System.out.println("AppDatabase is returning a real database that will persist on disk");
         return HD_INSTANCE;
     }
 
@@ -77,8 +79,10 @@ public abstract class AppDatabase extends RoomDatabase {
         if (MEMORY_INSTANCE == null) {
             MEMORY_INSTANCE =
                     Room.inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class).build();
+            System.out.println("AppDatabase just created and is returning a database for test purpose that will not persist on disk");
+        }else{
+            System.out.println("AppDatabase just is returning a database for test purpose that will not persist on disk and was previously created");
         }
-        System.out.println("AppDatabase is returning a instance that will stay just in memory for testing purpose");
         return MEMORY_INSTANCE;
     }
 
@@ -87,6 +91,7 @@ public abstract class AppDatabase extends RoomDatabase {
      * free the memory
      */
     public static void destroyInstance() {
+        System.out.println("AppDatabase has free the memory by deleting the reference to the database instances");
         MEMORY_INSTANCE = null;
         HD_INSTANCE = null;
     }

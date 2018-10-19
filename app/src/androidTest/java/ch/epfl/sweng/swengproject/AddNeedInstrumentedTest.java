@@ -114,9 +114,7 @@ public class AddNeedInstrumentedTest {
 
             passed = true;
         }
-
         assertEquals(true,passed);
-
     }
 
     @Test
@@ -145,10 +143,6 @@ public class AddNeedInstrumentedTest {
 
             passed = true;
         }
-
         assertEquals(true,passed);
-
     }
-
-
 }
