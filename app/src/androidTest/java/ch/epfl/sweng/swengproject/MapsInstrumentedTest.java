@@ -291,6 +291,7 @@ public class MapsInstrumentedTest {
 
         when(menu.findViewById(R.id.needDescription)).thenReturn(t);
         doNothing().when(t).setText(Matchers.any(String.class));
+        // or else "good and long description" instead of matcher
 
         mActivityRule.getActivity().setTestMode();
 
@@ -312,4 +313,495 @@ public class MapsInstrumentedTest {
 
         mActivityRule.getActivity().bindAddNeedButton();
     }
+
+    @Test
+    public void canUpdateUI(){
+
+        GoogleMap m = new GoogleMap(new IGoogleMapDelegate() {
+            @Override
+            public CameraPosition getCameraPosition() throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public float getMaxZoomLevel() throws RemoteException {
+                return 0;
+            }
+
+            @Override
+            public float getMinZoomLevel() throws RemoteException {
+                return 0;
+            }
+
+            @Override
+            public void moveCamera(IObjectWrapper iObjectWrapper) throws RemoteException {
+
+            }
+
+            @Override
+            public void animateCamera(IObjectWrapper iObjectWrapper) throws RemoteException {
+
+            }
+
+            @Override
+            public void animateCameraWithCallback(IObjectWrapper iObjectWrapper, zzc zzc) throws RemoteException {
+
+            }
+
+            @Override
+            public void animateCameraWithDurationAndCallback(IObjectWrapper iObjectWrapper, int i, zzc zzc) throws RemoteException {
+
+            }
+
+            @Override
+            public void stopAnimation() throws RemoteException {
+
+            }
+
+            @Override
+            public zzz addPolyline(PolylineOptions polylineOptions) throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public zzw addPolygon(PolygonOptions polygonOptions) throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public zzt addMarker(MarkerOptions markerOptions) throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public zzk addGroundOverlay(GroundOverlayOptions groundOverlayOptions) throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public zzac addTileOverlay(TileOverlayOptions tileOverlayOptions) throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public void clear() throws RemoteException {
+
+            }
+
+            @Override
+            public int getMapType() throws RemoteException {
+                return 0;
+            }
+
+            @Override
+            public void setMapType(int i) throws RemoteException {
+
+            }
+
+            @Override
+            public boolean isTrafficEnabled() throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public void setTrafficEnabled(boolean b) throws RemoteException {
+
+            }
+
+            @Override
+            public boolean isIndoorEnabled() throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public boolean setIndoorEnabled(boolean b) throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public boolean isMyLocationEnabled() throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public void setMyLocationEnabled(boolean b) throws RemoteException {
+
+            }
+
+            @Override
+            public Location getMyLocation() throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public void setLocationSource(ILocationSourceDelegate iLocationSourceDelegate) throws RemoteException {
+
+            }
+
+            @Override
+            public IUiSettingsDelegate getUiSettings() throws RemoteException {
+                return new IUiSettingsDelegate() {
+                    @Override
+                    public void setZoomControlsEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public void setCompassEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public void setMyLocationButtonEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public void setScrollGesturesEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public void setZoomGesturesEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public void setTiltGesturesEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public void setRotateGesturesEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public void setAllGesturesEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public boolean isZoomControlsEnabled() throws RemoteException {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isCompassEnabled() throws RemoteException {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isMyLocationButtonEnabled() throws RemoteException {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isScrollGesturesEnabled() throws RemoteException {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isZoomGesturesEnabled() throws RemoteException {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isTiltGesturesEnabled() throws RemoteException {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isRotateGesturesEnabled() throws RemoteException {
+                        return false;
+                    }
+
+                    @Override
+                    public void setIndoorLevelPickerEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public boolean isIndoorLevelPickerEnabled() throws RemoteException {
+                        return false;
+                    }
+
+                    @Override
+                    public void setMapToolbarEnabled(boolean b) throws RemoteException {
+
+                    }
+
+                    @Override
+                    public boolean isMapToolbarEnabled() throws RemoteException {
+                        return false;
+                    }
+
+                    @Override
+                    public IBinder asBinder() {
+                        return null;
+                    }
+                };
+            }
+
+            @Override
+            public IProjectionDelegate getProjection() throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public void setOnCameraChangeListener(zzl zzl) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnMapClickListener(zzaj zzaj) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnMapLongClickListener(zzan zzan) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnMarkerClickListener(zzar zzar) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnMarkerDragListener(zzat zzat) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnInfoWindowClickListener(zzab zzab) throws RemoteException {
+
+            }
+
+            @Override
+            public void setInfoWindowAdapter(zzh zzh) throws RemoteException {
+
+            }
+
+            @Override
+            public com.google.android.gms.internal.maps.zzh addCircle(CircleOptions circleOptions) throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public void setOnMyLocationChangeListener(zzax zzax) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnMyLocationButtonClickListener(zzav zzav) throws RemoteException {
+
+            }
+
+            @Override
+            public void snapshot(zzbs zzbs, IObjectWrapper iObjectWrapper) throws RemoteException {
+
+            }
+
+            @Override
+            public void setPadding(int i, int i1, int i2, int i3) throws RemoteException {
+
+            }
+
+            @Override
+            public boolean isBuildingsEnabled() throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public void setBuildingsEnabled(boolean b) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnMapLoadedCallback(zzal zzal) throws RemoteException {
+
+            }
+
+            @Override
+            public zzn getFocusedBuilding() throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public void setOnIndoorStateChangeListener(com.google.android.gms.maps.internal.zzz zzz) throws RemoteException {
+
+            }
+
+            @Override
+            public void setWatermarkEnabled(boolean b) throws RemoteException {
+
+            }
+
+            @Override
+            public void getMapAsync(zzap zzap) throws RemoteException {
+
+            }
+
+            @Override
+            public void onCreate(Bundle bundle) throws RemoteException {
+
+            }
+
+            @Override
+            public void onResume() throws RemoteException {
+
+            }
+
+            @Override
+            public void onPause() throws RemoteException {
+
+            }
+
+            @Override
+            public void onDestroy() throws RemoteException {
+
+            }
+
+            @Override
+            public void onLowMemory() throws RemoteException {
+
+            }
+
+            @Override
+            public boolean useViewLifecycleWhenInFragment() throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public void onSaveInstanceState(Bundle bundle) throws RemoteException {
+
+            }
+
+            @Override
+            public void setContentDescription(String s) throws RemoteException {
+
+            }
+
+            @Override
+            public void snapshotForTest(zzbs zzbs) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnPoiClickListener(zzbb zzbb) throws RemoteException {
+
+            }
+
+            @Override
+            public void onEnterAmbient(Bundle bundle) throws RemoteException {
+
+            }
+
+            @Override
+            public void onExitAmbient() throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnGroundOverlayClickListener(zzx zzx) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnInfoWindowLongClickListener(zzaf zzaf) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnPolygonClickListener(zzbd zzbd) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnInfoWindowCloseListener(zzad zzad) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnPolylineClickListener(zzbf zzbf) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnCircleClickListener(zzv zzv) throws RemoteException {
+
+            }
+
+            @Override
+            public void setMinZoomPreference(float v) throws RemoteException {
+
+            }
+
+            @Override
+            public void setMaxZoomPreference(float v) throws RemoteException {
+
+            }
+
+            @Override
+            public void resetMinMaxZoomPreference() throws RemoteException {
+
+            }
+
+            @Override
+            public void setLatLngBoundsForCameraTarget(LatLngBounds latLngBounds) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnCameraMoveStartedListener(com.google.android.gms.maps.internal.zzt zzt) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnCameraMoveListener(zzr zzr) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnCameraMoveCanceledListener(zzp zzp) throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnCameraIdleListener(com.google.android.gms.maps.internal.zzn zzn) throws RemoteException {
+
+            }
+
+            @Override
+            public boolean setMapStyle(MapStyleOptions mapStyleOptions) throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public void onStart() throws RemoteException {
+
+            }
+
+            @Override
+            public void onStop() throws RemoteException {
+
+            }
+
+            @Override
+            public void setOnMyLocationClickListener(zzaz zzaz) throws RemoteException {
+
+            }
+
+            @Override
+            public IBinder asBinder() {
+                return null;
+            }
+        });
+
+        mActivityRule.getActivity().setMap(m);
+        mActivityRule.getActivity().updateUI();
+
+    }
+
 }
