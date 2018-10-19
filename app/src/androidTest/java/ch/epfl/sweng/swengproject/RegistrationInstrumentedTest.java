@@ -28,7 +28,7 @@ public class RegistrationInstrumentedTest {
     public final ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(MainActivity.class);
 
-    @Test
+    @Test(expected = PerformException.class)
     public void testRandomRegisteredUser() throws InterruptedException {
 
         String mail = mailName +Math.random()+mailDomain;
