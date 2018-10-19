@@ -1,6 +1,5 @@
 package ch.epfl.sweng.swengproject;
 
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -15,14 +14,14 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 
 public final class Database {
@@ -55,6 +54,7 @@ public final class Database {
 
         needsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
+
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 defineTaskGetNeeds(task);
             }
