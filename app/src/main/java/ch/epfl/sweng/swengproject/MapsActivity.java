@@ -68,6 +68,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         this.auth = fAuth;
         this.test = true;
     }
+    public void setAuth(FirebaseAuth fAuth, GoogleMap m){
+        this.auth = fAuth;
+        this.test = true;
+        this.mMap = m;
+    }
 
 
     @Override
@@ -193,7 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void updateUI() {
+    public void updateUI() {
 
         Log.d(MainActivity.LOGTAG, "UPDATEUI");
 
@@ -240,8 +245,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
                     .title("TITLE"));
-            // TODO: change color depending on the type of need
-            marker.setTag(need);
+
+           if(!test) {
+               // TODO: change color depending on the type of need
+               marker.setTag(need);
+           }
         }
 
          mMap.setOnMarkerClickListener(this);
