@@ -37,12 +37,10 @@ public final class Database {
 
     //For testing
     public static void setReference(CollectionReference collRef){
-        Log.d("tamer", "in setReference : " + collRef);
         needsRef = collRef;
     }
 
     public static Task<DocumentReference> saveNeed(Need need){
-        Log.d("tamer", "in saveNeed with : " + needsRef);
         return needsRef.add(need);
     }
 
@@ -55,15 +53,14 @@ public final class Database {
         needsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                defineTask(task);
+                defineTaskGetNeeds(task);
             }
         });
-
 
         return DBTools.filterNeeds(mGeoPoint,range,categories, listNeeds);
     }
 
-    public static void addParticipant(LatLng pos){
+    public static void addParticipant(final LatLng pos){
 
         final LatLng position = pos;
 
@@ -71,31 +68,29 @@ public final class Database {
                 new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                        if(task.isSuccessful()) {
-                            for (DocumentSnapshot need : task.getResult().getDocuments()) {
-                                if ((double) need.get("latitude") == position.latitude && (double) need.get("longitude") == position.longitude) {
-
-                                    if (DBTools.computeNumber(need.get("participants").toString()) == 0) {
-                                        need.getReference().update("participants", getDBauth.getCurrentUser().getEmail());
-                                    } else {
-                                        need.getReference().update("participants", need.get("participants") + "," + getDBauth.getCurrentUser().getEmail());
-                                    }
-
-                                    return;
-                                }
-                            }
-                        }
-                        else{
-                            Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
-                        }
+                        defineTaskAddParticipant(task, position);
                     }
                 }
         );
     }
 
-    public static void defineTask(Task<QuerySnapshot> task){
-        Log.d(MainActivity.LOGTAG, "in defineTask, just to see if DatabaseTest passes here");
+    public static void defineTaskAddParticipant(Task<QuerySnapshot> task, LatLng position){
+        if(task.isSuccessful()) {
+            for (DocumentSnapshot need : task.getResult().getDocuments()) {
+                if ((double) need.get("latitude") == position.latitude && (double) need.get("longitude") == position.longitude) {
+                    if (DBTools.computeNumber(need.get("participants").toString()) == 0) {
+                        need.getReference().update("participants", getDBauth.getCurrentUser().getEmail());
+                    } else {
+                        need.getReference().update("participants", need.get("participants") + "," + getDBauth.getCurrentUser().getEmail());
+                    }
+                    return;
+                }
+            }
+        }
+
+    }
+
+    public static void defineTaskGetNeeds(Task<QuerySnapshot> task){
         if(task.isSuccessful()){
             ArrayList<Need> temp = new ArrayList<>();
 
@@ -112,9 +107,6 @@ public final class Database {
             }
 
             listNeeds = temp;
-        }else{
-            Log.d("tamer", "testGetNeeds comes here4");
-            Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
         }
     }
 
@@ -131,7 +123,6 @@ public final class Database {
             throw new NullPointerException("one or more elements of the document is null in setNeedFromSnapshot()");
         }
 
-        Log.d(MainActivity.LOGTAG, "in setNeedFromSnapshot, jst to see if DatabaseTest passes here");
         Need current = new Need();
 
         current.setLongitude((double)dS.get("longitude"));
@@ -145,8 +136,6 @@ public final class Database {
         int people = Integer.parseInt(dS.get("nbPeopleNeeded").toString());
         current.setNbPeopleNeeded(people);
         current.setParticipants(dS.get("participants").toString());
-
-        Log.d(MainActivity.LOGTAG, "testGetNeeds comes here");
 
         return current;
     }

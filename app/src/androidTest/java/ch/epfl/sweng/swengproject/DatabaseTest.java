@@ -6,6 +6,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 public class DatabaseTest {
 
-    //ALL MOCKED OBJECTS
+    //EVERY MOCKED OBJECTS
     @Mock
     private FirebaseFirestore fbFirestore = mock(FirebaseFirestore.class);
 
@@ -206,82 +207,8 @@ public class DatabaseTest {
         Database.saveNeed(need);
     }
 
-
-
     @Test
-    public void testDefineTaskSuccessful(){
-        Need need = new Need("emit", "descr", 1, 1.0, 1.0, Categories.HELP, 1, "");
-        when(fbFirestore.collection("needs")).thenReturn(collRef);
-        when(collRef.add(need)).thenReturn(new Task<DocumentReference>() {
-            @Override
-            public boolean isComplete() {
-                return true;
-            }
-
-            @Override
-            public boolean isSuccessful() {
-                return true;
-            }
-
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
-
-            @Nullable
-            @Override
-            public DocumentReference getResult() {
-                return docRef;
-            }
-
-            @Nullable
-            @Override
-            public <X extends Throwable> DocumentReference getResult(@NonNull Class<X> aClass) throws X {
-                return docRef;
-            }
-
-            @Nullable
-            @Override
-            public Exception getException() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<DocumentReference> addOnSuccessListener(@NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<DocumentReference> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<DocumentReference> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<DocumentReference> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<DocumentReference> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<DocumentReference> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-        });
+    public void testDefineTaskGetNeeds(){
 
         when(docSnap.get("longitude")).thenReturn(1.0);
         when(docSnap.get("latitude")).thenReturn(1.0);
@@ -296,9 +223,46 @@ public class DatabaseTest {
         listDocSnap.add(docSnap);
         when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
 
-        Database.defineTask(taskQuerySnapshot);
+        Database.defineTaskGetNeeds(taskQuerySnapshot);
     }
 
+    @Test
+    public void testDefineTaskAddParticipant1(){
+        listDocSnap.add(docSnap);
+        when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
+
+        when(docSnap.get("longitude")).thenReturn(0.0);
+        when(docSnap.get("latitude")).thenReturn(0.0);
+        when(docSnap.get("emitter")).thenReturn("emit");
+        when(docSnap.get("description")).thenReturn("descr");
+        when(docSnap.get("nbPeopleNeeded")).thenReturn(1);
+        when(docSnap.get("timeToLive")).thenReturn(1L);
+        when(docSnap.get("category")).thenReturn("HELP");
+        when(docSnap.get("participants")).thenReturn("");
+        when(docSnap.getReference()).thenReturn(docRef);
+
+
+        Database.defineTaskAddParticipant(taskQuerySnapshot, new LatLng(0.0, 0.0));
+    }
+
+    @Test
+    public void testDefineTaskAddParticipant2(){
+        listDocSnap.add(docSnap);
+        when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
+
+        when(docSnap.get("longitude")).thenReturn(0.0);
+        when(docSnap.get("latitude")).thenReturn(0.0);
+        when(docSnap.get("emitter")).thenReturn("emit");
+        when(docSnap.get("description")).thenReturn("descr");
+        when(docSnap.get("nbPeopleNeeded")).thenReturn(1);
+        when(docSnap.get("timeToLive")).thenReturn(1L);
+        when(docSnap.get("category")).thenReturn("HELP");
+        when(docSnap.get("participants")).thenReturn("benoitknuchel@gmail.com");
+        when(docSnap.getReference()).thenReturn(docRef);
+
+
+        Database.defineTaskAddParticipant(taskQuerySnapshot, new LatLng(0.0, 0.0));
+    }
 
     @Test(expected = NullPointerException.class)
     public void testSetNeedFromSnapshotNull(){
