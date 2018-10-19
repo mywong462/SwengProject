@@ -38,7 +38,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
     //constant used for input checks
     
-    private int REQUEST_LOCATION = 133;
+    public static int REQUEST_LOCATION = 133;
 
     protected static final int MIN_VALIDITY = 1;
     protected static final int MAX_VALIDITY = 30;
@@ -65,6 +65,11 @@ public class AddNeedActivity extends AppCompatActivity {
 
     //All the categories in the array listCategory
     private ArrayList<Categories> listCategory = new ArrayList<>(EnumSet.allOf(Categories.class));
+
+    public AddNeedActivity(LocationServer locationServer){
+        this.currLoc = locationServer;
+    }
+    public AddNeedActivity(){}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
