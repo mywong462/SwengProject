@@ -55,8 +55,8 @@ public class DatabaseTest {
     @Mock
     private ListenerRegistration listReg = mock(ListenerRegistration.class);
 
-    @Mock
-    private OnCompleteListener onCompleteListener = mock(OnCompleteListener.class);
+    //@Mock
+   // private OnCompleteListener onCompleteListener = mock(OnCompleteListener.class);
 
     @Mock
     private QuerySnapshot queryDocumentSnapshots = mock(QuerySnapshot.class);
@@ -219,12 +219,13 @@ public class DatabaseTest {
     }
 
 
+
     @Test
-    public void testGetNeeds(){
+    public void testSetNeedFromSnapshot(){
         //Save a need
         Need need = new Need("emit", "descr", 1, 1.0, 1.0, Categories.HELP, 1, "");
         when(fbFirestore.collection("needs")).thenReturn(collRef);
-        when(collRef.add(need)).thenReturn(new Task<DocumentReference>() {
+        /*when(collRef.add(need)).thenReturn(new Task<DocumentReference>() {
             @Override
             public boolean isComplete() {
                 return true;
@@ -293,83 +294,11 @@ public class DatabaseTest {
             public Task<DocumentReference> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
                 return null;
             }
-        });
+        });*/
         Database.setReference(collRef);
         Database.saveNeed(need);
 
-        //TODO: I DON'T KNOW WHAT IM DOING IN THE 3 NEXT LINES
         when(collRef.get()).thenReturn(taskQuerySnapshot);
-        onCompleteListener.onComplete(taskQuerySnapshot);
-        when(taskQuerySnapshot.addOnCompleteListener(onCompleteListener)).thenReturn(new Task() {
-            @Override
-            public boolean isComplete() {
-                return true;
-            }
-
-            @Override
-            public boolean isSuccessful() {
-                return true;
-            }
-
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
-
-            @Nullable
-            @Override
-            public Object getResult() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Object getResult(@NonNull Class aClass) throws Throwable {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Exception getException() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task addOnSuccessListener(@NonNull OnSuccessListener onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-        });
 
         listDocSnap.add(docSnap);
         when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
@@ -379,16 +308,12 @@ public class DatabaseTest {
         when(docSnap.get("emitter")).thenReturn("emit");
         when(docSnap.get("description")).thenReturn("descr");
         when(docSnap.get("nbPeopleNeeded")).thenReturn(1);
-        when(docSnap.get("timeToLive")).thenReturn(1);
-        when(docSnap.get("category")).thenReturn(Categories.HELP);
+        when(docSnap.get("timeToLive")).thenReturn(1L);
+        when(docSnap.get("category")).thenReturn("HELP");
         when(docSnap.get("participants")).thenReturn("");
         when(docSnap.getReference()).thenReturn(docRef);
 
-
-        ArrayList<Categories> listCat = new ArrayList<>();
-        listCat.add(Categories.ALL);
-        Database.getNeeds(new GeoPoint(1.0, 1.0), 1000, listCat);
-
+        Database.setNeedFromSnapshot(docSnap);
     }
 
 }

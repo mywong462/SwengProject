@@ -49,60 +49,16 @@ public final class Database {
 
     //If there is no limitation in category, pass null into categories variable
     public static ArrayList<Need> getNeeds(GeoPoint mGeoPoint, int range, ArrayList<Categories> categories){
-        Log.d("tamer", "testGetNeeds comes here3");
 
         DBTools.checkInput(mGeoPoint, range, categories);
 
         needsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                if(task.isSuccessful()){
-                    ArrayList<Need> temp = new ArrayList<>();
-
-                    Log.d(MainActivity.LOGTAG, "Fetch from DB");
-                    //get the needs from the database
-
-                    Log.d("tamer", "testGetNeeds comes here2");
-
-                    for(DocumentSnapshot dS: task.getResult().getDocuments()){
-                        Need current = new Need();
-
-                        current.setLongitude((double)dS.get("longitude"));
-                        current.setLatitude((double)dS.get("latitude"));
-                        current.setEmitter((String)dS.get("emitter"));
-                        current.setDescription((String)dS.get("description"));
-
-                        current.setCategory(DBTools.convertStringToCat((String)dS.get("category")));
-
-                        current.setTimeToLive((long)dS.get("timeToLive"));
-                        int people = Integer.parseInt(dS.get("nbPeopleNeeded").toString());
-                        current.setNbPeopleNeeded(people);
-                        current.setParticipants(dS.get("participants").toString());
-
-                        Log.d("tamer", "testGetNeeds comes here");
-
-                        temp.add(current);
-                    }
-
-                    //remove old needs from the database
-
-                    for(DocumentSnapshot old: task.getResult().getDocuments()){
-                        if((long)old.get("timeToLive") < System.currentTimeMillis()){
-                            old.getReference().delete();
-                        }
-                    }
-
-                    listNeeds = temp;
-                }else{
-                    Log.d("tamer", "testGetNeeds comes here4");
-                    Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
-                }
+                defineTask(task);
             }
         });
 
-
-        Log.d("tamer", "testGetNeeds comes here5");
 
         return DBTools.filterNeeds(mGeoPoint,range,categories, listNeeds);
     }
@@ -136,5 +92,50 @@ public final class Database {
                     }
                 }
         );
+    }
+
+    public static void defineTask(Task<QuerySnapshot> task){
+        Log.d(MainActivity.LOGTAG, "in defineTask, just to see if DatabaseTest passes here");
+        if(task.isSuccessful()){
+            ArrayList<Need> temp = new ArrayList<>();
+
+            for(DocumentSnapshot dS: task.getResult().getDocuments()){
+                Need current = setNeedFromSnapshot(dS);
+                temp.add(current);
+            }
+
+            //remove old needs from the database
+            for(DocumentSnapshot old: task.getResult().getDocuments()){
+                if((long)old.get("timeToLive") < System.currentTimeMillis()){
+                    old.getReference().delete();
+                }
+            }
+
+            listNeeds = temp;
+        }else{
+            Log.d("tamer", "testGetNeeds comes here4");
+            Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
+        }
+    }
+
+    public static Need setNeedFromSnapshot(DocumentSnapshot dS){
+        Log.d(MainActivity.LOGTAG, "in setNeedFromSnapshot, just to see if DatabaseTest passes here");
+        Need current = new Need();
+
+        current.setLongitude((double)dS.get("longitude"));
+        current.setLatitude((double)dS.get("latitude"));
+        current.setEmitter((String)dS.get("emitter"));
+        current.setDescription((String)dS.get("description"));
+
+        current.setCategory(DBTools.convertStringToCat((String)dS.get("category")));
+
+        current.setTimeToLive((long)dS.get("timeToLive"));
+        int people = Integer.parseInt(dS.get("nbPeopleNeeded").toString());
+        current.setNbPeopleNeeded(people);
+        current.setParticipants(dS.get("participants").toString());
+
+        Log.d(MainActivity.LOGTAG, "testGetNeeds comes here");
+
+        return current;
     }
 }
