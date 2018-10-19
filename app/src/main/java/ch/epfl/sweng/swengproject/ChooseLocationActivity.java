@@ -49,6 +49,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         Log.d(MainActivity.LOGTAG, "got the Serializable : " + (loc == null));
         if (loc != null) {
             currLoc = loc;
+
         } else {
             currLoc = currentLocation;
             launchDefaultLocation();
