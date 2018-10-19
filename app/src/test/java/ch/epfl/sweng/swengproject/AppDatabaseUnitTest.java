@@ -17,7 +17,7 @@ public class AppDatabaseUnitTest {
 
         Context c = mock(Context.class);
         when(c.getApplicationContext()).thenReturn(c);
-        AppDatabase apDatabase = AppDatabase.getInMemoryDatabase(c);
+        AppDatabase apDatabase = AppDatabase.getInstance(c);
         if(apDatabase == null){
             throw new NullPointerException();
         }
@@ -27,7 +27,7 @@ public class AppDatabaseUnitTest {
 
     @Test(expected = NullPointerException.class)
     public void wrongInput(){
-        AppDatabase apDatabase = AppDatabase.getInMemoryDatabase(null);
+        AppDatabase apDatabase = AppDatabase.getInstance(null);
     }
 
 }
