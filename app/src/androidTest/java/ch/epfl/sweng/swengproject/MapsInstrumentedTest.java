@@ -1,10 +1,19 @@
 package ch.epfl.sweng.swengproject;
 
 import android.content.Intent;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
+
+import com.google.android.gms.dynamic.IObjectWrapper;
+import com.google.android.gms.internal.maps.zzt;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -19,7 +28,8 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -40,9 +50,173 @@ public class MapsInstrumentedTest {
         mActivityRule.launchActivity(new Intent().putExtra("loc",ls));
     }
 
-    @Ignore
+    @Test
     public void dummyTest(){
-        Log.d("HELLO", "dummydummy");
+
+        FirebaseAuth fAuth = mock(FirebaseAuth.class);
+        FirebaseUser fUser = mock(FirebaseUser.class);
+        when(fUser.getEmail()).thenReturn("info@epfl.ch");
+        when(fAuth.getCurrentUser()).thenReturn(fUser);
+        mActivityRule.getActivity().setAuth(fAuth);
+        mActivityRule.getActivity().onMarkerClick(new Marker(new zzt() {
+            @Override
+            public void remove() throws RemoteException {
+
+            }
+
+            @Override
+            public String getId() throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public void setPosition(LatLng latLng) throws RemoteException {
+
+            }
+
+            @Override
+            public LatLng getPosition() throws RemoteException {
+                return new LatLng(12,13);
+            }
+
+            @Override
+            public void setTitle(String s) throws RemoteException {
+
+            }
+
+            @Override
+            public String getTitle() throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public void setSnippet(String s) throws RemoteException {
+
+            }
+
+            @Override
+            public String getSnippet() throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public void setDraggable(boolean b) throws RemoteException {
+
+            }
+
+            @Override
+            public boolean isDraggable() throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public void showInfoWindow() throws RemoteException {
+
+            }
+
+            @Override
+            public void hideInfoWindow() throws RemoteException {
+
+            }
+
+            @Override
+            public boolean isInfoWindowShown() throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public void setVisible(boolean b) throws RemoteException {
+
+            }
+
+            @Override
+            public boolean isVisible() throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public boolean zzj(zzt zzt) throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public int zzi() throws RemoteException {
+                return 0;
+            }
+
+            @Override
+            public void zzg(IObjectWrapper iObjectWrapper) throws RemoteException {
+
+            }
+
+            @Override
+            public void setAnchor(float v, float v1) throws RemoteException {
+
+            }
+
+            @Override
+            public void setFlat(boolean b) throws RemoteException {
+
+            }
+
+            @Override
+            public boolean isFlat() throws RemoteException {
+                return false;
+            }
+
+            @Override
+            public void setRotation(float v) throws RemoteException {
+
+            }
+
+            @Override
+            public float getRotation() throws RemoteException {
+                return 0;
+            }
+
+            @Override
+            public void setInfoWindowAnchor(float v, float v1) throws RemoteException {
+
+            }
+
+            @Override
+            public void setAlpha(float v) throws RemoteException {
+
+            }
+
+            @Override
+            public float getAlpha() throws RemoteException {
+                return 0;
+            }
+
+            @Override
+            public void setZIndex(float v) throws RemoteException {
+
+            }
+
+            @Override
+            public float getZIndex() throws RemoteException {
+                return 0;
+            }
+
+            @Override
+            public void zze(IObjectWrapper iObjectWrapper) throws RemoteException {
+
+            }
+
+            @Override
+            public IObjectWrapper zzj() throws RemoteException {
+                return null;
+            }
+
+            @Override
+            public IBinder asBinder() {
+                return null;
+            }
+        }));
+
+
+
     }
 
     @Test

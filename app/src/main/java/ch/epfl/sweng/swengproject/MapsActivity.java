@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 
 import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
@@ -59,6 +60,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private  ArrayList<Need> availableNeeds = null;
 
     private boolean normalExec = true;
+
+    private FirebaseAuth auth = Database.getDBauth;
+    private boolean test = false;
+
+    public void setAuth(FirebaseAuth fAuth){
+        this.auth = fAuth;
+        this.test = true;
+    }
 
 
     @Override
@@ -290,15 +299,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 pw.dismiss();
             }
         });
+
         Log.d(LOGTAG,"before check");
         //enable the button only if the need is not full and we haven't yet accepted this need
 
-        boolean canAccept = DBTools.notAlreadyAccepted(this.availableNeeds,marker.getPosition(), Database.getDBauth.getCurrentUser().getEmail())
+        boolean canAccept = DBTools.notAlreadyAccepted(this.availableNeeds,marker.getPosition(), this.auth.getCurrentUser().getEmail())
                 && DBTools.isNotFull(this.availableNeeds, marker.getPosition());
-
+    if(!test) {
         layout.findViewById(R.id.acceptBtn).setClickable(canAccept);
         layout.findViewById(R.id.acceptBtn).setEnabled(canAccept);
-
+    }
         Log.d(LOGTAG,"checks have passes now ready to query DB on click");
         //Implement the accept button
         (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
@@ -324,8 +334,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         pw.setOutsideTouchable(true);
 
-        //Display the pop-up window
-        pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+        if (!test) {
+            //Display the pop-up window
+            pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+        }
+
         return true;
     }
 
