@@ -103,8 +103,4 @@ public class CurrentLocationInstrumentedTest {
             assertTrue(test);
         }
     }
-
-    @Test
-
-
 }
