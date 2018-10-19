@@ -18,11 +18,13 @@ public class TestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
-        AsyncTask tv = voidTask().execute();
+        //AsyncTask tv = voidTask().execute();
 
         try {
-            boolean tb = boolTask().execute().get();
+            //boolean tb = boolTask().execute().get();
+            System.out.println("Before Task");
             System.out.println(multTask().execute(2).get());
+            System.out.println("After Task");
 
 
 
@@ -79,6 +81,11 @@ public class TestActivity extends AppCompatActivity {
 
             @Override
             protected Integer doInBackground(Integer... integers) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 return 2 * integers[0];
             }
         };
