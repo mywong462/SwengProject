@@ -2,6 +2,7 @@ package ch.epfl.sweng.swengproject;
 
 
 import android.support.test.espresso.NoMatchingViewException;
+import android.support.test.espresso.PerformException;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Ignore;
@@ -45,7 +46,7 @@ public class RegistrationInstrumentedTest {
         Thread.sleep(3000);
     }
 
-    @Test(expected = NoMatchingViewException.class)
+    @Test(expected = PerformException.class)
     public void testWrongEmailInput() throws InterruptedException {
 
         String mail = mailName +Math.random();  //the mail doesn't contains @something.domain
@@ -65,7 +66,7 @@ public class RegistrationInstrumentedTest {
         Thread.sleep(1000);
     }
 
-    @Test(expected = NoMatchingViewException.class)
+    @Test(expected = PerformException.class)
     public void testSmallPasswordInput() throws InterruptedException {
 
         String mail = mailName +Math.random();
