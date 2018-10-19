@@ -38,19 +38,28 @@ public class ChooseLocationInstrumentedTest {
     public final ActivityTestRule<ChooseLocationActivity> aActivityRule =
             new ActivityTestRule<>(ChooseLocationActivity.class,false,false);
 
-    @Rule
-    public final ActivityTestRule<AddNeedActivity> bActivityRule =
-            new ActivityTestRule<>(AddNeedActivity.class,false,false);
 
-    @Rule
-    public final ActivityTestRule<MainActivity> mActivityRule =
-            new ActivityTestRule<>(MainActivity.class);
+    @Before
+    public void setMock(){
+
+        LocationServer ls = new FakeLocation();
+
+        //inject the mocked object in the activity
+        aActivityRule.launchActivity(new Intent().putExtra("loc",ls));
+    }
+
 
 
     @Test
-    public void basicTest(){
-        return;
+    public void canAccessAndReturnFromActivity() {
+
+        onView(withId(R.id.map_ch_loc)).perform(click());
+
+        //onView(withId(R.id.set_loc_btn)).perform(click());
+
     }
+
+
 
     /*
     @Before

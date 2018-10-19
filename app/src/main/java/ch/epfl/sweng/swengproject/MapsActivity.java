@@ -4,6 +4,7 @@ import android.arch.core.util.Function;
 import android.content.Context;
 import android.content.Intent;
 
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 
 import android.support.v4.app.FragmentActivity;
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 
 import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
@@ -59,6 +61,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private boolean normalExec = true;
 
+    private FirebaseAuth auth = Database.getDBauth;
+    private boolean test = false;
+
+    public void setAuth(FirebaseAuth fAuth){
+        this.auth = fAuth;
+        this.test = true;
+    }
+    public void setAuth(FirebaseAuth fAuth, GoogleMap m){
+        this.auth = fAuth;
+        this.test = true;
+        this.mMap = m;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOGTAG, "onCreate");
@@ -76,7 +91,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             currLoc = loc;
             ArrayList<Need> needList = new ArrayList<>();
             long ttl = System.currentTimeMillis() + 100000;
-            needList.add(new Need("hedi.sassi@epfl.ch", "my description", ttl, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ));
+            needList.add(new Need("hedi.sassi@epfl.ch", "my description", ttl, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ,""));
             availableNeeds = needList;
         }
         else {
@@ -179,7 +194,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void updateUI() {
+    public void updateUI() {
 
         Log.d(LOGTAG, "UPDATEUI");
 
@@ -220,14 +235,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(this.normalExec) {
             Log.d("DEBUG","normal code");
             this.availableNeeds = Database.getNeeds(mGeoPoint, range, arrayCategories);
-
+            Log.d("DEBUG", "available needs number : "+this.availableNeeds.size());
         }
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
                     .title("TITLE"));
-            // TODO: change color depending on the type of need
-            marker.setTag(need);
+
+           if(!test) {
+               // TODO: change color depending on the type of need
+               marker.setTag(need);
+           }
         }
 
          mMap.setOnMarkerClickListener(this);
@@ -279,10 +297,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
         displayOnMenu(layout, needRequest);
 
-        //Implemnent the close button
-        ((Button) layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
+        //Implement the close button
+        (layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 pw.dismiss();
+            }
+        });
+
+        Log.d(LOGTAG,"before check");
+        //enable the button only if the need is not full and we haven't yet accepted this need
+
+        boolean canAccept = DBTools.notAlreadyAccepted(this.availableNeeds,marker.getPosition(), this.auth.getCurrentUser().getEmail())
+                && DBTools.isNotFull(this.availableNeeds, marker.getPosition());
+    if(!test) {
+        layout.findViewById(R.id.acceptBtn).setClickable(canAccept);
+        layout.findViewById(R.id.acceptBtn).setEnabled(canAccept);
+    }
+        Log.d(LOGTAG,"checks have passes now ready to query DB on click");
+        //Implement the accept button
+        (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Database.addParticipant(marker.getPosition());  //add the participant to the need. the need now contains participants in CSV format.
+                    pw.dismiss();
+
             }
         });
 
@@ -300,8 +338,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         pw.setOutsideTouchable(true);
 
-        //Display the pop-up window
-        pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+        if (!test) {
+            //Display the pop-up window
+            pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+        }
+
         return true;
     }
 

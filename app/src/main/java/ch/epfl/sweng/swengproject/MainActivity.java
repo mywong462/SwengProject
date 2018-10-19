@@ -31,14 +31,16 @@ public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout scrWelcome;
 
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+      
         setContentView(R.layout.activity_main);
         scrWelcome = findViewById(R.id.welcome_scr);
-
         scrWelcome.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
             public boolean onTouch(View v, MotionEvent m) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -47,10 +49,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-
-
     }
-
-
 }

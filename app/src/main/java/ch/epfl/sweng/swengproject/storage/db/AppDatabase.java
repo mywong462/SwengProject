@@ -38,6 +38,9 @@ public abstract class AppDatabase extends RoomDatabase {
 
 
     public static AppDatabase getInMemoryDatabase(Context context) {
+        if(context == null){
+            throw new NullPointerException();
+        }
         if (INSTANCE == null) {
             INSTANCE =
                     Room.inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class)
