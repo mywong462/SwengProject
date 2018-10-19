@@ -48,7 +48,7 @@ public class RegistrationInstrumentedTest {
     @Test(expected = NoMatchingViewException.class)
     public void testWrongEmailInput() throws InterruptedException {
 
-        String mail = mailName +Math.random();  //the mail does't contains @something.domain
+        String mail = mailName +Math.random();  //the mail doesn't contains @something.domain
         String pswd = mailName +Math.random();
 
         onView(withId(R.id.welcome_scr)).perform(click());
