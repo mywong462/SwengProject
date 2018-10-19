@@ -157,7 +157,6 @@ public class AddNeedInstrumentedTest {
 
         //onView(withId(R.id.map_ch_loc)).perform(click());
 
-
     }
 
 
