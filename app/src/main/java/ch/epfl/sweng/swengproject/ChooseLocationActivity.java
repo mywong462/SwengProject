@@ -17,6 +17,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
 
 
@@ -45,7 +46,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
 
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
 
-        Log.d(MainActivity.LOGTAG, "got the Serializable : " + (loc == null));
+        Log.d(LOGTAG, "got the Serializable : " + (loc == null));
         if (loc != null) {
             currLoc = loc;
 

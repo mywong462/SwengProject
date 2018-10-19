@@ -1,6 +1,5 @@
 package ch.epfl.sweng.swengproject;
 
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -15,11 +14,9 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -57,7 +54,7 @@ public final class Database {
 
                     ArrayList<Need> temp = new ArrayList<>();
 
-                    Log.d(MainActivity.LOGTAG, "Fetch from DB");
+                    Log.d(LOGTAG, "Fetch from DB");
                     //get the needs from the database
 
 
@@ -119,7 +116,7 @@ public final class Database {
                             }
                         }
                         else{
-                            Log.d(MainActivity.LOGTAG, "Got an exception querying the database");
+                            Log.d(LOGTAG, "Got an exception querying the database");
                         }
                     }
                 }
