@@ -36,12 +36,12 @@ public class CurrentLocationInstrumentedTest {
     public final ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(MainActivity.class);
 
-    @Ignore
+    @Test
     public void setCurrentLocationParametersValidTest(){
         MyApplication.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity());
     }
 
-    @Ignore
+    @Test
     public void setCurrentLocationParametersInvalidTest1() {
         try {
             MyApplication.currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
@@ -51,7 +51,7 @@ public class CurrentLocationInstrumentedTest {
         fail();
     }
 
-    @Ignore
+    @Test
     public void setCurrentLocationParametersInvalidTest2() {
         try {
             MyApplication.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), null);
@@ -81,7 +81,7 @@ public class CurrentLocationInstrumentedTest {
 
     private final Object lock1 = new Object();
 
-    @Ignore
+    @Test
     public void showDialogTest(){
 
         synchronized (lock1) {
