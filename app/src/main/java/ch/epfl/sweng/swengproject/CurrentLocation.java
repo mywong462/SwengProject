@@ -60,6 +60,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
+    private boolean alreadyAskingForLocation = false;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -256,45 +257,50 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
 
     private void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(500);
-        mLocationRequest.setFastestInterval(500);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        if(!alreadyAskingForLocation) {
+            alreadyAskingForLocation = true;
 
-        LocationSettingsRequest.Builder requestBuilder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
+            mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(500);
+            mLocationRequest.setFastestInterval(500);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        SettingsClient client = LocationServices.getSettingsClient(activity);
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(requestBuilder.build());
+            LocationSettingsRequest.Builder requestBuilder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
 
-        task.addOnSuccessListener(activity, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // Location settings are satisfied
+            SettingsClient client = LocationServices.getSettingsClient(activity);
+            Task<LocationSettingsResponse> task = client.checkLocationSettings(requestBuilder.build());
+            Log.d(LOGTAG, "Asking to enable location services");
+            task.addOnSuccessListener(activity, new OnSuccessListener<LocationSettingsResponse>() {
+                @Override
+                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                    // Location settings are satisfied
 
-                Log.d(LOGTAG, "createLocationRequest_true");
-                startLocationUpdates();
-            }
-        });
-
-        task.addOnFailureListener(activity, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Show a layout to ask for location settings to be on and explain why this is total shittery
-
-                if (e instanceof ResolvableApiException) {
-                    // Location settings are not satisfied, ask the user for it
-                    try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(activity,
-                                REQUEST_CHECK_SETTINGS);
-                    } catch (IntentSender.SendIntentException sendEx) {
-                    }
+                    Log.d(LOGTAG, "createLocationRequest_true");
+                    alreadyAskingForLocation = false;
+                    startLocationUpdates();
                 }
+            });
 
-            }
-        });
+            task.addOnFailureListener(activity, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Show a layout to ask for location settings to be on and explain why this is total shittery
+
+                    if (e instanceof ResolvableApiException) {
+                        // Location settings are not satisfied, ask the user for it
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            ResolvableApiException resolvable = (ResolvableApiException) e;
+                            resolvable.startResolutionForResult(activity,
+                                    REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException sendEx) {
+                        }
+                    }
+
+                }
+            });
+        }
 
     }
 
@@ -303,6 +309,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
         switch (requestCode) {
             case CurrentLocation.REQUEST_CHECK_SETTINGS:
+                alreadyAskingForLocation = false;
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         // All required changes were successfully made
@@ -313,7 +320,6 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
                         Log.d(LOGTAG, "USER REFUSED TO ENABLE LOCATION SERVICES");
-
                         startLocationUpdates();
                         break;
                     default:

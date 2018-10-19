@@ -3,25 +3,30 @@ package ch.epfl.sweng.swengproject;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.BySelector;
+import android.support.test.uiautomator.Direction;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
-import android.util.Log;
-import android.widget.Switch;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Consumer;
+
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -44,7 +49,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
             new ActivityTestRule<>(MainActivity.class);
 
     @Before
-    public void before() throws UiObjectNotFoundException, InterruptedException {
+    public void before() throws UiObjectNotFoundException, InterruptedException, RemoteException {
         //Initialize UiDevice
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
 
@@ -52,20 +57,29 @@ public class CurrentLocationInstrumentedTestNoPermission {
         context = InstrumentationRegistry.getContext();
 
         //Disable location
-
+        disableLocation();
 
         //Revoke location permission
+        revokePermission();
 
 
-        mDevice.pressBack();
-        mDevice.pressBack();
+        mDevice.pressHome();
+
+        //close all the apps
+        mDevice.pressRecentApps();
+        List<UiObject2> apps = mDevice.findObjects(By.clazz("android.widget.ImageView").clickable(true));
+        apps.forEach(new Consumer<UiObject2>() {
+            @Override
+            public void accept(UiObject2 uiObject2) {
+                uiObject2.click();
+            }
+        });
 
 
         //Wait for launcher
         final String launcherPackage = mDevice.getLauncherPackageName();
         assertThat(launcherPackage, notNullValue());
         mDevice.wait(Until.hasObject(By.pkg(launcherPackage).depth(0)), LAUNCH_TIMEOUT);
-
 
 
         //Start from home
@@ -86,6 +100,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
     public void allowTest(){
         try {
             clickAllow();
+            clickOKLocation();
         }catch (UiObjectNotFoundException e){fail();}
     }
 
@@ -101,7 +116,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
         .text("ALLOW")
         .className(androidBtn));
 
-        allowBtn.waitForExists(500);
+        allowBtn.waitForExists(2000);
         allowBtn.click();
     }
 
@@ -110,7 +125,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
                 .text("DENY")
                 .className(androidBtn));
 
-        allowBtn.waitForExists(500);
+        allowBtn.waitForExists(2000);
         allowBtn.click();
     }
 
@@ -118,20 +133,24 @@ public class CurrentLocationInstrumentedTestNoPermission {
         UiObject OKBtn = mDevice.findObject(new UiSelector()
                 .text("OK")
                 .className(androidBtn));
-        OKBtn.waitForExists(500);
-        OKBtn.click();
+        OKBtn.waitForExists(2000);
+        if(OKBtn.exists()) {
+            OKBtn.click();
+        }
     }
 
     private void clickNoThanksLocation() throws UiObjectNotFoundException{
         UiObject noThxBtn = mDevice.findObject(new UiSelector()
                 .text("OK")
                 .className(androidBtn));
-        noThxBtn.waitForExists(500);
-        noThxBtn.click();
+        noThxBtn.waitForExists(2000);
+        if(noThxBtn.exists()) {
+            noThxBtn.click();
+        }
     }
 
 
-    private void revokePermission() throws UiObjectNotFoundException{
+    private void revokePermission() throws UiObjectNotFoundException, InterruptedException{
         final Intent revokePermIntent = new Intent();
         revokePermIntent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         revokePermIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -144,14 +163,16 @@ public class CurrentLocationInstrumentedTestNoPermission {
         if(revokePerm.exists() && revokePerm.isChecked()){
             revokePerm.click();
         }
+        Thread.sleep(1000);
     }
 
-    private void disableLocation() throws UiObjectNotFoundException{
+    private void disableLocation() throws UiObjectNotFoundException, InterruptedException{
         final Intent disableLocIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         context.startActivity(disableLocIntent);
         UiObject disableLoc = mDevice.findObject(new UiSelector().className(android.widget.Switch.class.getName()).instance(1));
         if(disableLoc.exists() && disableLoc.isChecked()){
             disableLoc.click();
         }
+        Thread.sleep(1000);
     }
 }
