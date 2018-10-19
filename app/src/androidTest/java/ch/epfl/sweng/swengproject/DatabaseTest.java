@@ -47,18 +47,6 @@ public class DatabaseTest {
     private DocumentReference docRef = mock(DocumentReference.class);
 
     @Mock
-    private com.google.firebase.firestore.EventListener eveList = mock(com.google.firebase.firestore.EventListener.class);
-
-    @Mock
-    private FirebaseFirestoreException fireExcep = mock(FirebaseFirestoreException.class);
-
-    @Mock
-    private ListenerRegistration listReg = mock(ListenerRegistration.class);
-
-    //@Mock
-   // private OnCompleteListener onCompleteListener = mock(OnCompleteListener.class);
-
-    @Mock
     private QuerySnapshot queryDocumentSnapshots = mock(QuerySnapshot.class);
 
     @Mock
@@ -85,13 +73,13 @@ public class DatabaseTest {
         @Nullable
         @Override
         public QuerySnapshot getResult() {
-            return null;
+            return queryDocumentSnapshots;
         }
 
         @Nullable
         @Override
         public <X extends Throwable> QuerySnapshot getResult(@NonNull Class<X> aClass) throws X {
-            return null;
+            return queryDocumentSnapshots;
         }
 
         @Nullable
@@ -221,11 +209,10 @@ public class DatabaseTest {
 
 
     @Test
-    public void testSetNeedFromSnapshot(){
-        //Save a need
+    public void testDefineTaskSuccessful(){
         Need need = new Need("emit", "descr", 1, 1.0, 1.0, Categories.HELP, 1, "");
         when(fbFirestore.collection("needs")).thenReturn(collRef);
-        /*when(collRef.add(need)).thenReturn(new Task<DocumentReference>() {
+        when(collRef.add(need)).thenReturn(new Task<DocumentReference>() {
             @Override
             public boolean isComplete() {
                 return true;
@@ -250,7 +237,7 @@ public class DatabaseTest {
             @Nullable
             @Override
             public <X extends Throwable> DocumentReference getResult(@NonNull Class<X> aClass) throws X {
-                return null;
+                return docRef;
             }
 
             @Nullable
@@ -294,14 +281,38 @@ public class DatabaseTest {
             public Task<DocumentReference> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
                 return null;
             }
-        });*/
-        Database.setReference(collRef);
-        Database.saveNeed(need);
+        });
 
-        when(collRef.get()).thenReturn(taskQuerySnapshot);
+        when(docSnap.get("longitude")).thenReturn(1.0);
+        when(docSnap.get("latitude")).thenReturn(1.0);
+        when(docSnap.get("emitter")).thenReturn("emit");
+        when(docSnap.get("description")).thenReturn("descr");
+        when(docSnap.get("nbPeopleNeeded")).thenReturn(1);
+        when(docSnap.get("timeToLive")).thenReturn(1L);
+        when(docSnap.get("category")).thenReturn("HELP");
+        when(docSnap.get("participants")).thenReturn("");
+        when(docSnap.getReference()).thenReturn(docRef);
 
         listDocSnap.add(docSnap);
         when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
+
+        Database.defineTask(taskQuerySnapshot);
+    }
+
+
+    @Test(expected = NullPointerException.class)
+    public void testSetNeedFromSnapshotNull(){
+        Database.setNeedFromSnapshot(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSetNeedFromSnapshotNull2(){
+        Database.setNeedFromSnapshot(docSnap);
+    }
+
+    @Test
+    public void testSetNeedFromSnapshotNotNull(){
+
 
         when(docSnap.get("longitude")).thenReturn(1.0);
         when(docSnap.get("latitude")).thenReturn(1.0);

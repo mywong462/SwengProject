@@ -119,6 +119,18 @@ public final class Database {
     }
 
     public static Need setNeedFromSnapshot(DocumentSnapshot dS){
+
+        if(dS == null){
+            throw new NullPointerException("the document snapshot is null in setNeedFromSnapshot()");
+        }
+
+        if(dS.get("longitude") == null || dS.get("latitude") == null ||
+                dS.get("emitter") == null || dS.get("description") == null ||
+                dS.get("category") == null || dS.get("timeToLive") == null ||
+                dS.get("nbPeopleNeeded") == null || dS.get("participants") == null){
+            throw new NullPointerException("one or more elements of the document is null in setNeedFromSnapshot()");
+        }
+
         Log.d(MainActivity.LOGTAG, "in setNeedFromSnapshot, just to see if DatabaseTest passes here");
         Need current = new Need();
 
