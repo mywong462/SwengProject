@@ -114,11 +114,22 @@ public class CurrentLocationInstrumentedTestNoPermission {
         allowBtn.click();
     }
 
-    private void clickOKLocation(){
+    private void clickOKLocation() throws UiObjectNotFoundException{
         UiObject OKBtn = mDevice.findObject(new UiSelector()
                 .text("OK")
                 .className(androidBtn));
+        OKBtn.waitForExists(500);
+        OKBtn.click();
     }
+
+    private void clickNoThanksLocation() throws UiObjectNotFoundException{
+        UiObject noThxBtn = mDevice.findObject(new UiSelector()
+                .text("OK")
+                .className(androidBtn));
+        noThxBtn.waitForExists(500);
+        noThxBtn.click();
+    }
+
 
     private void revokePermission() throws UiObjectNotFoundException{
         final Intent revokePermIntent = new Intent();
