@@ -49,8 +49,6 @@ public class UserTests {
         List<User> usersToStore = UserTestUtil.randomUsers();
         userDao.deleteAll();
         userDao.insertUsers(usersToStore.toArray(new User[0]));
-
-
         List<User> fetchedUsers = userDao.getAll();
         assertEquals(usersToStore.size(), fetchedUsers.size());
     }
@@ -63,6 +61,18 @@ public class UserTests {
         userDao.deleteAll();
         List<User> fetchedUsers = userDao.getAll();
         assertEquals(0, fetchedUsers.size());
+    }
+
+    @Test
+    public void getByEmail() {
+        List<User> usersToStore = UserTestUtil.randomUsers();
+        userDao.deleteAll();
+        userDao.insertUsers(usersToStore.toArray(new User[0]));
+
+        for (int i = 0; i < 10; i++) {
+            User u = usersToStore.get(i);
+            assertEquals(u.inscriptionDate(), userDao.getUserByEmail(u.email()).inscriptionDate());
+        }
     }
 
     @Test
@@ -79,17 +89,7 @@ public class UserTests {
 
     }
 
-    @Test
-    public void getByEmail() {
-        List<User> usersToStore = UserTestUtil.randomUsers();
-        userDao.deleteAll();
-        userDao.insertUsers(usersToStore.toArray(new User[0]));
 
-        for (int i = 0; i < 10; i++) {
-            User u = usersToStore.get(i);
-            assertEquals(u.inscriptionDate(), userDao.getUserByEmail(u.email()).inscriptionDate());
-        }
-    }
 
     @Test
     public void findUserByName() {
@@ -139,7 +139,6 @@ public class UserTests {
 
     @Test
     public void myProfile() {
-
         List<User> randomUsers = UserTestUtil.randomUsers();
         userDao.deleteAll();
         User me = randomUsers.get(0);
