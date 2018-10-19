@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -63,7 +62,8 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            if (locationResult.getLastLocation() == null) {
+            if (locationResult == null) {
+                Log.d(LOGTAG, "return");
                 return;
             }
             mLastKnownLocation = locationResult.getLastLocation();
@@ -350,11 +350,20 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     public boolean getLocationPermissionStatus() {
         return isPermissionGranted();
     }
-
+/*
     public void injectionForTest(Location mockLocation){
         try {
+            Log.d(LOGTAG, "injection");
             mFusedLocationProviderClient.setMockLocation(mockLocation);
             mFusedLocationProviderClient.setMockMode(true);
+            mLocationRequest = new LocationRequest().
+            startLocationUpdates();
+            mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    Log.d(LOGTAG, location.toString());
+                }
+            });
         }catch(SecurityException e){}
-    }
+    }*/
 }
