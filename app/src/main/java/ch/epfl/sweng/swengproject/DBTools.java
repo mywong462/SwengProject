@@ -223,7 +223,7 @@ public class DBTools {
      * @param user
      * @return
      */
-    public boolean participateToNeed(ArrayList<Need> list, String user){
+    public static boolean participateToNeed(ArrayList<Need> list, String user){
 
         if(list == null || user == null || user.isEmpty()){
 
@@ -250,7 +250,7 @@ public class DBTools {
      * @param user
      * @return
      */
-    public int numberOfParticipation(ArrayList<Need> list, String user){
+    public static int numberOfParticipation(ArrayList<Need> list, String user){
 
         if(list == null || user == null || user.isEmpty()){
 
@@ -277,7 +277,7 @@ public class DBTools {
      * @param list
      * @return
      */
-    public int[] proportionOfCategories(ArrayList<Need> list){
+    public static int[] proportionOfCategories(ArrayList<Need> list){
 
         if(list == null){
             throw new NullPointerException();
@@ -303,7 +303,7 @@ public class DBTools {
      * @param list
      * @return
      */
-    public int totalNbrParticipants(ArrayList<Need> list){
+    public static int totalNbrParticipants(ArrayList<Need> list){
 
         if(list == null){
             throw new NullPointerException();
@@ -325,13 +325,13 @@ public class DBTools {
      * @param pos
      * @return
      */
-    public Need findClosest(ArrayList<Need> list, GeoPoint pos){
+    public static Need findClosest(ArrayList<Need> list, GeoPoint pos){
 
-        if(list == null){
+        if(list == null || pos == null){
             throw new NullPointerException();
         }
         if(list.isEmpty()){
-            throw new IllegalArgumentException("List is empty. Cannot compute closes Need");
+            throw new IllegalArgumentException("List is empty. Cannot compute closest Need");
         }
 
         Need closest = new Need();
@@ -362,7 +362,7 @@ public class DBTools {
      * @param list
      * @return
      */
-    public double averageNbrParticipants(ArrayList<Need> list){
+    public static double averageNbrParticipants(ArrayList<Need> list){
         if(list == null){
             throw new NullPointerException();
         }
@@ -373,6 +373,7 @@ public class DBTools {
         return totalNbrParticipants(list) / list.size();
 
     }
+
 
 
 }
