@@ -41,7 +41,7 @@ public class RegistrationInstrumentedTest {
         onView(withId(R.id.password2)).perform(typeText(pswd)).perform(closeSoftKeyboard());
         onView(withId(R.id.register_btn2)).perform(click());
 
-        //will exit because email is not registered
+        //will exit bcause email is not registered
         Thread.sleep(3000);
     }
 
