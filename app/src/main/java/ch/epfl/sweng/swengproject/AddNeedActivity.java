@@ -69,6 +69,7 @@ public class AddNeedActivity extends AppCompatActivity {
     public AddNeedActivity(LocationServer locationServer){
         this.currLoc = locationServer;
     }
+    public AddNeedActivity(){}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
