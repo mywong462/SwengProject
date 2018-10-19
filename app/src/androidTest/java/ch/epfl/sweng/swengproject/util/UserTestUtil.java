@@ -1,19 +1,24 @@
 package ch.epfl.sweng.swengproject.util;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import ch.epfl.sweng.swengproject.MyApplication;
+import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.storage.db.User;
 
 
 public class UserTestUtil {
     private UserTestUtil(){}
 
-    private static String[] firstNames = {"Jean", "Peter", "Harsh", "Jojo", "Ginette", "Mark", "Antoine",
+    private static final String[] firstNames = {"Jean", "Peter", "Harsh", "Jojo", "Ginette", "Mark", "Antoine",
             "Aurélie", "Manon", "Candice", "Axelle", "Axel"};
 
     private static String[] lastNames = {"Dupont", "Desvaux", "Sancord", "Lepreu", "Du Jardin", "Beau", "Müller",
@@ -28,6 +33,8 @@ public class UserTestUtil {
         return new Date(ms);
     }
 
+    private static Bitmap notRandomImage = BitmapFactory.decodeResource(MyApplication.getAppContext().getResources(), R.drawable.emptyprofile);
+
     /**
      *
      * @return a user that is make randommly to test purposes
@@ -41,8 +48,11 @@ public class UserTestUtil {
         u.setLastName(rln);
         u.setEmail(re+UUID.randomUUID());
         u.setInscriptionDate(randomDate());
+        u.setPicture(notRandomImage);
         return u;
     }
+
+
 
     /**
      *
