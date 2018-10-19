@@ -9,6 +9,8 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.dynamic.IObjectWrapper;
 import com.google.android.gms.internal.maps.zzac;
@@ -59,6 +61,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.GeoPoint;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -275,4 +278,19 @@ public class MapsInstrumentedTest {
 
     }
 
+
+    @Test
+    public void canDisplayOnMenu(){
+
+        View menu =  mock(View.class);
+
+        TextView t = mock(TextView.class);
+
+        when(menu.findViewById(R.id.needDescription)).thenReturn(t);
+
+        mActivityRule.getActivity().displayOnMenu(menu,new GeoPoint(12,13));
+
+
+
+    }
 }

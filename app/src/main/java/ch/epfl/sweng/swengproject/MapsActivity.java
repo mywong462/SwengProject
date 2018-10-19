@@ -253,7 +253,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          mMap.setOnMarkerClickListener(this);
     }
 
-    private void displayOnMenu(View menuView, GeoPoint tempGeo) {
+    public void displayOnMenu(View menuView, GeoPoint tempGeo) {
         //  TODO: need to update this function when more fields from the needs are available
         //The field to be update
         TextView description = menuView.findViewById(R.id.needDescription);
@@ -264,12 +264,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ArrayList<Categories> arrayCategories = new ArrayList<>();
         arrayCategories.add(Categories.ALL);
 
+        ArrayList<Need> currentNeed;
 
         //Searching for the need
-
-        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo, range, arrayCategories);
+        if(!test) {
+             currentNeed = Database.getNeeds(tempGeo, range, arrayCategories);
+        }
+        else{
+            currentNeed = new ArrayList<>();
+            currentNeed.add(new Need("yolo@gmail.com",
+                    "good and long description",
+                    0,  tempGeo.getLatitude(),
+                    tempGeo.getLongitude(),
+                    Categories.ALL,
+                    1,
+                    "simon@epfl.ch"));
+        }
         for (int i = 0; i < currentNeed.size(); i++){
-            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
+            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude())
+                    && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
+
                 selectedNeed = currentNeed.get(i);
                 break;
             }
