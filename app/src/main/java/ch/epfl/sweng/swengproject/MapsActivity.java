@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.PopupWindow;
@@ -62,16 +63,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean normalExec = true;
 
     private FirebaseAuth auth = Database.getDBauth;
-    private boolean test = false;
 
     public void setAuth(FirebaseAuth fAuth){
         this.auth = fAuth;
-        this.test = true;
-    }
-    public void setAuth(FirebaseAuth fAuth, GoogleMap m){
-        this.auth = fAuth;
-        this.test = true;
-        this.mMap = m;
     }
 
 
@@ -218,9 +212,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .fillColor(0x300000cf);
                 mMap.clear();
                 mMap.addCircle(mCircleOptions);
-                if(!test) {
-                    showAvailableNeeds();
-                }
+
+                showAvailableNeeds();
+
                 if (isOpening) {
                     isOpening = false;
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
@@ -248,10 +242,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
                     .title("TITLE"));
 
-           if(!test) {
                // TODO: change color depending on the type of need
                marker.setTag(need);
-           }
+
         }
 
          mMap.setOnMarkerClickListener(this);
@@ -290,35 +283,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean onMarkerClick(final Marker marker) {
         // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
         //Get the size of screen and pop up a window
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
-        final PopupWindow pw = new PopupWindow(layout, (int) (width * 0.8), (int) (height * 0.7), true);
-
-        //Get the marker information
-        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
-        displayOnMenu(layout, needRequest);
-
-        //Implement the close button
-        (layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                pw.dismiss();
-            }
-        });
-
-        Log.d(LOGTAG,"before check");
+        Pair<View, PopupWindow> p = popUp(marker);
+        final View layout = p.first;
+        final PopupWindow pw = p.second;
         //enable the button only if the need is not full and we haven't yet accepted this need
 
         boolean canAccept = DBTools.notAlreadyAccepted(this.availableNeeds,marker.getPosition(), this.auth.getCurrentUser().getEmail())
                 && DBTools.isNotFull(this.availableNeeds, marker.getPosition());
-    if(!test) {
+
         layout.findViewById(R.id.acceptBtn).setClickable(canAccept);
         layout.findViewById(R.id.acceptBtn).setEnabled(canAccept);
-    }
+
         Log.d(LOGTAG,"checks have passes now ready to query DB on click");
         //Implement the accept button
         (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
@@ -344,12 +319,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         pw.setOutsideTouchable(true);
 
-        if (!test) {
-            //Display the pop-up window
-            pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
-        }
+
+        //Display the pop-up window
+        pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
 
         return true;
+    }
+
+
+
+    public Pair<View,PopupWindow> popUp(Marker marker){
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
+        final PopupWindow pw = new PopupWindow(layout, (int) (width * 0.8), (int) (height * 0.7), true);
+
+        //Get the marker information
+        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
+        displayOnMenu(layout, needRequest);
+
+        //Implement the close button
+        (layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                pw.dismiss();
+            }
+        });
+
+        Log.d(LOGTAG,"before check");
+
+        return new Pair<View,PopupWindow>(layout, pw);
+
     }
 
 }
