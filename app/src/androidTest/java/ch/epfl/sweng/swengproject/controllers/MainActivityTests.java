@@ -21,15 +21,21 @@ import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
+import ch.epfl.sweng.swengproject.storage.db.UserDao;
 import ch.epfl.sweng.swengproject.util.UserTestUtil;
 
 
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTests {
 
+    private static UserDao userDao;
+    private static AppDatabase dataBase;
+
     @BeforeClass
-   public static void doBeforeAll(){
+    public static void doBeforeAll(){
         AppDatabase.setUnderTest(true);
+        dataBase = AppDatabase.getInstance();
+        userDao = dataBase.userDao();
     }
 
     @Rule
@@ -38,11 +44,9 @@ public class MainActivityTests {
 
     @Test
     public void noProfileInHDExist() throws InterruptedException{
-        Thread.sleep(5000);
         StorageHelper.deleteAllDataStoredLocally();
-        User me = UserTestUtil.randomUser();
-        StorageHelper.saveThisUserAsMe(me);
-        Thread.sleep(5000);
+        //User me = UserTestUtil.randomUser();
+        //userDao.storeMyOwnProfile(me);
 
         /*Instrumentation.ActivityMonitor aM =  new Instrumentation.ActivityMonitor();
 

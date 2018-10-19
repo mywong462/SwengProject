@@ -36,8 +36,6 @@ public class UserTests {
     public static void doBeforeAll(){
         AppDatabase.setUnderTest(true);
         dataBase = AppDatabase.getInstance();
-        //Context context = InstrumentationRegistry.getTargetContext();
-        //Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
         userDao = dataBase.userDao();
     }
 
