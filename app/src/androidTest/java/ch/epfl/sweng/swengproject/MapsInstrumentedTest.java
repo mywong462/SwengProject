@@ -78,6 +78,8 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -287,10 +289,11 @@ public class MapsInstrumentedTest {
         TextView t = mock(TextView.class);
 
         when(menu.findViewById(R.id.needDescription)).thenReturn(t);
+        doNothing().when(t).setText(isA(String.class));
+
+        mActivityRule.getActivity().setTestMode();
 
         mActivityRule.getActivity().displayOnMenu(menu,new GeoPoint(12,13));
-
-
 
     }
 }
