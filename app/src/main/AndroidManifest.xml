@@ -65,7 +65,9 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
         <!-- end of bug fixes -->
-        <activity android:name=".controllers.MyProfileActivity"></activity>
+        <activity android:name=".controllers.MyProfileActivity" />
+        <activity android:name=".controllers.TestActivity"
+            android:exported="true"></activity>
     </application>
 
 </manifest>

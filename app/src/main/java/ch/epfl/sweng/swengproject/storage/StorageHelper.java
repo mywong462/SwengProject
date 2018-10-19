@@ -12,7 +12,7 @@ public class StorageHelper {
     private StorageHelper(){}
 
     /**
-     * Delete all data that might be stored in the disk!
+     * Delete all data that might be stored in the disk! You must call this method asynchronously
      */
     public static void deleteAllDataStoredLocally(){
         UserDao userDao = AppDatabase.getInstance().userDao();
