@@ -131,7 +131,7 @@ public final class Database {
             throw new NullPointerException("one or more elements of the document is null in setNeedFromSnapshot()");
         }
 
-        Log.d(MainActivity.LOGTAG, "in setNeedFromSnapshot, just to see if DatabaseTest passes here");
+        Log.d(MainActivity.LOGTAG, "in setNeedFromSnapshot, jst to see if DatabaseTest passes here");
         Need current = new Need();
 
         current.setLongitude((double)dS.get("longitude"));
