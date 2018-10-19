@@ -68,6 +68,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 
 import java.util.List;
 
@@ -289,11 +290,26 @@ public class MapsInstrumentedTest {
         TextView t = mock(TextView.class);
 
         when(menu.findViewById(R.id.needDescription)).thenReturn(t);
-        doNothing().when(t).setText(isA(String.class));
+        doNothing().when(t).setText(Matchers.any(String.class));
 
         mActivityRule.getActivity().setTestMode();
 
         mActivityRule.getActivity().displayOnMenu(menu,new GeoPoint(12,13));
 
+    }
+
+    @Test
+    public void onRestoreTest(){
+
+        Bundle b = new Bundle();
+
+        mActivityRule.getActivity().onRestoreInstanceState(b);
+
+    }
+
+    @Test
+    public void canBindButton(){
+
+        mActivityRule.getActivity().bindAddNeedButton();
     }
 }

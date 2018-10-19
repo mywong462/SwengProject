@@ -112,7 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void bindAddNeedButton(){
+    public void bindAddNeedButton(){
         //button with listener to create new needs
         createNeed_btn = findViewById(R.id.create_need_btn);
         createNeed_btn.setOnClickListener(new View.OnClickListener() {
