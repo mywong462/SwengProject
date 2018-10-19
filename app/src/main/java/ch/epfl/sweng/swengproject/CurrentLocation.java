@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -130,7 +132,9 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     private Function<Void, Void> bringMeToManagement = new Function<Void, Void>() {
         @Override
         public Void apply(Void input) {
-            activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_SETTINGS));
+            activity.startActivity(new Intent()
+                    .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    .setData(Uri.fromParts("package", "ch.epfl.sweng.swengproject", null)));
             return null;
         }
     };
@@ -189,8 +193,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     }
 
     private boolean isPermissionGranted() {
-        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
 

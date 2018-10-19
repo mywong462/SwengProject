@@ -22,19 +22,19 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentLocationInstrumentedTest {
 
-
+    //These tests have all the permissions
     @Rule
     public GrantPermissionRule grantPermissionRule  = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
 
     @Rule
-    public final ActivityTestRule<MainActivity> mActivityRule =
-            new ActivityTestRule<>(MainActivity.class);
+    public final ActivityTestRule<MapsActivity> mActivityRule =
+            new ActivityTestRule<>(MapsActivity.class);
 
     @Test
     public void setCurrentLocationParametersValidTest(){
