@@ -218,7 +218,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .fillColor(0x300000cf);
                 mMap.clear();
                 mMap.addCircle(mCircleOptions);
-                showAvailableNeeds();
+                if(!test) {
+                    showAvailableNeeds();
+                }
                 if (isOpening) {
                     isOpening = false;
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));

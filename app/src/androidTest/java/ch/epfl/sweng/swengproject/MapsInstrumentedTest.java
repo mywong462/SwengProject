@@ -879,7 +879,7 @@ public class MapsInstrumentedTest {
             }
         }));
 
-        //mActivityRule.getActivity().updateUI();
+        mActivityRule.getActivity().updateUI();
 
     }
 
