@@ -2,6 +2,7 @@ package ch.epfl.sweng.swengproject;
 
 import android.app.AlertDialog;
 import android.arch.core.util.Function;
+import android.location.Location;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -13,12 +14,15 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentLocationInstrumentedTest {
@@ -129,11 +133,19 @@ public class CurrentLocationInstrumentedTest {
 
     private boolean finished2 = false;
 
+    @Mock
+    private Location mockLocation = mock(android.location.Location.class);
+
     @Ignore
     public void checkLocationTest(){
+
+        when(mockLocation.getLatitude()).thenReturn(22.0);
+        when(mockLocation.getLatitude()).thenReturn(80.0);
+
         synchronized (lock2) {
             if(!finished2) {
                 MyApplication.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity(), checkLocFunc);
+                MyApplication.currentLocation.injectionForTest(mockLocation);
                 MyApplication.currentLocation.callerActivityReady();
             }
         }
@@ -145,8 +157,8 @@ public class CurrentLocationInstrumentedTest {
                 } catch (InterruptedException e){}
             }
 
-            assertEquals(currLoc.latitude, 37.4219983);
-            assertEquals(currLoc.longitude, -122.084);
+            assertEquals(currLoc.latitude, 22.0);
+            assertEquals(currLoc.longitude, 80.0);
         }
 
 

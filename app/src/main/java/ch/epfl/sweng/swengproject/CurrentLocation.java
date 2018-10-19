@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -350,4 +351,10 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         return isPermissionGranted();
     }
 
+    public void injectionForTest(Location mockLocation){
+        try {
+            mFusedLocationProviderClient.setMockLocation(mockLocation);
+            mFusedLocationProviderClient.setMockMode(true);
+        }catch(SecurityException e){}
+    }
 }
