@@ -3,13 +3,20 @@ package ch.epfl.sweng.swengproject;
 import android.app.AlertDialog;
 import android.arch.core.util.Function;
 import android.location.Location;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiSelector;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,6 +38,18 @@ public class CurrentLocationInstrumentedTest {
     @Rule
     public GrantPermissionRule grantPermissionRule  = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
+    private UiDevice mDevice;
+
+    @Before
+    public void before(){
+        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+    }
+
+    @After
+    public void after(){
+        allowIfNeeded();
+        clickOKLocationIfAsked();
+    }
 
     @Rule
     public final ActivityTestRule<MapsActivity> mActivityRule =
@@ -110,58 +129,41 @@ public class CurrentLocationInstrumentedTest {
     }
 
 
+    private void allowIfNeeded(){
+        try {
+            UiObject allowBtn = mDevice.findObject(new UiSelector()
+                    .text("ALLOW")
+                    .className("android.widget.Button"));
 
-    private final Object lock2 = new Object();
-    private LatLng currLoc;
-
-    private Function<Void, Void> checkLocFunc = new Function<Void, Void>() {
-        @Override
-        public Void apply(Void input) {
-            Log.d(LOGTAG, "checkLocFunc");
-            locationNotNull();
-            return null;
-        }
-    };
-
-    private void locationNotNull(){
-        synchronized (lock2) {
-            currLoc = MyApplication.currentLocation.getLastLocation();
-            finished2 = true;
-            lock2.notifyAll();
-        }
+            allowBtn.waitForExists(500);
+            allowBtn.click();
+        }catch (UiObjectNotFoundException e){}
     }
 
-    private boolean finished2 = false;
-
-    @Mock
-    private Location mockLocation = mock(android.location.Location.class);
-
-    @Ignore
-    public void checkLocationTest(){
-
-
-        Log.d(LOGTAG, "coucou");
-        MyApplication.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity(), checkLocFunc);
-        Log.d(LOGTAG, "hey");
-        MyApplication.currentLocation.callerActivityReady();
-        Log.d(LOGTAG, "how");
-        //MyApplication.currentLocation.injectionForTest(mockLocation);
-        Log.d(LOGTAG, "jhhgjhgh");
-
-
-
-        synchronized (lock2){
-            Log.d(LOGTAG, "deadlock");
-            while (!finished2){
-                try {
-                    lock2.wait();
-                } catch (InterruptedException e){}
+    private void clickOKLocationIfAsked(){
+        try {
+            UiObject OKBtn = mDevice.findObject(new UiSelector()
+                    .text("OK")
+                    .className("android.widget.Button"));
+            OKBtn.waitForExists(500);
+            if (OKBtn.exists()) {
+                OKBtn.click();
             }
+            clickAgreeImproveLocationAccuracy();
+        }catch(UiObjectNotFoundException e){}
+    }
 
-            assertEquals(currLoc.latitude, 22.0);
-            assertEquals(currLoc.longitude, 80.0);
+    private void clickAgreeImproveLocationAccuracy() throws UiObjectNotFoundException {
+        UiObject agreeImprove = mDevice.findObject(new UiSelector()
+                .text("AGREE")
+                .index(1)
+                .resourceId("android:id/button1")
+                .className("android.widget.Button")
+                .clickable(true)
+                .packageName("com.google.android.gms"));
+        agreeImprove.waitForExists(500);
+        if (agreeImprove.exists()) {
+            agreeImprove.click();
         }
-
-
     }
 }

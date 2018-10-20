@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.Settings;
@@ -19,7 +20,9 @@ import android.support.test.uiautomator.Until;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,56 +46,47 @@ public class CurrentLocationInstrumentedTestNoPermission {
     private static final String androidBtn = "android.widget.Button";
 
 
-    private UiDevice mDevice;
+    private UiDevice mDevice = UiDevice.getInstance(getInstrumentation());
     private Context context;
-    private boolean disabled;
     private boolean revoked;
     private boolean closed;
+    private boolean disabled;
 
 
     @Before
     public void before() throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        //Initialize UiDevice
-        mDevice = UiDevice.getInstance(getInstrumentation());
 
-        //Get Context
         context = InstrumentationRegistry.getContext();
+        closed = closeApp();
 
         //Disable location
-        Log.d(LOGTAG, "Disable location");
         disabled = disableLocation();
-        Thread.sleep(1000);
-        closed = closeApp();
-        Thread.sleep(1000);
+        Log.d(LOGTAG, "Location disabled = " + disabled);
 
         revoked = revokePermission();
         Thread.sleep(500);
         Log.d(LOGTAG, "perm = " + revoked);
-
-        mDevice.pressHome();
-
-        //Wait for launcher
-        final String launcherPackage = mDevice.getLauncherPackageName();
-        assertThat(launcherPackage, notNullValue());
-        mDevice.wait(Until.hasObject(By.pkg(launcherPackage).depth(0)), LAUNCH_TIMEOUT);
-
 
         //Start from home
         mDevice.pressHome();
 
         //Launch the app
         final Intent intent = new Intent(mActivity.getActivity(), MapsActivity.class);
-
         //Clear Previous instances
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
 
         //Wait for app to appear
         mDevice.wait(Until.hasObject(By.pkg(PACKAGE).depth(0)), LAUNCH_TIMEOUT);
     }
 
+    @After
+    public void after() throws RemoteException, InterruptedException, UiObjectNotFoundException {
+        closeApp();
+    }
+
     @Test
-    public void okLocationTest() {
+    public void okLocationTest() throws InterruptedException, RemoteException{
 
         try {
             clickAllow();
@@ -103,7 +97,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
     }
 
     @Test
-    public void refuseTwiceTest() {
+    public void refuseTwiceTest() throws InterruptedException, RemoteException{
         try {
             clickAllow();
             clickNoThanksLocation();
@@ -114,7 +108,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
         }
     }
 
-    @Test
+    @Ignore
     public void locationOkThenDisableTest() throws InterruptedException, RemoteException{
         try {
             clickAllow();
@@ -130,7 +124,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
         }
     }
 
-    @Test
+    @Ignore
     public void denyPermissionThenManuallyAllow() throws InterruptedException{
         try {
             clickDeny();
@@ -162,11 +156,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
             fail();
         }
     }
-
-
-
-
-
 
 
     private void clickAllow() throws UiObjectNotFoundException {
@@ -229,7 +218,23 @@ public class CurrentLocationInstrumentedTestNoPermission {
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
     }
 
-    private boolean disableLocation() throws UiObjectNotFoundException, InterruptedException {
+    private boolean disableLocation() throws InterruptedException{
+        getInstrumentation().getUiAutomation().executeShellCommand("settings put secure location_providers_allowed -gps");
+        getInstrumentation().getUiAutomation().executeShellCommand("settings put secure location_providers_allowed -network");
+        Thread.sleep(1000);
+
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled;
+        boolean network_enabled;
+
+        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        Thread.sleep(500);
+        return !(gps_enabled && network_enabled);
+
+    }
+
+    /*private boolean disableLocation() throws UiObjectNotFoundException, InterruptedException {
         final Intent disableLocIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         disableLocIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(disableLocIntent);
@@ -239,7 +244,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
             return disableLoc.click();
         }
         return false;
-    }
+    }*/
 
     private boolean grantPermission() throws UiObjectNotFoundException, InterruptedException {
         final Intent revokePermIntent = new Intent();
