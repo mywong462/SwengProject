@@ -166,8 +166,9 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             permissionDialog.dismiss();
             permDialogUp = false;
         }
-
-        controlLocationRequest();
+        if(isPermissionGranted()) {
+            controlLocationRequest();
+        }
     }
 
     private AlertDialog getNewPermissionDialog() {
