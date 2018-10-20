@@ -325,7 +325,7 @@ public class MapsInstrumentedTest {
         mActivityRule.getActivity().bindAddNeedButton();
     }
 
-    @Ignore
+    @Test
     public void canUpdateUI(){
 
         GoogleMap m = new GoogleMap(new IGoogleMapDelegate() {
