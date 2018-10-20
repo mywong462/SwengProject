@@ -60,11 +60,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private  ArrayList<Need> availableNeeds = null;
 
-    private boolean normalExec = true;
+    private boolean normalExec = true;  //boolean used when injecting position
 
     private FirebaseAuth auth = Database.getDBauth;
 
-    private boolean test;
+    private boolean test = false;   //boolean used when calling functions from instrumented tests
 
     public void setAuth(FirebaseAuth fAuth){
         this.auth = fAuth;
@@ -219,16 +219,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .strokeWidth(0)
                         .fillColor(0x300000cf);
                 mMap.clear();
+                mMap.addCircle(mCircleOptions);
 
                 if(!test) {
-                    mMap.addCircle(mCircleOptions);
                     showAvailableNeeds();
                 }
 
                 if (zoomIn) {
                     zoomIn = false;
-                  
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
+                  if(!test) {
+                      mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
+                  }
                 }
             } else {
                 Log.d("ERROR", "NO PERMISSION TO UPDATEUI");
