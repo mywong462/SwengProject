@@ -17,8 +17,11 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
+import android.util.Log;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +30,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -43,6 +47,9 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
     private UiDevice mDevice;
     private Context context;
+    private boolean disabled;
+    private boolean revoked;
+    private boolean closed;
 
     @Rule
     public final ActivityTestRule<MainActivity> mActivityRule =
@@ -57,24 +64,14 @@ public class CurrentLocationInstrumentedTestNoPermission {
         context = InstrumentationRegistry.getContext();
 
         //Disable location
-        disableLocation();
-
-        //Revoke location permission
-        revokePermission();
+        Log.d(LOGTAG, "Disable location");
+        disabled = disableLocation();
+        Thread.sleep(1000);
+        closed = closeApp();
+        Thread.sleep(1000);
 
 
         mDevice.pressHome();
-
-        //close all the apps
-        mDevice.pressRecentApps();
-        List<UiObject2> apps = mDevice.findObjects(By.clazz("android.widget.ImageView").clickable(true));
-        apps.forEach(new Consumer<UiObject2>() {
-            @Override
-            public void accept(UiObject2 uiObject2) {
-                uiObject2.click();
-            }
-        });
-
 
         //Wait for launcher
         final String launcherPackage = mDevice.getLauncherPackageName();
@@ -96,6 +93,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
         mDevice.wait(Until.hasObject(By.pkg(PACKAGE).depth(0)), LAUNCH_TIMEOUT);
     }
 
+
     @Test
     public void allowTest(){
         try {
@@ -107,7 +105,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
     @Test
     public void denyTest(){
         try {
-            clickDeny();
+            clickNoThanksLocation();
         }catch (UiObjectNotFoundException e){fail();}
     }
 
@@ -125,7 +123,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
                 .text("DENY")
                 .className(androidBtn));
 
-        allowBtn.waitForExists(2000);
+        allowBtn.waitForExists(500);
         allowBtn.click();
     }
 
@@ -133,24 +131,39 @@ public class CurrentLocationInstrumentedTestNoPermission {
         UiObject OKBtn = mDevice.findObject(new UiSelector()
                 .text("OK")
                 .className(androidBtn));
-        OKBtn.waitForExists(2000);
+        OKBtn.waitForExists(500);
         if(OKBtn.exists()) {
             OKBtn.click();
         }
+
+        clickAgreeImproveLocationAccuracy();
     }
 
     private void clickNoThanksLocation() throws UiObjectNotFoundException{
         UiObject noThxBtn = mDevice.findObject(new UiSelector()
                 .text("OK")
                 .className(androidBtn));
-        noThxBtn.waitForExists(2000);
+        noThxBtn.waitForExists(500);
         if(noThxBtn.exists()) {
             noThxBtn.click();
         }
     }
 
+    private void clickAgreeImproveLocationAccuracy() throws UiObjectNotFoundException{
+        UiObject agreeImprove = mDevice.findObject(new UiSelector()
+                .text("AGREE")
+                .index(1)
+                .resourceId("android:id/button1")
+                .className("android.widget.Button")
+                .clickable(true)
+                .packageName("com.google.android.gms"));
+        agreeImprove.waitForExists(500);
+        if(agreeImprove.exists()){
+            agreeImprove.click();
+        }
+    }
 
-    private void revokePermission() throws UiObjectNotFoundException, InterruptedException{
+    private boolean revokePermission() throws UiObjectNotFoundException, InterruptedException{
         final Intent revokePermIntent = new Intent();
         revokePermIntent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         revokePermIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -160,19 +173,71 @@ public class CurrentLocationInstrumentedTestNoPermission {
         UiObject permissions = mDevice.findObject(new UiSelector().text("Permissions"));
         permissions.clickAndWaitForNewWindow();
         UiObject revokePerm = mDevice.findObject(new UiSelector().className(android.widget.Switch.class.getName()).instance(0));
+
+        Thread.sleep(2000);
+
         if(revokePerm.exists() && revokePerm.isChecked()){
-            revokePerm.click();
+            return revokePerm.click();
         }
-        Thread.sleep(1000);
+        return false;
     }
 
-    private void disableLocation() throws UiObjectNotFoundException, InterruptedException{
+    private boolean disableLocation() throws UiObjectNotFoundException, InterruptedException{
         final Intent disableLocIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        disableLocIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(disableLocIntent);
         UiObject disableLoc = mDevice.findObject(new UiSelector().className(android.widget.Switch.class.getName()).instance(1));
+        Thread.sleep(2000);
         if(disableLoc.exists() && disableLoc.isChecked()){
-            disableLoc.click();
+            return disableLoc.click();
         }
-        Thread.sleep(1000);
+        return false;
+    }
+
+    private boolean grantPermission() throws UiObjectNotFoundException, InterruptedException{
+        final Intent revokePermIntent = new Intent();
+        revokePermIntent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        revokePermIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Uri uri = Uri.fromParts("package", PACKAGE, null);
+        revokePermIntent.setData(uri);
+        context.startActivity(revokePermIntent);
+        UiObject permissions = mDevice.findObject(new UiSelector().text("Permissions"));
+        permissions.clickAndWaitForNewWindow();
+        UiObject revokePerm = mDevice.findObject(new UiSelector().className(android.widget.Switch.class.getName()).instance(0));
+
+        Thread.sleep(2000);
+
+        if(revokePerm.exists() && !revokePerm.isChecked()){
+            return revokePerm.click();
+        }
+        return false;
+    }
+
+    private boolean enableLocation() throws UiObjectNotFoundException, InterruptedException{
+        final Intent disableLocIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        disableLocIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(disableLocIntent);
+        UiObject disableLoc = mDevice.findObject(new UiSelector().className(android.widget.Switch.class.getName()).instance(1));
+        Thread.sleep(2000);
+        if(disableLoc.exists() && !disableLoc.isChecked()){
+            return disableLoc.click();
+        }
+        return false;
+    }
+
+    private boolean closeApp() throws UiObjectNotFoundException, RemoteException, InterruptedException{
+        mDevice.pressRecentApps();
+
+        boolean res;
+
+        UiObject close = mDevice.findObject(new UiSelector().resourceId("com.android.systemui:id/dismiss_task"));
+        res = close.click();
+        Thread.sleep(100);
+
+        Log.d(LOGTAG, "res = "+res);
+
+        mDevice.pressHome();
+
+        return res;
     }
 }
