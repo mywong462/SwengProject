@@ -16,6 +16,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.GeoPoint;
 
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
@@ -30,10 +31,11 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     private LatLng lastLatLng_sl;
     private LatLng setLatLng;
     private String setLatLng_str;
-    private float[] distance = new float[1]; // in meters
-    private int max_distance;
+    private double distance = 0.0; // in km
+    private final int max_distance = 5;
     private boolean isOpening;
     private LocationServer currLoc;
+    private boolean test = false;
 
 
     @Override
@@ -42,14 +44,15 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         setContentView(R.layout.activity_choose_location);
         isOpening = true;
         Log.d(LOGTAG_sl, "in onCreate");
-        max_distance = 500;
 
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
 
         Log.d(LOGTAG, "got the Serializable : " + (loc == null));
         if (loc != null) {
             currLoc = loc;
-
+            lastLatLng_sl = loc.getLastLocation();
+            setLatLng = loc.getLastLocation();
+            this.test = true;
         } else {
             currLoc = currentLocation;
             launchDefaultLocation();
@@ -76,7 +79,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         setLocation_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (lastLatLng_sl == null || locationTooFar()) {
+                if (lastLatLng_sl == null || (locationTooFar() && !test)) {
                     Log.d(LOGTAG_sl, "in bindSaveLocationButton and sth went wrong");
                     setDefaultLocation();
                 } else {
@@ -86,7 +89,9 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                     position.putExtra("lng_code", setLatLng.longitude);
                     //position.setData(Uri.parse(setLatLng_str));
                     setResult(RESULT_OK, position);
-                    finish();
+                    if(!test) {
+                        finish();
+                    }
                 }
             }
         });
@@ -143,11 +148,11 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         };
     }
 
-    private boolean locationTooFar() {
-        Location.distanceBetween(lastLatLng_sl.latitude, lastLatLng_sl.longitude,
-                setLatLng.latitude, setLatLng.longitude, distance);
+    public boolean locationTooFar() {
 
-        if (distance[0] > max_distance) {
+        distance = DBTools.distanceBetween(new GeoPoint(lastLatLng_sl.latitude, lastLatLng_sl.longitude),
+                new GeoPoint(setLatLng.latitude, setLatLng.longitude));
+        if (distance > max_distance) {
             Toast.makeText(ChooseLocationActivity.this, "It's too far away, you can't get there in time!",Toast.LENGTH_LONG).show();
             return true;
         } else {
@@ -158,7 +163,9 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     @Override
     protected void onPause() {
         super.onPause();
-        currentLocation.callerOnPause();
+        if(!test) {
+            currentLocation.callerOnPause();
+        }
     }
 
     @Override
@@ -168,7 +175,9 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
             Log.d(LOGTAG_sl, "inOnResume");
             launchDefaultLocation();
         }
-        currentLocation.callerOnResume();
+        if(!test) {
+            currentLocation.callerOnResume();
+        }
     }
 
 
