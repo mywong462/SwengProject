@@ -1,6 +1,8 @@
 package ch.epfl.sweng.swengproject;
 
 import android.app.Activity;
+import android.arch.core.util.Function;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -39,6 +41,21 @@ public class AddNeedUnitTest {
             public boolean getLocationPermissionStatus() {
                 return true;
             }
+
+            @Override
+            public void callerOnPause(){}
+
+            @Override
+            public void callerOnResume(){}
+
+            @Override
+            public void setCurrentLocationParameters(Context context, Activity activity, Function<Void, Void> function){}
+
+            @Override
+            public void setCurrentLocationParameters(Context context, Activity activity){}
+
+            @Override
+            public void callerActivityReady(){}
         });
 
         Intent mockData = mock(Intent.class);

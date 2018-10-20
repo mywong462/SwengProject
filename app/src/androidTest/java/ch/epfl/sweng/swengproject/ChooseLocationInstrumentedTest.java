@@ -27,6 +27,7 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(AndroidJUnit4.class)
 public class ChooseLocationInstrumentedTest {
@@ -55,10 +56,30 @@ public class ChooseLocationInstrumentedTest {
 
         onView(withId(R.id.map_ch_loc)).perform(click());
 
-        //onView(withId(R.id.set_loc_btn)).perform(click());
 
     }
 
+
+    @Test
+    public void NotTooFar(){
+
+
+       assertFalse(aActivityRule.getActivity().locationTooFar());
+
+    }
+
+    @Test
+    public void canClick(){
+
+        onView(withId(R.id.set_loc_btn)).perform(click());
+    }
+
+    @Test
+    public void canSetDefaultLoc(){
+
+        aActivityRule.getActivity().setDefaultLocation();
+
+    }
 
 
     /*
