@@ -43,7 +43,7 @@ public class MainActivityTests {
     public final ActivityTestRule<MainActivity> mainActivity =
             new ActivityTestRule<>(MainActivity.class, false, false);
 
-    @Test
+   /* @Test
     public void noProfileInHDExist() throws InterruptedException{
         StorageHelper.deleteAllDataStoredLocally();
         //User me = UserTestUtil.randomUser();
@@ -59,7 +59,7 @@ public class MainActivityTests {
 
 
         //mainActivity.finishActivity();
-        mainActivity.launchActivity(new Intent());
+        /*mainActivity.launchActivity(new Intent());
         //Thread.sleep(5000);
         boolean passed = true;
         try { //the activity should not have changed => login_btn isn't on the view and should return an error
@@ -70,7 +70,7 @@ public class MainActivityTests {
             passed = false;
         }
         assertEquals(true,passed);
-    }
+    }*/
 
     @Test
     public void wrongProfileInHDExist() throws InterruptedException{

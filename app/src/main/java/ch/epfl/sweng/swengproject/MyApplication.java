@@ -22,11 +22,12 @@ public class MyApplication extends Application {
 
     private static boolean isUnderTest = false;
     private static Context context = null;
-    private static FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private static FirebaseAuth firebaseAuth = null;
 
     public void onCreate() {
         super.onCreate();
         MyApplication.context = getApplicationContext();
+        firebaseAuth = FirebaseAuth.getInstance();
     }
 
     /**
