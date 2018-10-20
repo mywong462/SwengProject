@@ -168,7 +168,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             permissionDialog.dismiss();
             permDialogUp = false;
         }
-        if(isPermissionGranted() && !alreadyAskingForLocation) {
+        if(isPermissionGranted()) {
             Log.d(LOGTAG, "controlLocationRequest call from onResume");
             controlLocationRequest();
         }
@@ -322,7 +322,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         try {
             if (isPermissionGranted()) {
                 Log.d(LOGTAG, "OK PERMISSION");
-
+                alreadyAskingForLocation = false;
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
             } else {

@@ -64,10 +64,12 @@ public class CurrentLocationInstrumentedTestNoPermission {
         mDevice.pressHome();
         Log.d(LOGTAG, "crash0");
         //Launch the app
+        Thread.sleep(1000);
         final Intent intent = new Intent(mActivity.getActivity(), MapsActivity.class);
+        Thread.sleep(1000);
         //Clear Previous instances
         Log.d(LOGTAG, "crash1");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Log.d(LOGTAG, "crash2");
         context.startActivity(intent);
         Log.d(LOGTAG, "crash3");
@@ -80,7 +82,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
     public boolean after() throws RemoteException, InterruptedException, UiObjectNotFoundException {
         closeApp();
-        Thread.sleep(3000);
+        Thread.sleep(1000);
         return true;
     }
 
@@ -104,7 +106,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
         done = before();
         done = locationOkThenDisableTest();
         done = after();
-        
     }
 
 
