@@ -1,16 +1,32 @@
 package ch.epfl.sweng.swengproject;
 
 
+import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.text.Editable;
+import android.util.Log;
+import android.widget.EditText;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+
+import java.util.concurrent.Executor;
 
 import ch.epfl.sweng.swengproject.util.FakeLocation;
 
@@ -23,6 +39,8 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -155,9 +173,251 @@ public class AddNeedInstrumentedTest {
 
         onView(withId(R.id.choose_loc_btn)).perform(click());
 
-        //onView(withId(R.id.map_ch_loc)).perform(click());
-
     }
 
 
+    @Mock
+    private EditText editValidityNotOk = mock(EditText.class);
+    @Mock
+    private EditText editDecsr = mock(EditText.class);
+    @Mock
+    private EditText editNbPeople = mock(EditText.class);
+    @Mock
+    private LatLng latLong = mock(LatLng.class);
+    @Mock
+    private LocationServer locServ = mock(LocationServer.class);
+
+    @Test (expected = NumberFormatException.class)
+    public void testGetAndSetToDatabaseValidityError(){
+        AddNeedActivity addNeedActivity = new AddNeedActivity(true, null);
+
+        when(editValidityNotOk.getText().toString()).thenReturn("fail"); //not valid
+        when(editDecsr.getText().toString()).thenReturn("descriptionAtLeast10"); //valid
+        when(editNbPeople.getText().toString()).thenReturn("1"); //valid
+
+        when(editDecsr.length()).thenReturn(10); //length should be at least 10
+
+        addNeedActivity.getAndSetToDatabase(editValidityNotOk, editDecsr, editNbPeople);
+    }
+
+    @Test
+    public void testGetAndSetToDatabaseDescrTooShort(){
+        AddNeedActivity addNeedActivity = new AddNeedActivity(true, null);
+
+        when(editValidityNotOk.getText().toString()).thenReturn("1"); //valid
+        when(editDecsr.getText().toString()).thenReturn("tooshort"); //not valid
+        when(editNbPeople.getText().toString()).thenReturn("1"); //valid
+
+        when(editDecsr.length()).thenReturn(8); //length should be at least 10
+
+        addNeedActivity.getAndSetToDatabase(editValidityNotOk, editDecsr, editNbPeople);
+    }
+
+    @Test
+    public void testGetAndSetToDatabaseNotEnoughPeople(){
+        AddNeedActivity addNeedActivity = new AddNeedActivity(true, null);
+
+        when(editValidityNotOk.getText().toString()).thenReturn("1"); //valid
+        when(editDecsr.getText().toString()).thenReturn("descriptionAtLeast10"); //valid
+        when(editNbPeople.getText().toString()).thenReturn("0"); //not valid
+
+        when(editDecsr.length()).thenReturn(10); //length should be at least 10
+
+        addNeedActivity.getAndSetToDatabase(editValidityNotOk, editDecsr, editNbPeople);
+    }
+
+    @Test
+    public void testGetAndSetOKLatLng(){
+        AddNeedActivity addNeedActivity = new AddNeedActivity(true, latLong);
+
+        when(editValidityNotOk.getText().toString()).thenReturn("1"); //valid
+        when(editDecsr.getText().toString()).thenReturn("descriptionAtLeast10"); //valid
+        when(editNbPeople.getText().toString()).thenReturn("1"); //valid
+
+        when(editDecsr.length()).thenReturn(10); //length should be at least 10
+
+        addNeedActivity.getAndSetToDatabase(editValidityNotOk, editDecsr, editNbPeople);
+    }
+
+    @Test
+    public void testGetAndSetOKLoc(){
+        AddNeedActivity addNeedActivity = new AddNeedActivity(true, null);
+
+        when(editValidityNotOk.getText().toString()).thenReturn("1"); //valid
+        when(editDecsr.getText().toString()).thenReturn("descriptionAtLeast10"); //valid
+        when(editNbPeople.getText().toString()).thenReturn("1"); //valid
+
+        when(editDecsr.length()).thenReturn(10); //length should be at least 10
+
+        when(locServ.getLastLocation()).thenReturn(latLong);
+
+        addNeedActivity.getAndSetToDatabase(editValidityNotOk, editDecsr, editNbPeople);
+    }
+
+
+
+
+    @Test
+    public void testWriteNewNeed(){
+        AddNeedActivity addNeedActivity = new AddNeedActivity(true, latLong);
+
+        when(Database.getDBauth.getCurrentUser().getEmail()).thenReturn("benoitknuchel@gmail.com");
+
+        addNeedActivity.writeNewNeed("thisisavaliddescr", 10L, latLong, 1);
+    }
+
+    @Mock
+    private Task<DocumentReference> docRefTaskSucc = new Task<DocumentReference>() {
+        @Override
+        public boolean isComplete() {
+            return true;
+        }
+
+        @Override
+        public boolean isSuccessful() {
+            return true;
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Nullable
+        @Override
+        public DocumentReference getResult() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public <X extends Throwable> DocumentReference getResult(@NonNull Class<X> aClass) throws X {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Exception getException() {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnSuccessListener(@NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
+            return null;
+        }
+    };
+    @Mock
+    private Task<DocumentReference> docRefTaskNotSucc = new Task<DocumentReference>() {
+        @Override
+        public boolean isComplete() {
+            return true;
+        }
+
+        @Override
+        public boolean isSuccessful() {
+            return false;
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Nullable
+        @Override
+        public DocumentReference getResult() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public <X extends Throwable> DocumentReference getResult(@NonNull Class<X> aClass) throws X {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Exception getException() {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnSuccessListener(@NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super DocumentReference> onSuccessListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Task<DocumentReference> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
+            return null;
+        }
+    };
+
+    @Test
+    public void testWriteInsideTaskSucc(){
+        AddNeedActivity addNeedActivity = new AddNeedActivity(true, latLong);
+        addNeedActivity.writeNewNeedInside(docRefTaskSucc);
+    }
+
+    @Test
+    public void testWriteInsideTaskNotSucc(){
+        AddNeedActivity addNeedActivity = new AddNeedActivity(true, latLong);
+        addNeedActivity.writeNewNeedInside(docRefTaskNotSucc);
+    }
 }

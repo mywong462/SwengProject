@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
 import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
@@ -70,6 +71,13 @@ public class AddNeedActivity extends AppCompatActivity {
         this.currLoc = locationServer;
     }
     public AddNeedActivity(){}
+
+    private boolean test = false;
+    public AddNeedActivity(boolean test, LatLng latlong){
+        this.test = test;
+        this.setLocation = latlong;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,52 +148,49 @@ public class AddNeedActivity extends AppCompatActivity {
                     return;
                 }
 
-
-                String descr = description.getText().toString();
-                int valid = 0;
-                int nbPeople = 0;
-                try {
-                    valid = Integer.parseInt(validity.getText().toString());
-                    nbPeople = Integer.parseInt(nbPeopleNeeded.getText().toString());
-                } catch (NumberFormatException e) {
-                    Toast.makeText(AddNeedActivity.this, "The validity and the number of people needed must be numbers", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-
-                //Perform checks
-
-                if (valid < MIN_VALIDITY || valid > MAX_VALIDITY || description.length() < MIN_DESCR_L) {
-
-                    Toast.makeText(AddNeedActivity.this, "Incorrect input. Validity must be " + validityInterval + " and the description must be at least 10 characters long", Toast.LENGTH_LONG).show();
-
-
-                } else if (nbPeople < MIN_NB_PEOPLE || nbPeople > MAX_NB_PEOPLE) {
-
-                    Toast.makeText(AddNeedActivity.this, "Incorrect input. The number of people needed must be " + peopleInterval, Toast.LENGTH_LONG).show();
-
-                } else {  //try to do something for the concurrency bug
-
-                    LatLng currPos;
-                    if (setLocation != null) {
-                        Log.d("Tag_sl", "Setting user set location");
-                        currPos = setLocation;
-                    } else {
-                        currPos = currLoc.getLastLocation();
-                    }
-
-                    Log.d(MainActivity.LOGTAG, "position is null " + (currPos == null));
-
-                    writeNewNeed(descr, (long) (valid * MILLS_IN_MINUTES) + System.currentTimeMillis(), currPos, nbPeople);
-
-
-                    finish();
-                }
+                getAndSetToDatabase(validity, description, nbPeopleNeeded);
             }
         });
     }
-        
-        private void bindChooseLocationButton(){
+
+
+    public void getAndSetToDatabase(EditText validity, EditText description, EditText nbPeopleNeeded){
+        Log.d(MainActivity.LOGTAG, "HI IM CALLED");
+        String descr = description.getText().toString();
+        int valid = 0;
+        int nbPeople = 0;
+        try {
+            valid = Integer.parseInt(validity.getText().toString());
+            nbPeople = Integer.parseInt(nbPeopleNeeded.getText().toString());
+        } catch (NumberFormatException e) {
+            Log.d(MainActivity.LOGTAG,"inGetAndSetToDatabase, sth is not a number");
+            Toast.makeText(AddNeedActivity.this, "The validity and the number of people needed must be numbers", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //Perform checks and send to database
+        if (valid < MIN_VALIDITY || valid > MAX_VALIDITY || description.length() < MIN_DESCR_L) {
+            Toast.makeText(AddNeedActivity.this, "Incorrect input. Validity must be " + validityInterval + " and the description must be at least 10 characters long", Toast.LENGTH_LONG).show();
+        } else if (nbPeople < MIN_NB_PEOPLE || nbPeople > MAX_NB_PEOPLE) {
+            Toast.makeText(AddNeedActivity.this, "Incorrect input. The number of people needed must be " + peopleInterval, Toast.LENGTH_LONG).show();
+        } else {  //try to do something for the concurrency bug
+            LatLng currPos;
+            if (setLocation != null) {
+                Log.d("Tag_sl", "Setting user set location");
+                currPos = setLocation;
+            } else {
+                currPos = currLoc.getLastLocation();
+            }
+
+            Log.d(MainActivity.LOGTAG, "position is null " + (currPos == null));
+            if(!test){
+                writeNewNeed(descr, (long) (valid * MILLS_IN_MINUTES) + System.currentTimeMillis(), currPos, nbPeople);
+            }
+            finish();
+        }
+    }
+
+    private void bindChooseLocationButton(){
         chooseLocation_btn = findViewById(R.id.choose_loc_btn);
         chooseLocation_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,23 +203,29 @@ public class AddNeedActivity extends AppCompatActivity {
 
 
     //method used to write in the DB
-
-    private void writeNewNeed(String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
+    public void writeNewNeed(String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
 
         Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded,"");
-        Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentReference> task) {
-                if(task.isSuccessful()){
 
-                    Toast.makeText(AddNeedActivity.this,"Need Successfully added",Toast.LENGTH_SHORT).show();
+        if(!test){
+            Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentReference> task) {
+                    writeNewNeedInside(task);
                 }
-                else{
-                    Toast.makeText(AddNeedActivity.this,"Error : Please verify your connection",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+            });
 
+        }
+
+    }
+
+    public void writeNewNeedInside(Task<DocumentReference> task){
+        if(task.isSuccessful()){
+            Toast.makeText(AddNeedActivity.this,"Need Successfully added",Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(AddNeedActivity.this,"Error : Please verify your connection",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
