@@ -52,13 +52,16 @@ public class CurrentLocationInstrumentedTestNoPermission {
     private boolean disabled;
 
 
-    private boolean before() throws UiObjectNotFoundException, InterruptedException, RemoteException {
+    @Before
+    public void before() throws UiObjectNotFoundException, InterruptedException, RemoteException {
 
         context = InstrumentationRegistry.getContext();
 
         //Disable location
         disabled = disableLocation();
         Log.d(LOGTAG, "Location disabled = " + disabled);
+
+        revokePermission();
 
         //Start from home
         mDevice.pressHome();
@@ -76,51 +79,27 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
         //Wait for app to appear
         mDevice.wait(Until.hasObject(By.pkg(PACKAGE).depth(0)), LAUNCH_TIMEOUT);
-        return true;
+    }
+
+    @After
+    public void after() throws RemoteException, InterruptedException, UiObjectNotFoundException {
+        closeApp();
+        Thread.sleep(1000);
     }
 
 
-    public boolean after() throws RemoteException, InterruptedException, UiObjectNotFoundException {
-        closeApp();
-        Thread.sleep(1000);
-        return true;
+    @Test
+    public void okLocationTest(){
+
+        try {
+            clickOKLocation();
+        } catch (UiObjectNotFoundException e) {
+            fail();
+        }
     }
 
     @Test
-    public void order() throws RemoteException, InterruptedException, UiObjectNotFoundException{
-
-        boolean done;
-
-        done = before();
-        done = aaaaaDenyPermissionThenManuallyAllow();
-        done = after();
-
-        done = before();
-        done = okLocationTest();
-        done = after();
-
-        done = before();
-        done = refuseTwiceTest();
-        done = after();
-
-        done = before();
-        done = locationOkThenDisableTest();
-        done = after();
-    }
-
-
-
-    private boolean okLocationTest(){
-
-        try {
-            clickOKLocation();
-        } catch (UiObjectNotFoundException e) {
-            fail();
-        }
-        return true;
-    }
-
-    private boolean refuseTwiceTest(){
+    public void refuseTwiceTest(){
         try {
             clickNoThanksLocation();
             clickNoThanksLocation();
@@ -129,10 +108,10 @@ public class CurrentLocationInstrumentedTestNoPermission {
             fail();
         }
 
-        return true;
     }
 
-    private boolean locationOkThenDisableTest() throws InterruptedException, RemoteException{
+    @Test
+    public void locationOkThenDisableTest() throws InterruptedException, RemoteException{
         try {
             clickOKLocation();
             disableLocation();
@@ -144,12 +123,10 @@ public class CurrentLocationInstrumentedTestNoPermission {
         } catch (UiObjectNotFoundException e) {
             fail();
         }
-        return true;
     }
 
-    //name for the test to be run first
-    private boolean aaaaaDenyPermissionThenManuallyAllow() throws InterruptedException{
-        revokePermission();
+    @Test
+    public void  aaaaaDenyPermissionThenManuallyAllow() throws InterruptedException{
         try {
             clickDeny();
             //follow settings to the graaaaahl
@@ -169,18 +146,12 @@ public class CurrentLocationInstrumentedTestNoPermission {
             mDevice.pressBack();
             Thread.sleep(200);
 
-            //Finally click done
-            /*UiObject doneBtn = mDevice.findObject(new UiSelector().text("DONE !"));
-            doneBtn.waitForExists(200);
-            doneBtn.click();*/
-
             clickOKLocation();
 
         } catch (UiObjectNotFoundException e) {
             fail();
         }
 
-        return true;
     }
 
 
