@@ -1,35 +1,31 @@
 package ch.epfl.sweng.swengproject;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
-import android.support.test.uiautomator.BySelector;
-import android.support.test.uiautomator.Direction;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
-import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Consumer;
-
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -37,6 +33,9 @@ import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentLocationInstrumentedTestNoPermission {
+
+    @Rule
+    public GrantPermissionRule grantPermissionRule  = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
     private static final String PACKAGE
             = "ch.epfl.sweng.swengproject";
@@ -58,7 +57,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
     @Before
     public void before() throws UiObjectNotFoundException, InterruptedException, RemoteException {
         //Initialize UiDevice
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        mDevice = UiDevice.getInstance(getInstrumentation());
 
         //Get Context
         context = InstrumentationRegistry.getContext();
@@ -69,7 +68,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
         Thread.sleep(1000);
         closed = closeApp();
         Thread.sleep(1000);
-
 
         mDevice.pressHome();
 
@@ -93,11 +91,18 @@ public class CurrentLocationInstrumentedTestNoPermission {
         mDevice.wait(Until.hasObject(By.pkg(PACKAGE).depth(0)), LAUNCH_TIMEOUT);
     }
 
+    /*@After
+    public void after(){
+        getInstrumentation().getUiAutomation()
+                .executeShellCommand("adb shell pm revoke "
+                        + context.getPackageName() + " "
+                        + Manifest.permission.ACCESS_FINE_LOCATION);
+    }*/
 
     @Test
     public void allowTest(){
         try {
-            clickAllow();
+            //clickAllow();
             clickOKLocation();
         }catch (UiObjectNotFoundException e){fail();}
     }
@@ -106,6 +111,8 @@ public class CurrentLocationInstrumentedTestNoPermission {
     public void denyTest(){
         try {
             clickNoThanksLocation();
+            clickNoThanksLocation();
+            clickOKLocation();
         }catch (UiObjectNotFoundException e){fail();}
     }
 
@@ -163,28 +170,15 @@ public class CurrentLocationInstrumentedTestNoPermission {
         }
     }
 
-    private boolean revokePermission() throws UiObjectNotFoundException, InterruptedException{
-        final Intent revokePermIntent = new Intent();
-        revokePermIntent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        revokePermIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        Uri uri = Uri.fromParts("package", PACKAGE, null);
-        revokePermIntent.setData(uri);
-        context.startActivity(revokePermIntent);
-        UiObject permissions = mDevice.findObject(new UiSelector().text("Permissions"));
-        permissions.clickAndWaitForNewWindow();
-        UiObject revokePerm = mDevice.findObject(new UiSelector().className(android.widget.Switch.class.getName()).instance(0));
+    private boolean revokePermission(){
+        getInstrumentation().getUiAutomation().executeShellCommand("adb shell pm revoke " + PACKAGE + " " + Manifest.permission.ACCESS_FINE_LOCATION);
 
-        Thread.sleep(2000);
-
-        if(revokePerm.exists() && revokePerm.isChecked()){
-            return revokePerm.click();
-        }
-        return false;
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
     }
 
     private boolean disableLocation() throws UiObjectNotFoundException, InterruptedException{
         final Intent disableLocIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        disableLocIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        disableLocIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(disableLocIntent);
         UiObject disableLoc = mDevice.findObject(new UiSelector().className(android.widget.Switch.class.getName()).instance(1));
         Thread.sleep(2000);
@@ -197,7 +191,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
     private boolean grantPermission() throws UiObjectNotFoundException, InterruptedException{
         final Intent revokePermIntent = new Intent();
         revokePermIntent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        revokePermIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        revokePermIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Uri uri = Uri.fromParts("package", PACKAGE, null);
         revokePermIntent.setData(uri);
         context.startActivity(revokePermIntent);
@@ -215,7 +209,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
     private boolean enableLocation() throws UiObjectNotFoundException, InterruptedException{
         final Intent disableLocIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        disableLocIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        disableLocIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(disableLocIntent);
         UiObject disableLoc = mDevice.findObject(new UiSelector().className(android.widget.Switch.class.getName()).instance(1));
         Thread.sleep(2000);
