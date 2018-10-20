@@ -76,6 +76,4 @@ public class LoginInstrumentedTest {
         assertEquals(true, passed);
     }
 
-
-
 }

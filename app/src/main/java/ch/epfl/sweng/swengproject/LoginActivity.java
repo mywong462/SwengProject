@@ -21,16 +21,43 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth;
+    private FirebaseAuth auth = Database.getDBauth;
     private EditText inputEmail, inputPassword;
     private Button btnLogin, btnRegister, btnResetPassword;
+    private boolean test = false;
+
+
+    public void setAuth(FirebaseAuth firebaseAuth){
+        this.auth = firebaseAuth;
+        this.test = true;
+    }
+
+    public OnCompleteListener listener = new OnCompleteListener<AuthResult>(){
+
+        @Override
+        public void onComplete(@NonNull Task<AuthResult> task) {
+            if (!auth.getCurrentUser().isEmailVerified()) {
+                Toast.makeText(getApplicationContext(), "Email not verified", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (task.isSuccessful()) {
+                if (!LoginActivity.this.getSharedPreferences("UserProfile", 0).contains("userName")) {
+                    startActivity(new Intent(LoginActivity.this, UserProfileActivity.class));
+                } else {
+                    startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+                    finish();
+                }
+            } else {
+                Toast fail = Toast.makeText(LoginActivity.this, "Login Failed",Toast.LENGTH_LONG);
+                fail.show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        auth = Database.getDBauth;
 
         getViewElements();
 
@@ -70,28 +97,9 @@ public class LoginActivity extends AppCompatActivity {
                 String email = checkInput(inputEmail.getText().toString());
                 String password = checkInput(inputPassword.getText().toString());
 
-                auth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>(){
-
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (!auth.getCurrentUser().isEmailVerified()) {
-                                    Toast.makeText(getApplicationContext(), "Email not verified", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                if (task.isSuccessful()) {
-                                    if (!LoginActivity.this.getSharedPreferences("UserProfile", 0).contains("userName")) {
-                                        startActivity(new Intent(LoginActivity.this, UserProfileActivity.class));
-                                    } else {
-                                        startActivity(new Intent(LoginActivity.this, MapsActivity.class));
-                                        finish();
-                                    }
-                                } else {
-                                    Toast fail = Toast.makeText(LoginActivity.this, "Login Failed",Toast.LENGTH_LONG);
-                                    fail.show();
-                                }
-                            }
-                        });
+                if(!test) {
+                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, listener);
+                }
             }
         });
 
