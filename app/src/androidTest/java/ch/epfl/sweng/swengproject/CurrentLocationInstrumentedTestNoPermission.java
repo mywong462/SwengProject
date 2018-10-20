@@ -50,9 +50,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
     private boolean revoked;
     private boolean closed;
 
-    @Rule
-    public final ActivityTestRule<MainActivity> mActivityRule =
-            new ActivityTestRule<>(MainActivity.class);
 
     @Before
     public void before() throws UiObjectNotFoundException, InterruptedException, RemoteException {
@@ -81,23 +78,16 @@ public class CurrentLocationInstrumentedTestNoPermission {
         mDevice.pressHome();
 
         //Launch the app
-        final Intent mapsIntent = new Intent(mActivityRule.getActivity(), MapsActivity.class);
+        final Intent intent = context.getPackageManager()
+                .getLaunchIntentForPackage(PACKAGE);
 
         //Clear Previous instances
-        mapsIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(mapsIntent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
 
         //Wait for app to appear
         mDevice.wait(Until.hasObject(By.pkg(PACKAGE).depth(0)), LAUNCH_TIMEOUT);
     }
-
-    /*@After
-    public void after(){
-        getInstrumentation().getUiAutomation()
-                .executeShellCommand("adb shell pm revoke "
-                        + context.getPackageName() + " "
-                        + Manifest.permission.ACCESS_FINE_LOCATION);
-    }*/
 
     @Test
     public void allowTest(){
