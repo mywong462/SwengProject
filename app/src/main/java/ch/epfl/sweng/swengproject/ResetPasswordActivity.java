@@ -62,8 +62,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 String email = getAndCheckEmail(inputEmail.getText().toString());
 
                 if(!test){
-                    auth.sendPasswordResetEmail(email)
-                            .addOnCompleteListener(listener);
+                    auth.sendPasswordResetEmail(email).addOnCompleteListener(listener);
                 }
             }
         });

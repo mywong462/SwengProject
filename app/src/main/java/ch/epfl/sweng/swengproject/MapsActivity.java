@@ -221,8 +221,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 if(!test) {
                     mMap.addCircle(mCircleOptions);
-                }
-                if(!test) {
                     showAvailableNeeds();
                 }
 
