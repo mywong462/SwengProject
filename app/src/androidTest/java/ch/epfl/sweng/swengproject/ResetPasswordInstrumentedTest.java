@@ -34,10 +34,8 @@ public class ResetPasswordInstrumentedTest {
     @Rule
     public final ActivityTestRule<ResetPasswordActivity> mActivityRule = new ActivityTestRule<>(ResetPasswordActivity.class);
 
-    @Test
-    public void dummy(){}
 
-    @Ignore
+    @Test
     public void onClickWork(){
 
         String email = "";
@@ -50,12 +48,11 @@ public class ResetPasswordInstrumentedTest {
 
         onView(withId(R.id.resetPassword_btn3)).perform(click());
 
-
     }
 
 
 
-    @Ignore
+    @Test
     public void ListenerWork(){
 
         Task<Void> t = new Task<Void>() {

@@ -307,7 +307,7 @@ public class MapsInstrumentedTest {
 
     }
 
-    @Test
+   /* @Test
     public void onActResTest(){
         mActivityRule.getActivity().onActivityResult(0,0,new Intent());
     }
@@ -316,7 +316,7 @@ public class MapsInstrumentedTest {
     @Test
     public void onReqPermResTest(){
         mActivityRule.getActivity().onRequestPermissionsResult(0,new String[0],new int[0]);
-    }
+    }*/
 
 
     @Test
