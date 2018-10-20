@@ -74,6 +74,14 @@ public class ChooseLocationInstrumentedTest {
         onView(withId(R.id.set_loc_btn)).perform(click());
     }
 
+    @Test
+    public void canSetDefaultLoc(){
+
+        aActivityRule.getActivity().setDefaultLocation();
+
+    }
+
+
     /*
     @Before
     public void create(){

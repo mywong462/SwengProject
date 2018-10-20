@@ -98,7 +98,7 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     }
 
 
-    private void launchDefaultLocation() {
+    public void launchDefaultLocation() {
         Function<Void, Void> function_sl = new Function<Void, Void>() {
             @Override
             public Void apply(Void input) {
@@ -112,18 +112,22 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
 
     }
 
-    private void setDefaultLocation() {
+    public void setDefaultLocation() {
         Log.d(LOGTAG_sl, "in setDefaultLocation");
 
         try {
             if (currLoc.getLocationPermissionStatus()) {
                 //mMap_sl.clear(); // removes all markers, overlays... from the map
-                mMap_sl.setMyLocationEnabled(true); // while enabled, location is available
-                mMap_sl.getUiSettings().setMyLocationButtonEnabled(true);
-                Log.d(LOGTAG_sl, "in setDefaultLocation, lastLatLng = "+lastLatLng_sl);
-                Log.d(LOGTAG_sl, "in setDefaultLocation, setLatLng = "+setLatLng);
-                lastLatLng_sl = currLoc.getLastLocation();
-                mMap_sl.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng_sl, 12));
+                 Log.d(LOGTAG_sl, "in setDefaultLocation, lastLatLng = "+lastLatLng_sl);
+                 Log.d(LOGTAG_sl, "in setDefaultLocation, setLatLng = "+setLatLng);
+                 lastLatLng_sl = currLoc.getLastLocation();
+
+                if(!test) {
+                    mMap_sl.setMyLocationEnabled(true); // while enabled, location is available
+                    mMap_sl.getUiSettings().setMyLocationButtonEnabled(true);
+                    mMap_sl.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng_sl, 12));
+                }
+
             } else {
                 Log.d("ERROR", "CAN'T SET LOCATION");
             }
