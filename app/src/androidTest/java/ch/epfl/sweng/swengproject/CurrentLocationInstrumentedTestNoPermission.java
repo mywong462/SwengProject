@@ -83,13 +83,13 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
     @After
     public void after() throws RemoteException, InterruptedException, UiObjectNotFoundException {
-        closeApp();
+        //closeApp();
         Thread.sleep(1000);
     }
 
 
     @Test
-    public void okLocationTest(){
+    public void okLocationTest() {
 
         try {
             clickOKLocation();
@@ -99,8 +99,9 @@ public class CurrentLocationInstrumentedTestNoPermission {
     }
 
     @Test
-    public void refuseTwiceTest(){
+    public void refuseTwiceTest() {
         try {
+            clickAllow();
             clickNoThanksLocation();
             clickNoThanksLocation();
             clickOKLocation();
@@ -111,22 +112,20 @@ public class CurrentLocationInstrumentedTestNoPermission {
     }
 
     @Test
-    public void locationOkThenDisableTest() throws InterruptedException, RemoteException{
-        try {
-            clickOKLocation();
-            disableLocation();
-            closeApp();
-            Thread.sleep(500);
-            goBackToSwengProjectApp();
-            Thread.sleep(500);
-            clickOKLocation();
-        } catch (UiObjectNotFoundException e) {
-            fail();
-        }
+    public void locationOkThenDisableTest() throws UiObjectNotFoundException, InterruptedException, RemoteException {
+
+        clickAllow();
+        clickOKLocation();
+        disableLocation();
+        Thread.sleep(500);
+        goBackToSwengProjectApp();
+        Thread.sleep(500);
+        clickOKLocation();
+
     }
 
     @Test
-    public void  aaaaaDenyPermissionThenManuallyAllow() throws InterruptedException{
+    public void denyPermissionThenManuallyAllow() throws InterruptedException {
         try {
             clickDeny();
             //follow settings to the graaaaahl
@@ -212,7 +211,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
     /**
      * Can only be used once, otherwise it crashes...WHY??
      */
-    private boolean revokePermission() throws InterruptedException{
+    private boolean revokePermission() throws InterruptedException {
         Log.d(LOGTAG, "crash8");
         getInstrumentation().getUiAutomation().executeShellCommand("pm revoke " + PACKAGE + " " + Manifest.permission.ACCESS_FINE_LOCATION);
         Thread.sleep(1000);
@@ -220,12 +219,12 @@ public class CurrentLocationInstrumentedTestNoPermission {
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
     }
 
-    private boolean disableLocation() throws InterruptedException{
+    private boolean disableLocation() throws InterruptedException {
         getInstrumentation().getUiAutomation().executeShellCommand("settings put secure location_providers_allowed -gps");
         getInstrumentation().getUiAutomation().executeShellCommand("settings put secure location_providers_allowed -network");
         Thread.sleep(1000);
 
-        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled;
         boolean network_enabled;
 
@@ -279,7 +278,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
         return false;
     }
 
-    private void goBackToSwengProjectApp() throws RemoteException, UiObjectNotFoundException{
+    private void goBackToSwengProjectApp() throws RemoteException, UiObjectNotFoundException {
         //Be sure no other app is running
         mDevice.pressRecentApps();
 
