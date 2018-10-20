@@ -33,8 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 
-import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
-import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
+import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 import java.util.ArrayList;
 
@@ -45,7 +45,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private LatLng lastLatLng;
 
-    private Boolean isOpening;
+    private boolean zoomIn;
 
     private GoogleMap mMap;
 
@@ -74,15 +74,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         this.mMap = m;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(MainActivity.LOGTAG, "onCreate");
+        Log.d(LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
 
 
         setContentView(R.layout.activity_maps);
-        isOpening = true;
+        zoomIn = true;
         //TODO: get range in user settings
         range = 3000;
 
@@ -97,9 +96,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else {
             this.normalExec = true;
-            Log.d(MainActivity.LOGTAG,"Normal code section");
+            Log.d(LOGTAG,"Normal code section");
             currLoc = currentLocation;
-            launchCurrentLocation();
         }
 
         bindAddNeedButton();
@@ -118,7 +116,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         createNeed_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MapsActivity.this, AddNeedActivity.class));
+                if(currLoc.getLocationPermissionStatus()) {
+                    startActivity(new Intent(MapsActivity.this, AddNeedActivity.class));
+                }
             }
         });
     }
@@ -132,13 +132,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this, function);
+        currLoc.setCurrentLocationParameters(this.getApplicationContext(), this, function);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (mMap != null) {
-            Log.d(MainActivity.LOGTAG, "saving instance of map");
+            Log.d(LOGTAG, "saving instance of map");
             outState.putParcelable(KEY_LOCATION, lastLatLng);
         }
         super.onSaveInstanceState(outState);
@@ -148,7 +148,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            Log.d(MainActivity.LOGTAG, "getting old instance");
+            Log.d(LOGTAG, "getting old instance");
             lastLatLng = savedInstanceState.getParcelable(KEY_LOCATION);
         }
     }
@@ -159,48 +159,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap = googleMap;
 
+        Log.d(LOGTAG, "Map is ready");
 
         if (lastLatLng != null) {
             updateUI();
         }
 
-        currentLocation.callerActivityReady();
+        currLoc.callerActivityReady();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        currentLocation.callerOnPause();
+        currLoc.callerOnPause();
     }
 
     @Override
     protected void onResume() {
-        //Log.d(MainActivity.LOGTAG, "onResume before super");
         super.onResume();
-        //Log.d(MainActivity.LOGTAG, "onResume after super");
-        if(!isOpening) {
-            launchCurrentLocation();
-        }
-        currentLocation.callerOnResume();
-        //Log.d(MainActivity.LOGTAG, "onResume before super");
+        launchCurrentLocation();
+        currLoc.callerOnResume();
     }
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        currentLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        currLoc.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        currentLocation.onActivityResult(requestCode, resultCode, data);
+        currLoc.onActivityResult(requestCode, resultCode, data);
     }
 
 
     public void updateUI() {
 
-        Log.d(MainActivity.LOGTAG, "UPDATEUI");
+        Log.d(LOGTAG, "UPDATEUI");
 
         try {
             if (currLoc.getLocationPermissionStatus()) {
@@ -219,8 +215,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 mMap.addCircle(mCircleOptions);
                 showAvailableNeeds();
-                if (isOpening) {
-                    isOpening = false;
+                if (zoomIn) {
+                    zoomIn = false;
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
                 }
             } else {
