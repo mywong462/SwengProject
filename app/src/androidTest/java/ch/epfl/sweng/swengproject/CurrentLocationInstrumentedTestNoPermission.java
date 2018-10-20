@@ -48,70 +48,91 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
     private UiDevice mDevice = UiDevice.getInstance(getInstrumentation());
     private Context context;
-    private boolean revoked;
     private boolean closed;
     private boolean disabled;
 
 
-    @Before
-    public void before() throws UiObjectNotFoundException, InterruptedException, RemoteException {
+    private boolean before() throws UiObjectNotFoundException, InterruptedException, RemoteException {
 
         context = InstrumentationRegistry.getContext();
-        closed = closeApp();
 
         //Disable location
         disabled = disableLocation();
         Log.d(LOGTAG, "Location disabled = " + disabled);
 
-        revoked = revokePermission();
-        Thread.sleep(500);
-        Log.d(LOGTAG, "perm = " + revoked);
-
         //Start from home
         mDevice.pressHome();
-
+        Log.d(LOGTAG, "crash0");
         //Launch the app
         final Intent intent = new Intent(mActivity.getActivity(), MapsActivity.class);
         //Clear Previous instances
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Log.d(LOGTAG, "crash1");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Log.d(LOGTAG, "crash2");
         context.startActivity(intent);
+        Log.d(LOGTAG, "crash3");
 
         //Wait for app to appear
         mDevice.wait(Until.hasObject(By.pkg(PACKAGE).depth(0)), LAUNCH_TIMEOUT);
+        return true;
     }
 
-    @After
-    public void after() throws RemoteException, InterruptedException, UiObjectNotFoundException {
+
+    public boolean after() throws RemoteException, InterruptedException, UiObjectNotFoundException {
         closeApp();
+        Thread.sleep(3000);
+        return true;
     }
 
     @Test
-    public void okLocationTest() throws InterruptedException, RemoteException{
+    public void order() throws RemoteException, InterruptedException, UiObjectNotFoundException{
+
+        boolean done;
+
+        done = before();
+        done = aaaaaDenyPermissionThenManuallyAllow();
+        done = after();
+
+        done = before();
+        done = okLocationTest();
+        done = after();
+
+        done = before();
+        done = refuseTwiceTest();
+        done = after();
+
+        done = before();
+        done = locationOkThenDisableTest();
+        done = after();
+        
+    }
+
+
+
+    private boolean okLocationTest(){
 
         try {
-            clickAllow();
             clickOKLocation();
         } catch (UiObjectNotFoundException e) {
             fail();
         }
+        return true;
     }
 
-    @Test
-    public void refuseTwiceTest() throws InterruptedException, RemoteException{
+    private boolean refuseTwiceTest(){
         try {
-            clickAllow();
             clickNoThanksLocation();
             clickNoThanksLocation();
             clickOKLocation();
         } catch (UiObjectNotFoundException e) {
             fail();
         }
+
+        return true;
     }
 
-    @Ignore
-    public void locationOkThenDisableTest() throws InterruptedException, RemoteException{
+    private boolean locationOkThenDisableTest() throws InterruptedException, RemoteException{
         try {
-            clickAllow();
             clickOKLocation();
             disableLocation();
             closeApp();
@@ -122,10 +143,12 @@ public class CurrentLocationInstrumentedTestNoPermission {
         } catch (UiObjectNotFoundException e) {
             fail();
         }
+        return true;
     }
 
-    @Ignore
-    public void denyPermissionThenManuallyAllow() throws InterruptedException{
+    //name for the test to be run first
+    private boolean aaaaaDenyPermissionThenManuallyAllow() throws InterruptedException{
+        revokePermission();
         try {
             clickDeny();
             //follow settings to the graaaaahl
@@ -146,15 +169,17 @@ public class CurrentLocationInstrumentedTestNoPermission {
             Thread.sleep(200);
 
             //Finally click done
-            UiObject doneBtn = mDevice.findObject(new UiSelector().text("DONE !"));
+            /*UiObject doneBtn = mDevice.findObject(new UiSelector().text("DONE !"));
             doneBtn.waitForExists(200);
-            doneBtn.click();
+            doneBtn.click();*/
 
             clickOKLocation();
 
         } catch (UiObjectNotFoundException e) {
             fail();
         }
+
+        return true;
     }
 
 
@@ -212,9 +237,14 @@ public class CurrentLocationInstrumentedTestNoPermission {
         }
     }
 
-    private boolean revokePermission() {
+    /**
+     * Can only be used once, otherwise it crashes...WHY??
+     */
+    private boolean revokePermission() throws InterruptedException{
+        Log.d(LOGTAG, "crash8");
         getInstrumentation().getUiAutomation().executeShellCommand("pm revoke " + PACKAGE + " " + Manifest.permission.ACCESS_FINE_LOCATION);
-
+        Thread.sleep(1000);
+        Log.d(LOGTAG, "crash9");
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
     }
 
