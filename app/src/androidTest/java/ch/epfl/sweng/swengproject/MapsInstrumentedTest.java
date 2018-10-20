@@ -290,8 +290,7 @@ public class MapsInstrumentedTest {
         TextView t = mock(TextView.class);
 
         when(menu.findViewById(R.id.needDescription)).thenReturn(t);
-        doNothing().when(t).setText(Matchers.any(String.class));
-        // or else "good and long description" instead of matcher
+        doNothing().when(t).setText("good and long description");
 
         mActivityRule.getActivity().setTestMode();
 
