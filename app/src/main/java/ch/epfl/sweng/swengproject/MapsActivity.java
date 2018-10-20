@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.PopupWindow;
@@ -59,19 +60,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private  ArrayList<Need> availableNeeds = null;
 
-    private boolean normalExec = true;
+    private boolean normalExec = true;  //boolean used when injecting position
 
     private FirebaseAuth auth = Database.getDBauth;
-    private boolean test = false;
+
+    private boolean test = false;   //boolean used when calling functions from instrumented tests
 
     public void setAuth(FirebaseAuth fAuth){
         this.auth = fAuth;
-        this.test = true;
+        setTestMode();
     }
-    public void setAuth(FirebaseAuth fAuth, GoogleMap m){
-        this.auth = fAuth;
-        this.test = true;
+
+    public void setMap(GoogleMap m){
         this.mMap = m;
+        setTestMode();
+    }
+
+    public void setTestMode(){
+        this.test = true;
     }
 
     @Override
@@ -110,7 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void bindAddNeedButton(){
+    public void bindAddNeedButton(){
         //button with listener to create new needs
         createNeed_btn = findViewById(R.id.create_need_btn);
         createNeed_btn.setOnClickListener(new View.OnClickListener() {
@@ -213,11 +219,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .strokeWidth(0)
                         .fillColor(0x300000cf);
                 mMap.clear();
-                mMap.addCircle(mCircleOptions);
-                showAvailableNeeds();
+                if(!test) {
+                    mMap.addCircle(mCircleOptions);
+                    showAvailableNeeds();
+                }
+
                 if (zoomIn) {
                     zoomIn = false;
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
+                  if(!test) {
+                      mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
+                  }
                 }
             } else {
                 Log.d("ERROR", "NO PERMISSION TO UPDATEUI");
@@ -242,16 +253,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
                     .title("TITLE"));
 
-           if(!test) {
                // TODO: change color depending on the type of need
                marker.setTag(need);
-           }
+
         }
 
          mMap.setOnMarkerClickListener(this);
     }
 
-    private void displayOnMenu(View menuView, GeoPoint tempGeo) {
+    public void displayOnMenu(View menuView, GeoPoint tempGeo) {
         //  TODO: need to update this function when more fields from the needs are available
         //The field to be update
         TextView description = menuView.findViewById(R.id.needDescription);
@@ -262,12 +272,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ArrayList<Categories> arrayCategories = new ArrayList<>();
         arrayCategories.add(Categories.ALL);
 
+        ArrayList<Need> currentNeed;
 
         //Searching for the need
-
-        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo, range, arrayCategories);
+        if(!test) {
+             currentNeed = Database.getNeeds(tempGeo, range, arrayCategories);
+        }
+        else{
+            currentNeed = new ArrayList<>();
+            currentNeed.add(new Need("yolo@gmail.com",
+                    "good and long description",
+                    0,  tempGeo.getLatitude(),
+                    tempGeo.getLongitude(),
+                    Categories.ALL,
+                    1,
+                    "simon@epfl.ch"));
+        }
         for (int i = 0; i < currentNeed.size(); i++){
-            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
+            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude())
+                    && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
+
                 selectedNeed = currentNeed.get(i);
                 break;
             }
@@ -284,46 +308,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean onMarkerClick(final Marker marker) {
         // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
         //Get the size of screen and pop up a window
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
-        final PopupWindow pw = new PopupWindow(layout, (int) (width * 0.8), (int) (height * 0.7), true);
-
-        //Get the marker information
-        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
-        displayOnMenu(layout, needRequest);
-
-        //Implement the close button
-        (layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                pw.dismiss();
-            }
-        });
-
-        Log.d(LOGTAG,"before check");
+        Pair<View, PopupWindow> p = popUp(marker);
+        final View layout = p.first;
+        final PopupWindow pw = p.second;
         //enable the button only if the need is not full and we haven't yet accepted this need
 
         boolean canAccept = DBTools.notAlreadyAccepted(this.availableNeeds,marker.getPosition(), this.auth.getCurrentUser().getEmail())
                 && DBTools.isNotFull(this.availableNeeds, marker.getPosition());
-    if(!test) {
-        layout.findViewById(R.id.acceptBtn).setClickable(canAccept);
-        layout.findViewById(R.id.acceptBtn).setEnabled(canAccept);
-    }
-        Log.d(LOGTAG,"checks have passes now ready to query DB on click");
-        //Implement the accept button
-        (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
 
-                Database.addParticipant(marker.getPosition());  //add the participant to the need. the need now contains participants in CSV format.
+        if(!test) {
+            layout.findViewById(R.id.acceptBtn).setClickable(canAccept);
+            layout.findViewById(R.id.acceptBtn).setEnabled(canAccept);
+
+            //Implement the accept button
+            (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Database.addParticipant(marker.getPosition());  //add the participant to the need. the need now contains participants in CSV format.
                     pw.dismiss();
 
-            }
-        });
-
+                }
+            });
+        }
         //Clicking outside the window will close the window
         pw.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         pw.setTouchInterceptor(new View.OnTouchListener() {
@@ -338,12 +344,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         pw.setOutsideTouchable(true);
 
-        if (!test) {
+        if(!test) {
             //Display the pop-up window
             pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
         }
 
         return true;
+    }
+
+
+
+    public Pair<View,PopupWindow> popUp(Marker marker){
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        View layout = null;
+        if(!test){
+            LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
+        }
+
+        final PopupWindow pw = new PopupWindow(layout, (int) (width * 0.8), (int) (height * 0.7), true);
+
+        //Get the marker information
+        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
+        if(!test) {
+
+            displayOnMenu(layout, needRequest);
+
+            //Implement the close button
+            (layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    pw.dismiss();
+                }
+            });
+        }
+
+        Log.d(LOGTAG,"before check");
+
+        return new Pair<>(layout, pw);
+
     }
 
 }
