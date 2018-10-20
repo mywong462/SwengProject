@@ -11,11 +11,19 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.concurrent.Executor;
 
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.typeTextIntoFocusedView;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,91 +31,23 @@ public class ResetPasswordInstrumentedTest {
 
 
     @Rule
-    public final ActivityTestRule<ResetPasswordActivity> mActivityRule = new ActivityTestRule<>(ResetPasswordActivity.class,false,false);
+    public final ActivityTestRule<ResetPasswordActivity> mActivityRule = new ActivityTestRule<>(ResetPasswordActivity.class);
 
 
 
     @Test
     public void onClickWork(){
 
-        String email = "test@epfl.ch";
+        String email = "";
 
         FirebaseAuth mockF = mock(FirebaseAuth.class);
 
-        when(mockF.sendPasswordResetEmail(email)).thenReturn(new Task<Void>() {
-            @Override
-            public boolean isComplete() {
-                return true;
-            }
+        mActivityRule.getActivity().setAuth(mockF);
 
-            @Override
-            public boolean isSuccessful() {
-                return true;
-            }
+        onView(withId(R.id.email3)).perform(typeText(email));
 
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
+        onView(withId(R.id.resetPassword_btn3)).perform(click());
 
-            @Nullable
-            @Override
-            public Void getResult() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public <X extends Throwable> Void getResult(@NonNull Class<X> aClass) throws X {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Exception getException() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnSuccessListener(@NonNull OnSuccessListener<? super Void> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super Void> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super Void> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            public Task<Void> addOnCompleteListener(OnCompleteListener listener){
-                return null;
-            }
-        });
 
     }
 

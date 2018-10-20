@@ -21,8 +21,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private EditText inputEmail;
     private Button btnResetPassword, btnGoBack;
+    private boolean test = false;
 
-    private OnCompleteListener listener = new OnCompleteListener<Void>() {
+    public OnCompleteListener listener = new OnCompleteListener<Void>() {
         @Override
         public void onComplete(@NonNull Task<Void> task) {
             if (task.isSuccessful()) {
@@ -35,6 +36,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     public void setAuth(FirebaseAuth fAuth){
         this.auth = fAuth;
+        this.test = true;
     }
 
     @Override
@@ -59,8 +61,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = getAndCheckEmail(inputEmail.getText().toString());
 
-                auth.sendPasswordResetEmail(email)
-                        .addOnCompleteListener(listener);
+                if(!test){
+                    auth.sendPasswordResetEmail(email)
+                            .addOnCompleteListener(listener);
+                }
             }
         });
     }
