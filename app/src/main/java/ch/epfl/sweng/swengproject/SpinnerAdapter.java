@@ -26,18 +26,16 @@ public class SpinnerAdapter extends ArrayAdapter<DropdownMenuCheckboxes> {
     }
 
     @Override
-    public View getDropDownView(int position, View convertView,
-                                ViewGroup parent) {
+    public View getDropDownView(int position, View convertView,ViewGroup parent) {
         return getCustomView(position, convertView, parent);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView,ViewGroup parent) {
         return getCustomView(position, convertView, parent);
     }
 
-    public View getCustomView(final int position, View convertView,
-                              ViewGroup parent) {
+    public View getCustomView(final int position, View convertView,ViewGroup parent) {
 
         final ViewHolder holder;
         if (convertView == null) {
@@ -55,7 +53,7 @@ public class SpinnerAdapter extends ArrayAdapter<DropdownMenuCheckboxes> {
 
         holder.mTextView.setText(listState.get(position).getTitle());
 
-        // To check weather checked event fire from getview() or user input
+        // To check whether checked event fire from getview() or user input
         isFromView = true;
         holder.mCheckBox.setChecked(listState.get(position).isSelected());
         isFromView = false;

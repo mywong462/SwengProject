@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.PopupWindow;
 import android.widget.Button;
+import android.widget.Toast;
 import android.view.LayoutInflater;
 import android.view.Gravity;
 import android.view.Display;
@@ -127,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         bindAddNeedButton();
-        setFilterBehaviour(displayFilter);
+        setFilterBehaviour();
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -151,31 +152,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void setFilterBehaviour(UserSettings userSettings){
+    private void setFilterBehaviour(){
         //button with listener to open the filter menu
         filterDrawer = findViewById(R.id.drawer_layout);
         mapFilter_btn = findViewById(R.id.map_filter_btn);
         mapFilter_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Spinner spinner = findViewById(R.id.catSpinner);
+                SpinnerAdapter adapter = (SpinnerAdapter) spinner.getAdapter();
+                ArrayList<Categories> tempCat = displayFilter.getCategories();
+                for (int i = 1; i < tempCat.size(); i++){       //Reason for starting from 1 is that the first item would be the description
+                    DropdownMenuCheckboxes item = adapter.getItem(i);
+                    if (tempCat.indexOf(Categories.valueOf(item.getTitle())) != -1){
+                        item.setSelected(true);
+                    }
+                }
+
+                range_slider.setProgress((int)(range/5000.0*100));
+                range_label.setText(new DecimalFormat("0.0").format(range/1000.0) + "km");
                 filterDrawer.openDrawer(GravityCompat.START);
             }
         });
 
 
         //Set behaviour of spinner inside the menu
-        //TODO: Get the types of categories from here
         Spinner spinner = findViewById(R.id.catSpinner);
         ArrayList<DropdownMenuCheckboxes> listVOs = new ArrayList<>();
-        List<Categories> needCategories = userSettings.getCategories();
-        needCategories.remove(Categories.ALL); //A need cannot choose 'ALL' as a category
+        List<Categories> needCategories = displayFilter.getCategories();
         DropdownMenuCheckboxes description = new DropdownMenuCheckboxes();
         description.setTitle("Select the categories");
         description.setSelected(false);
         listVOs.add(description);
-        for (int i = 0; i < needCategories.size(); i++) {
+        for (int i = 0; i < CategoriesInfo.size; i++) {
+            if (Categories.values()[i] == Categories.ALL) { continue; }
             DropdownMenuCheckboxes stateVO = new DropdownMenuCheckboxes();
-            stateVO.setTitle(needCategories.get(i).toString());
+            stateVO.setTitle(Categories.values()[i].toString());
             stateVO.setSelected(true);
             listVOs.add(stateVO);
         }
@@ -188,8 +200,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         range_slider = findViewById(R.id.rangeBar);
         range_label = findViewById(R.id.rangeProgressLabel);
         //The default value of the label
-        range_slider.setProgress((int)(userSettings.getRange()/5000.0*100));
-        range_label.setText(new DecimalFormat("0.0").format(userSettings.getRange()/1000.0) + "km");
+        range_slider.setProgress((int)(displayFilter.getRange()/5000.0*100));
+        range_label.setText(new DecimalFormat("0.0").format(displayFilter.getRange()/1000.0) + "km");
         range_slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
