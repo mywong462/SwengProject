@@ -43,6 +43,8 @@ import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnMarkerClickListener{
@@ -78,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean test = false;   //boolean used when calling functions from instrumented tests
 
     //TODO Save the setting to profile or other places that can be retrieved again each time the app is opened
-    //private UserSettings displayFilter;
+    private UserSettings displayFilter;
 
     public void setAuth(FirebaseAuth fAuth){
         this.auth = fAuth;
@@ -104,12 +106,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         zoomIn = true;
 
         //TODO: Remove this when we can retrieve userSettings from database
-        //displayFilter.setRange(3000);
+        displayFilter = new UserSettings(new ArrayList<>(EnumSet.allOf(Categories.class)),3000);
 
-
-
-
-        //range = displayFilter.getRange();
+        range = displayFilter.getRange();
 
 
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
@@ -128,7 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         bindAddNeedButton();
-        setFilterBehaviour();
+        setFilterBehaviour(displayFilter);
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -152,7 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void setFilterBehaviour(){
+    private void setFilterBehaviour(UserSettings userSettings){
         //button with listener to open the filter menu
         filterDrawer = findViewById(R.id.drawer_layout);
         mapFilter_btn = findViewById(R.id.map_filter_btn);
@@ -166,14 +165,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Set behaviour of spinner inside the menu
         //TODO: Get the types of categories from here
-        final String needCategories[] = {"Select the categories","HeHe","HoHo","HaHa"};
         Spinner spinner = findViewById(R.id.catSpinner);
         ArrayList<DropdownMenuCheckboxes> listVOs = new ArrayList<>();
-
-        for (int i = 0; i < needCategories.length; i++) {
+        List<Categories> needCategories = userSettings.getCategories();
+        needCategories.remove(Categories.ALL); //A need cannot choose 'ALL' as a category
+        DropdownMenuCheckboxes description = new DropdownMenuCheckboxes();
+        description.setTitle("Select the categories");
+        description.setSelected(false);
+        listVOs.add(description);
+        for (int i = 0; i < needCategories.size(); i++) {
             DropdownMenuCheckboxes stateVO = new DropdownMenuCheckboxes();
-            stateVO.setTitle(needCategories[i]);
-            stateVO.setSelected(false);
+            stateVO.setTitle(needCategories.get(i).toString());
+            stateVO.setSelected(true);
             listVOs.add(stateVO);
         }
 
@@ -184,7 +187,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Set behaviour of slider inside the menu
         range_slider = findViewById(R.id.rangeBar);
         range_label = findViewById(R.id.rangeProgressLabel);
-
+        //The default value of the label
+        range_slider.setProgress((int)(userSettings.getRange()/5000.0*100));
+        range_label.setText(new DecimalFormat("0.0").format(userSettings.getRange()/1000.0) + "km");
         range_slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
