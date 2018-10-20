@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 
 import ch.epfl.sweng.swengproject.Database;
 import ch.epfl.sweng.swengproject.MapsActivity;
+import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
@@ -25,7 +26,7 @@ import ch.epfl.sweng.swengproject.storage.db.UserDao;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final FirebaseAuth auth = Database.getDBauth;
+    private final FirebaseAuth auth = MyApplication.getFirebaseAuth();
     private User me = null;
 
     @Override

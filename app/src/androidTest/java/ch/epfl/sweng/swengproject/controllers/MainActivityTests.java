@@ -17,6 +17,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static junit.framework.TestCase.assertEquals;
 import android.support.test.rule.ActivityTestRule;
 
+import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
@@ -33,14 +34,14 @@ public class MainActivityTests {
 
     @BeforeClass
     public static void doBeforeAll(){
-        AppDatabase.setUnderTest(true);
+        MyApplication.setUnderTest(true);
         dataBase = AppDatabase.getInstance();
         userDao = dataBase.userDao();
     }
 
     @Rule
     public final ActivityTestRule<MainActivity> mainActivity =
-            new ActivityTestRule<>(MainActivity.class);
+            new ActivityTestRule<>(MainActivity.class, false, false);
 
     @Test
     public void noProfileInHDExist() throws InterruptedException{
@@ -69,5 +70,19 @@ public class MainActivityTests {
             passed = false;
         }
         assertEquals(true,passed);
+    }
+
+    @Test
+    public void wrongProfileInHDExist() throws InterruptedException{
+        User realUser = new User();
+        realUser.setEmail("kaeser.jonathan@gmail.com");
+        realUser.setPassword("123456");
+        userDao.storeMyOwnProfile(realUser);
+
+        mainActivity.launchActivity(new Intent());
+        Thread.sleep(5000);
+
+
+        assertEquals(true,true);
     }
 }
