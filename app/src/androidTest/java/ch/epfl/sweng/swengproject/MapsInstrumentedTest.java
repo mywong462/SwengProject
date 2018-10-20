@@ -273,13 +273,13 @@ public class MapsInstrumentedTest {
     }
 
 
-    @Test
+   /* @Test
     public void canSwitchActivity() {
 
         onView(withId(R.id.create_need_btn)).perform(click());
         
 
-    }
+    }*/
 
 
     @Test
