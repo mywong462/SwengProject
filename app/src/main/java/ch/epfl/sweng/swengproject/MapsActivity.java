@@ -64,6 +64,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private FloatingActionButton createNeed_btn, mapFilter_btn;
 
+    private Button saveFilter_btn;
+
+    private Spinner categoriesSpinner;
+
     private SeekBar range_slider;
 
     private TextView range_label;
@@ -130,6 +134,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bindAddNeedButton();
         setFilterBehaviour();
 
+        saveFilter_btn = findViewById(R.id.applyBtn);
+        saveFilter_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateFilter();
+            }
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -151,24 +162,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    private void updateFilter(){
+        List<Categories> categories = new ArrayList<Categories>();
+        SpinnerAdapter adapter = (SpinnerAdapter) categoriesSpinner.getAdapter();
+        ArrayList<Categories> tempCat = displayFilter.getCategories();
+        for (int i = 1; i < CategoriesInfo.size; i++){       //Reason for starting from 1 is that the first item would be the description
+            DropdownMenuCheckboxes item = adapter.getItem(i);
+            if (item.isSelected()){
+                categories.add(Categories.valueOf(item.getTitle()));
+            }
+        }
+        displayFilter.setCategories(categories);
+        displayFilter.setRange((int)(range_slider.getProgress()/100.0*5000.0));
+        filterDrawer.closeDrawer(GravityCompat.START);
+        range = displayFilter.getRange();
+        updateUI();
+
+    }
+
 
     private void setFilterBehaviour(){
         //button with listener to open the filter menu
         filterDrawer = findViewById(R.id.drawer_layout);
         mapFilter_btn = findViewById(R.id.map_filter_btn);
+        categoriesSpinner = findViewById(R.id.catSpinner);
         mapFilter_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Spinner spinner = findViewById(R.id.catSpinner);
-                SpinnerAdapter adapter = (SpinnerAdapter) spinner.getAdapter();
+
+                SpinnerAdapter adapter = (SpinnerAdapter) categoriesSpinner.getAdapter();
                 ArrayList<Categories> tempCat = displayFilter.getCategories();
-                for (int i = 1; i < tempCat.size(); i++){       //Reason for starting from 1 is that the first item would be the description
+                for (int i = 1; i < CategoriesInfo.size; i++){       //Reason for starting from 1 is that the first item would be the description
                     DropdownMenuCheckboxes item = adapter.getItem(i);
                     if (tempCat.indexOf(Categories.valueOf(item.getTitle())) != -1){
                         item.setSelected(true);
                     }
                 }
-
                 range_slider.setProgress((int)(range/5000.0*100));
                 range_label.setText(new DecimalFormat("0.0").format(range/1000.0) + "km");
                 filterDrawer.openDrawer(GravityCompat.START);
@@ -177,7 +206,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         //Set behaviour of spinner inside the menu
-        Spinner spinner = findViewById(R.id.catSpinner);
         ArrayList<DropdownMenuCheckboxes> listVOs = new ArrayList<>();
         List<Categories> needCategories = displayFilter.getCategories();
         DropdownMenuCheckboxes description = new DropdownMenuCheckboxes();
@@ -194,7 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         SpinnerAdapter myAdapter = new SpinnerAdapter(MapsActivity.this, 0,
                 listVOs);
-        spinner.setAdapter(myAdapter);
+        categoriesSpinner.setAdapter(myAdapter);
 
         //Set behaviour of slider inside the menu
         range_slider = findViewById(R.id.rangeBar);
