@@ -9,6 +9,8 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.dynamic.IObjectWrapper;
 import com.google.android.gms.internal.maps.zzac;
@@ -59,12 +61,14 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.GeoPoint;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 
 import java.util.List;
 
@@ -75,6 +79,8 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -98,14 +104,15 @@ public class MapsInstrumentedTest {
     }
 
     @Test
-    public void canClickOnMarker(){
+    public void popUpWork(){
 
         FirebaseAuth fAuth = mock(FirebaseAuth.class);
         FirebaseUser fUser = mock(FirebaseUser.class);
         when(fUser.getEmail()).thenReturn("info@epfl.ch");
         when(fAuth.getCurrentUser()).thenReturn(fUser);
         mActivityRule.getActivity().setAuth(fAuth);
-      /*  mActivityRule.getActivity().onMarkerClick(new Marker(new zzt() {
+
+        mActivityRule.getActivity().onMarkerClick(new Marker(new zzt() {
             @Override
             public void remove() throws RemoteException {
 
@@ -123,7 +130,7 @@ public class MapsInstrumentedTest {
 
             @Override
             public LatLng getPosition() throws RemoteException {
-                return new LatLng(12,13);
+                return new LatLng(1,2);
             }
 
             @Override
@@ -260,22 +267,71 @@ public class MapsInstrumentedTest {
             public IBinder asBinder() {
                 return null;
             }
-        }));*/
+        }));
+
 
     }
 
 
     @Test
-    public void canUpdateUi(){
-        FirebaseAuth fAuth = mock(FirebaseAuth.class);
-        FirebaseUser fUser = mock(FirebaseUser.class);
-        when(fUser.getEmail()).thenReturn("info@epfl.ch");
-        when(fAuth.getCurrentUser()).thenReturn(fUser);
+    public void canSwitchActivity() {
 
-        mActivityRule.getActivity().setAuth(fAuth, new GoogleMap(new IGoogleMapDelegate() {
+        onView(withId(R.id.create_need_btn)).perform(click());
+        
+
+    }
+
+
+    @Test
+    public void canDisplayOnMenu(){
+
+        View menu =  mock(View.class);
+
+        TextView t = mock(TextView.class);
+
+        when(menu.findViewById(R.id.needDescription)).thenReturn(t);
+        doNothing().when(t).setText("good and long description");
+
+        mActivityRule.getActivity().setTestMode();
+
+        mActivityRule.getActivity().displayOnMenu(menu,new GeoPoint(12,13));
+
+    }
+
+    @Test
+    public void onRestoreTest(){
+
+        Bundle b = new Bundle();
+
+        mActivityRule.getActivity().onRestoreInstanceState(b);
+
+    }
+
+    @Test
+    public void onActResTest(){
+        mActivityRule.getActivity().onActivityResult(0,0,new Intent());
+    }
+
+
+    @Test
+    public void onReqPermResTest(){
+        mActivityRule.getActivity().onRequestPermissionsResult(0,new String[0],new int[0]);
+    }
+
+
+    @Test
+    public void canBindButton(){
+
+        mActivityRule.getActivity().bindAddNeedButton();
+    }
+
+    @Test
+    public void canUpdateUI(){
+
+        GoogleMap m = new GoogleMap(new IGoogleMapDelegate() {
             @Override
             public CameraPosition getCameraPosition() throws RemoteException {
-                return new CameraPosition(new LatLng(1,2),0,0,0);
+                return null;
             }
 
             @Override
@@ -540,132 +596,7 @@ public class MapsInstrumentedTest {
 
             @Override
             public com.google.android.gms.internal.maps.zzh addCircle(CircleOptions circleOptions) throws RemoteException {
-                return new com.google.android.gms.internal.maps.zzh() {
-                    @Override
-                    public void remove() throws RemoteException {
-
-                    }
-
-                    @Override
-                    public String getId() throws RemoteException {
-                        return null;
-                    }
-
-                    @Override
-                    public void setCenter(LatLng latLng) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public LatLng getCenter() throws RemoteException {
-                        return null;
-                    }
-
-                    @Override
-                    public void setRadius(double v) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public double getRadius() throws RemoteException {
-                        return 0;
-                    }
-
-                    @Override
-                    public void setStrokeWidth(float v) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public float getStrokeWidth() throws RemoteException {
-                        return 0;
-                    }
-
-                    @Override
-                    public void setStrokeColor(int i) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public int getStrokeColor() throws RemoteException {
-                        return 0;
-                    }
-
-                    @Override
-                    public void setFillColor(int i) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public int getFillColor() throws RemoteException {
-                        return 0;
-                    }
-
-                    @Override
-                    public void setZIndex(float v) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public float getZIndex() throws RemoteException {
-                        return 0;
-                    }
-
-                    @Override
-                    public void setVisible(boolean b) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public boolean isVisible() throws RemoteException {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean zzb(com.google.android.gms.internal.maps.zzh zzh) throws RemoteException {
-                        return false;
-                    }
-
-                    @Override
-                    public int zzi() throws RemoteException {
-                        return 0;
-                    }
-
-                    @Override
-                    public void setClickable(boolean b) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public boolean isClickable() throws RemoteException {
-                        return false;
-                    }
-
-                    @Override
-                    public void setStrokePattern(List<PatternItem> list) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public List<PatternItem> getStrokePattern() throws RemoteException {
-                        return null;
-                    }
-
-                    @Override
-                    public void zze(IObjectWrapper iObjectWrapper) throws RemoteException {
-
-                    }
-
-                    @Override
-                    public IObjectWrapper zzj() throws RemoteException {
-                        return null;
-                    }
-
-                    @Override
-                    public IBinder asBinder() {
-                        return null;
-                    }
-                };
+                return null;
             }
 
             @Override
@@ -877,17 +808,10 @@ public class MapsInstrumentedTest {
             public IBinder asBinder() {
                 return null;
             }
-        }));
+        });
 
-        //mActivityRule.getActivity().updateUI();
-
-    }
-
-    @Test
-    public void canSwitchActivity() {
-
-        onView(withId(R.id.create_need_btn)).perform(click());
-        
+        mActivityRule.getActivity().setMap(m);
+        mActivityRule.getActivity().updateUI();
 
     }
 

@@ -106,7 +106,7 @@ public class UserTests {
         for (int i = 0; i < 10; i++) {
             User u = usersToStore.get((int) (Math.random() * usersToStore.size()));
             User found = userDao.findByName(u.firstName(), u.lastName());
-            assertNotNull(found);
+            assertNotNull(found.picture());
         }
     }
 
