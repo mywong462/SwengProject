@@ -31,23 +31,26 @@ import static org.mockito.Mockito.when;
 
 public class ResetPasswordInstrumentedTest {
 
-    private boolean once = true;
+
 
     @Rule
     public final ActivityTestRule<ResetPasswordActivity> mActivityRule = new ActivityTestRule<>(ResetPasswordActivity.class);
 
 
-    @Before
-    public void init(){
-        if(once){
+    @Test
+    public void master(){
+
             Looper.prepare();
-            once = false;
-        }
+
+            onClickWork();
+            ListenerWork();
+
     }
 
 
-    @Test
-    public void onClickWork(){
+
+
+    private void onClickWork(){
 
 
         String email = "";
@@ -64,8 +67,8 @@ public class ResetPasswordInstrumentedTest {
 
 
 
-    @Test
-    public void ListenerWork(){
+
+    private void ListenerWork(){
 
         Task<Void> t = new Task<Void>() {
             @Override

@@ -31,18 +31,24 @@ public class RegistrationINstrumentedTestFrommRegistration {
     public final ActivityTestRule<RegistrationActivity> mActivityRule =
             new ActivityTestRule<>(RegistrationActivity.class);
 
+
     @Before
-    public void testMode(){
+
+    public void init(){
         mActivityRule.getActivity().setTestMode();
-        if(once){
-            Looper.prepare();
-            once = false;
-        }
+    }
+
+    @Test
+    public void master(){
+
+        Looper.prepare();
+        testListenerFail();
+        testListenerSuccess();
     }
 
 
-    @Test
-    public void testListenerSuccess(){
+
+    private void testListenerSuccess(){
 
 
         Task<Void> t = new Task<Void>() {
@@ -128,8 +134,8 @@ public class RegistrationINstrumentedTestFrommRegistration {
     }
 
 
-    @Test
-    public void testListenerFail(){
+
+    private void testListenerFail(){
 
 
         Task<Void> t = new Task<Void>() {
@@ -223,7 +229,6 @@ public class RegistrationINstrumentedTestFrommRegistration {
     public void canClick(){
 
         onView(withId(R.id.register_btn2)).perform(click());
-
 
     }
 

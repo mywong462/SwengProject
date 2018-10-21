@@ -27,23 +27,29 @@ import static org.mockito.Mockito.when;
 
 public class LoginInstrumentedTestFromLogin {
 
-    private boolean once = true;
+
 
 
     @Rule
     public final ActivityTestRule<LoginActivity> mActivityRule =
             new ActivityTestRule<>(LoginActivity.class);
 
-    @Before
-    public void init(){
-        if(once){
-            Looper.prepare();
-            once = false;
-        }
-    }
+
 
     @Test
-    public void eMailNotVerified(){
+    public void master(){
+
+        Looper.prepare();
+
+        eMailNotVerified();
+        emailVerified();
+        taskNotSuccess();
+
+
+    }
+
+
+    private void eMailNotVerified(){
 
 
 
@@ -139,8 +145,8 @@ public class LoginInstrumentedTestFromLogin {
 
     }
 
-    @Test
-    public void emailVerified(){
+
+    private void emailVerified(){
 
         FirebaseAuth mockF = mock(FirebaseAuth.class);
 
@@ -233,8 +239,8 @@ public class LoginInstrumentedTestFromLogin {
     }
 
 
-    @Test
-    public void taskNotSuccess(){
+
+    private void taskNotSuccess(){
 
         FirebaseAuth mockF = mock(FirebaseAuth.class);
 
@@ -330,7 +336,7 @@ public class LoginInstrumentedTestFromLogin {
 
 
     @Test
-    public void canClick(){
+    public  void canClick(){
 
         FirebaseAuth mock = mock(FirebaseAuth.class);
         mActivityRule.getActivity().setAuth(mock);
