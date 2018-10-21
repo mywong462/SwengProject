@@ -55,7 +55,6 @@ public class RegistrationActivity extends AppCompatActivity {
         this.test = true;
     }
 
-    private boolean test = false;
     public void setTest(boolean b){
         test = b;
     }
@@ -104,7 +103,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 }
 
             }
-        }
+        });
 
     }
 

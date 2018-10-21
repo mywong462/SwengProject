@@ -70,9 +70,8 @@ public class AddNeedActivity extends AppCompatActivity {
     public AddNeedActivity(){}
 
     private boolean test = false;
-    public AddNeedActivity(boolean test, LatLng latlong){
+    public AddNeedActivity(boolean test){
         this.test = test;
-        this.setLocation = latlong;
     }
 
 
@@ -209,7 +208,12 @@ public class AddNeedActivity extends AppCompatActivity {
             Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentReference> task) {
-                    writeNewNeedInside(task);
+                    if(task.isSuccessful()){
+                        Toast.makeText(AddNeedActivity.this,"Need Successfully added",Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(AddNeedActivity.this,"Error : Please verify your connection",Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -217,14 +221,6 @@ public class AddNeedActivity extends AppCompatActivity {
 
     }
 
-    public void writeNewNeedInside(Task<DocumentReference> task){
-        if(task.isSuccessful()){
-            Toast.makeText(AddNeedActivity.this,"Need Successfully added",Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(AddNeedActivity.this,"Error : Please verify your connection",Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
