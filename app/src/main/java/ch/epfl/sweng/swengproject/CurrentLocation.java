@@ -38,6 +38,8 @@ import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 public class CurrentLocation implements LocationServer, ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private boolean test = false;
+
     private static final int LOCATION_REQUEST_CODE = 99;
 
     private static final int REQUEST_CHECK_SETTINGS = 555;
@@ -143,6 +145,9 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
+        if(test){
+            mFusedLocationProviderClient.setMockMode(true);
+        }
         updatingLocation = false;
 
         checkLocationPermission();
@@ -323,6 +328,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             if (isPermissionGranted()) {
                 Log.d(LOGTAG, "OK PERMISSION");
                 alreadyAskingForLocation = false;
+
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
             } else {
@@ -344,20 +350,14 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     public boolean getLocationPermissionStatus() {
         return isPermissionGranted();
     }
-/*
-    public void injectionForTest(Location mockLocation){
-        try {
-            Log.d(LOGTAG, "injection");
-            mFusedLocationProviderClient.setMockLocation(mockLocation);
-            mFusedLocationProviderClient.setMockMode(true);
-            mLocationRequest = new LocationRequest().
-            startLocationUpdates();
-            mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    Log.d(LOGTAG, location.toString());
-                }
-            });
-        }catch(SecurityException e){}
-    }*/
+
+//For test purpose
+    public void testMode(){
+        test = true;
+    }
+
+    public void triggerInjectLocation(Location mockLocation) throws SecurityException{
+        mFusedLocationProviderClient.setMockLocation(mockLocation);
+        mFusedLocationProviderClient.flushLocations();
+    }
 }
