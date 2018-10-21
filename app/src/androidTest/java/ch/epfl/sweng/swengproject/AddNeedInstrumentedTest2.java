@@ -1,5 +1,6 @@
 package ch.epfl.sweng.swengproject;
 
+import android.Manifest;
 import android.app.Activity;
 import android.arch.core.util.Function;
 import android.content.Context;
@@ -21,6 +22,7 @@ import ch.epfl.sweng.swengproject.util.FakeLocation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
@@ -40,7 +42,7 @@ public class AddNeedInstrumentedTest2 {
 
     @Rule
     public final ActivityTestRule<AddNeedActivity> mActivityRule =
-            new ActivityTestRule<>(AddNeedActivity.class,false,false);
+            new ActivityTestRule<>(AddNeedActivity.class,false,true);
 
 
     private UiDevice mDevice;
@@ -54,18 +56,22 @@ public class AddNeedInstrumentedTest2 {
         InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("settings put location_providers_allowed +gps");
         InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("settings put location_providers_allowed +network");
 
-        mActivityRule.launchActivity(new Intent());
+
+        //mActivityRule.launchActivity(new Intent());
         mActivityRule.getActivity().setAddNeedActivity(true, locServ);
+        clickAllowIfAsked();
     }
 
     @After
     public void after(){
         clickOKLocationIfAsked();
+        clickAllowIfAsked();
     }
 
 
     @Test
     public void createWithOneFieldNull(){
+
         StringBuilder sb = new StringBuilder();
         sb.append("");
 
@@ -80,11 +86,14 @@ public class AddNeedInstrumentedTest2 {
 
     @Test
     public void createWithInvalidValidity(){
+
         Looper.prepare();
 
         onView(withId(R.id.descr_txt)).perform(typeText("abcdefghijkl")).perform(closeSoftKeyboard());
         onView(withId(R.id.validity_txt)).perform(typeText("0")).perform(closeSoftKeyboard());
         onView(withId(R.id.nbPeople_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
+
+        //onView(withId(R.id.create_btn)).perform(scrollTo());
 
         onView(withId(R.id.create_btn)).perform(click());
     }
@@ -95,6 +104,8 @@ public class AddNeedInstrumentedTest2 {
         onView(withId(R.id.descr_txt)).perform(typeText("abcdefghijkl")).perform(closeSoftKeyboard());
         onView(withId(R.id.validity_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
         onView(withId(R.id.nbPeople_txt)).perform(typeText("0")).perform(closeSoftKeyboard());
+
+
 
         onView(withId(R.id.create_btn)).perform(click());
     }
@@ -136,6 +147,17 @@ public class AddNeedInstrumentedTest2 {
         if (agreeImprove.exists()) {
             agreeImprove.click();
         }
+    }
+
+    private void clickAllowIfAsked() {
+        try {
+            UiObject allowBtn = mDevice.findObject(new UiSelector()
+                    .text("ALLOW")
+                    .className("android.widget.Button"));
+
+            allowBtn.waitForExists(500);
+            allowBtn.click();
+        }catch(UiObjectNotFoundException e){}
     }
 
 }
