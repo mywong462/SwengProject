@@ -15,9 +15,6 @@ import android.support.test.uiautomator.UiSelector;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
