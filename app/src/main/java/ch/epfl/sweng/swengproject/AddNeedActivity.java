@@ -191,16 +191,13 @@ public class AddNeedActivity extends AppCompatActivity {
     private void writeNewNeed( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
         if (canAddNewNeed(((MyApplication) this.getApplication()).getUser_need_ttl())) {
             Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
-
-            // Problem here: the setUser_need_ttl method should be called if the task is successful but getApplication is not resolved in the listener
-            ((MyApplication) this.getApplication()).setUser_need_ttl(ttl);
+            final long ttlCopy = new Long(ttl);
 
             Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentReference> task) {
                     if (task.isSuccessful()) {
-
-
+                        updateTtl(ttlCopy);
                         Toast.makeText(AddNeedActivity.this, "Need Successfully added", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(AddNeedActivity.this, "Error : Please verify your connection", Toast.LENGTH_SHORT).show();
@@ -208,6 +205,11 @@ public class AddNeedActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void updateTtl(long ttl) {
+        ((MyApplication) this.getApplication()).setUser_need_ttl(ttl);
+        return;
     }
 
     /** This method uses the global variable accross the application state user_need_ttl
