@@ -52,10 +52,11 @@ public class CurrLocCallBackTest {
     };
 
     @Before
-    public void before(){
+    public void before() throws InterruptedException{
         try{
             clickAllow();
             clickOKLocation();
+            Thread.sleep(2000);
         }catch (UiObjectNotFoundException e){}
     }
 
@@ -69,7 +70,7 @@ public class CurrLocCallBackTest {
 
 
     @Test
-    public void testCallbackNonNull(){
+    public void testCallbackNonNull() throws InterruptedException{
 
         Location loc = mock(Location.class);
         when(loc.getLatitude()).thenReturn(40.0);
@@ -84,7 +85,7 @@ public class CurrLocCallBackTest {
         MyApplication.currentLocation.getCallBack().onLocationResult(lr);
 
         LatLng res = MyApplication.currentLocation.getLastLocation();
-
+        Thread.sleep(3000);
         assertTrue(test);
         assertEquals(new LatLng(40.0, 7.0), res);
 
