@@ -1,6 +1,7 @@
 package ch.epfl.sweng.swengproject;
 
 import android.app.Activity;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.test.rule.ActivityTestRule;
@@ -37,6 +38,8 @@ public class ResetPasswordInstrumentedTest {
 
     @Test
     public void onClickWork(){
+
+        Looper.prepare();
 
         String email = "";
 
@@ -131,6 +134,8 @@ public class ResetPasswordInstrumentedTest {
         };
 
         t.addOnCompleteListener(mActivityRule.getActivity().listener);
+
+        mActivityRule.getActivity().listener.onComplete(t);
     }
 
 

@@ -1,8 +1,10 @@
 package ch.epfl.sweng.swengproject;
 
 import android.app.Activity;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,12 +32,13 @@ public class RegistrationINstrumentedTestFrommRegistration {
     @Before
     public void testMode(){
         mActivityRule.getActivity().setTestMode();
+
     }
 
 
     @Test
     public void testListenerSuccess(){
-
+        Looper.prepare();
 
         Task<Void> t = new Task<Void>() {
             @Override
@@ -115,9 +118,8 @@ public class RegistrationINstrumentedTestFrommRegistration {
         };
 
 
-
         t.addOnCompleteListener(mActivityRule.getActivity().listener);
-
+        mActivityRule.getActivity().listener.onComplete(t);
     }
 
 
@@ -128,6 +130,7 @@ public class RegistrationINstrumentedTestFrommRegistration {
         Task<Void> t = new Task<Void>() {
             @Override
             public boolean isComplete() {
+
                 return true;
             }
 
@@ -203,9 +206,10 @@ public class RegistrationINstrumentedTestFrommRegistration {
         };
 
 
-
         t.addOnCompleteListener(mActivityRule.getActivity().listener);
-        t.getResult();
+
+        mActivityRule.getActivity().listener.onComplete(t);
+
 
     }
 

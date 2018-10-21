@@ -1,6 +1,7 @@
 package ch.epfl.sweng.swengproject;
 
 import android.app.Activity;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.test.rule.ActivityTestRule;
@@ -32,6 +33,8 @@ public class LoginInstrumentedTestFromLogin {
 
     @Test
     public void eMailNotVerified(){
+
+        Looper.prepare();
 
         FirebaseAuth mockF = mock(FirebaseAuth.class);
 
@@ -121,6 +124,7 @@ public class LoginInstrumentedTestFromLogin {
 
         t.addOnCompleteListener(mActivityRule.getActivity().listener);
 
+        mActivityRule.getActivity().listener.onComplete(t);
 
     }
 
@@ -214,7 +218,7 @@ public class LoginInstrumentedTestFromLogin {
         };
 
         t.addOnCompleteListener(mActivityRule.getActivity().listener);
-
+        mActivityRule.getActivity().listener.onComplete(t);
     }
 
 
@@ -308,6 +312,8 @@ public class LoginInstrumentedTestFromLogin {
         };
 
         t.addOnCompleteListener(mActivityRule.getActivity().listener);
+
+        mActivityRule.getActivity().listener.onComplete(t);
 
     }
 
