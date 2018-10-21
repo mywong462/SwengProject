@@ -67,6 +67,11 @@ public class AddNeedActivity extends AppCompatActivity {
     public AddNeedActivity(LocationServer locationServer){ this.currLoc = locationServer; }
     public AddNeedActivity(){}
 
+    public AddNeedActivity(boolean test, LatLng locServ){
+        this.test = test;
+        this.setLocation = locServ;
+    }
+
     private boolean test = false;
 
     public void setAddNeedActivity(boolean test, LocationServer loc){
@@ -204,17 +209,21 @@ public class AddNeedActivity extends AppCompatActivity {
             Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentReference> task) {
-                    if(task.isSuccessful()){
-                        Toast.makeText(AddNeedActivity.this,"Need Successfully added",Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(AddNeedActivity.this,"Error : Please verify your connection",Toast.LENGTH_SHORT).show();
-                    }
+                    writeNewNeedInside(task);
                 }
             });
 
         }
 
+    }
+
+    public void writeNewNeedInside(Task<DocumentReference> task){
+        if(task.isSuccessful()){
+            Toast.makeText(AddNeedActivity.this,"Need Successfully added",Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(AddNeedActivity.this,"Error : Please verify your connection",Toast.LENGTH_SHORT).show();
+        }
     }
 
 
