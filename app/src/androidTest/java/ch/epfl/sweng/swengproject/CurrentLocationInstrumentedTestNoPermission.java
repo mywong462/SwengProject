@@ -89,7 +89,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
     @Test
     public void okLocationTest() throws UiObjectNotFoundException{
 
-        clickAllow();
+        //clickAllow();
         clickOKLocation();
 
     }
@@ -97,17 +97,17 @@ public class CurrentLocationInstrumentedTestNoPermission {
     @Test
     public void refuseTwiceTest() throws UiObjectNotFoundException{
 
-        clickAllow();
+        //clickAllow();
         clickNoThanksLocation();
         clickNoThanksLocation();
         clickOKLocation();
 
     }
 
-    @Test
+    @Ignore
     public void locationOkThenDisableTest() throws UiObjectNotFoundException, InterruptedException, RemoteException {
-
-        clickAllow();
+        //revokePermission();
+        //clickAllow();
         clickOKLocation();
         disableLocation();
         Thread.sleep(500);
@@ -227,18 +227,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
         return !(gps_enabled && network_enabled);
 
     }
-
-    /*private boolean disableLocation() throws UiObjectNotFoundException, InterruptedException {
-        final Intent disableLocIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        disableLocIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(disableLocIntent);
-        UiObject disableLoc = mDevice.findObject(new UiSelector().className(android.widget.Switch.class.getName()).instance(1));
-        Thread.sleep(500);
-        if (disableLoc.exists() && disableLoc.isChecked()) {
-            return disableLoc.click();
-        }
-        return false;
-    }*/
 
     private boolean grantPermission() throws UiObjectNotFoundException, InterruptedException {
         final Intent revokePermIntent = new Intent();
