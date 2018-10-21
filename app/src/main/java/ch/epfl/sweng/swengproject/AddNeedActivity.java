@@ -155,7 +155,7 @@ public class AddNeedActivity extends AppCompatActivity {
 
 
     public void getAndSetToDatabase(EditText validity, EditText description, EditText nbPeopleNeeded){
-        Log.d(MainActivity.LOGTAG, "HI IM CALLED");
+        Log.d("HELLO", "HI IM CALLED");
         String descr = description.getText().toString();
         int valid = 0;
         int nbPeople = 0;
@@ -163,7 +163,7 @@ public class AddNeedActivity extends AppCompatActivity {
             valid = Integer.parseInt(validity.getText().toString());
             nbPeople = Integer.parseInt(nbPeopleNeeded.getText().toString());
         } catch (NumberFormatException e) {
-            Log.d(MainActivity.LOGTAG,"inGetAndSetToDatabase, sth is not a number");
+            Log.d("HELLO","inGetAndSetToDatabase, sth is not a number");
             Toast.makeText(AddNeedActivity.this, "The validity and the number of people needed must be numbers", Toast.LENGTH_LONG).show();
             return;
         }
@@ -176,13 +176,13 @@ public class AddNeedActivity extends AppCompatActivity {
         } else {  //try to do something for the concurrency bug
             LatLng currPos;
             if (setLocation != null) {
-                Log.d("Tag_sl", "Setting user set location");
+                Log.d("HELLO", "Setting user set location");
                 currPos = setLocation;
             } else {
                 currPos = currLoc.getLastLocation();
             }
 
-            Log.d(MainActivity.LOGTAG, "position is null " + (currPos == null));
+            Log.d("HELLO", "position is null " + (currPos == null));
             if(!test){
                 writeNewNeed(descr, (long) (valid * MILLS_IN_MINUTES) + System.currentTimeMillis(), currPos, nbPeople);
             }
