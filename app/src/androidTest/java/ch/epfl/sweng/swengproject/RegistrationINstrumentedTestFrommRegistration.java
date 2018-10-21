@@ -205,6 +205,7 @@ public class RegistrationINstrumentedTestFrommRegistration {
 
 
         t.addOnCompleteListener(mActivityRule.getActivity().listener);
+        t.getResult();
 
     }
 
