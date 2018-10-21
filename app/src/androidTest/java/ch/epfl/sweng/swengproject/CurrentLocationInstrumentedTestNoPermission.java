@@ -21,16 +21,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentLocationInstrumentedTestNoPermission {
-    @Rule
-    public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
-
     @Rule
     public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
 
@@ -44,7 +40,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
 
     @Before
-    public void before() throws InterruptedException{
+    public void before() {
 
         context = InstrumentationRegistry.getContext();
 
