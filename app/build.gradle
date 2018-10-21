@@ -8,7 +8,7 @@ jacoco {
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "27.0.3"
+    buildToolsVersion "28.0.2" //switch to 27.0.3 for travis
     defaultConfig {
         applicationId "ch.epfl.sweng.swengproject"
         minSdkVersion 21    //forced for google auth to put minimum 16
@@ -44,6 +44,8 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:4.1.0'
     //password and email registration
     implementation 'com.google.firebase:firebase-database:16.0.3'
+    //sending notifications to users
+    implementation 'com.google.firebase:firebase-messaging:10.2.1'
     //database connection
     implementation 'com.google.firebase:firebase-firestore:17.1.1'
     implementation 'com.google.firebase:firebase-core:16.0.4'

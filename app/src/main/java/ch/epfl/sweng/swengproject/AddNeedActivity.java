@@ -191,12 +191,16 @@ public class AddNeedActivity extends AppCompatActivity {
     private void writeNewNeed( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
         if (canAddNewNeed(((MyApplication) this.getApplication()).getUser_need_ttl())) {
             Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
+
+            // Problem here: the setUser_need_ttl method should be called if the task is successful but getApplication is not resolved in the listener
             ((MyApplication) this.getApplication()).setUser_need_ttl(ttl);
+
             Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentReference> task) {
                     if (task.isSuccessful()) {
-                        //need_created = true;
+
+
                         Toast.makeText(AddNeedActivity.this, "Need Successfully added", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(AddNeedActivity.this, "Error : Please verify your connection", Toast.LENGTH_SHORT).show();
@@ -206,6 +210,14 @@ public class AddNeedActivity extends AppCompatActivity {
         }
     }
 
+    /** This method uses the global variable accross the application state user_need_ttl
+     * Variable to keep track of the last need created by the user and allowing him to create only one
+     * If (user_need_ttl-System.currentTimeMillis()) is negative, it means the need created by the user has expired
+     * It is initialized at 0L, so the first time a need is created, the above will always evaluate to true
+     * However, for this to be true, a user created need needs to be deleted when he closes the app
+     * This makes sense for shortlived needs, especially since the user would not be notified
+     * when another accepts its invitation if the app is closed
+     */
     private boolean canAddNewNeed(long user_need_ttl) {
         ttl = user_need_ttl-System.currentTimeMillis();
         Log.d(LOGTAG_nn, "Time alive left = "+ttl);
