@@ -10,11 +10,10 @@ import android.support.test.rule.GrantPermissionRule;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import ch.epfl.sweng.swengproject.util.FakeLocation;
 
@@ -23,8 +22,15 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiSelector;
+
+
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
+
 
 public class AddNeedInstrumentedTest2 {
 
@@ -36,13 +42,23 @@ public class AddNeedInstrumentedTest2 {
             new ActivityTestRule<>(AddNeedActivity.class,false,false);
 
 
+    private UiDevice mDevice;
+
     @Before
-    public void init(){
+    public void create(){
         LocationServer locServ = new FakeLocation();
+
+        mDevice = UiDevice.getInstance(getInstrumentation());
 
         mActivityRule.launchActivity(new Intent());
         mActivityRule.getActivity().setAddNeedActivity(true, locServ);
     }
+
+    @After
+    public void after(){
+        clickOKLocationIfAsked();
+    }
+
 
     @Test
     public void createWithOneFieldNull(){
@@ -88,4 +104,34 @@ public class AddNeedInstrumentedTest2 {
 
         onView(withId(R.id.create_btn)).perform(click());
     }
+
+
+
+    private void clickOKLocationIfAsked(){
+        try {
+            UiObject OKBtn = mDevice.findObject(new UiSelector()
+                    .text("OK")
+                    .className("android.widget.Button"));
+            OKBtn.waitForExists(500);
+            if (OKBtn.exists()) {
+                OKBtn.click();
+            }
+            clickAgreeImproveLocationAccuracy();
+        }catch(UiObjectNotFoundException e){}
+    }
+
+    private void clickAgreeImproveLocationAccuracy() throws UiObjectNotFoundException {
+        UiObject agreeImprove = mDevice.findObject(new UiSelector()
+                .text("AGREE")
+                .index(1)
+                .resourceId("android:id/button1")
+                .className("android.widget.Button")
+                .clickable(true)
+                .packageName("com.google.android.gms"));
+        agreeImprove.waitForExists(500);
+        if (agreeImprove.exists()) {
+            agreeImprove.click();
+        }
+    }
+
 }
