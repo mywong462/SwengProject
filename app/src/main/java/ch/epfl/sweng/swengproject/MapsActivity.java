@@ -165,19 +165,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateFilter(){
         List<Categories> categories = new ArrayList<Categories>();
         SpinnerAdapter adapter = (SpinnerAdapter) categoriesSpinner.getAdapter();
-        ArrayList<Categories> tempCat = displayFilter.getCategories();
         for (int i = 1; i < CategoriesInfo.size; i++){       //Reason for starting from 1 is that the first item would be the description
             DropdownMenuCheckboxes item = adapter.getItem(i);
             if (item.isSelected()){
                 categories.add(Categories.valueOf(item.getTitle()));
             }
         }
+        
         displayFilter.setCategories(categories);
         displayFilter.setRange((int)(range_slider.getProgress()/100.0*5000.0));
-        filterDrawer.closeDrawer(GravityCompat.START);
+
         range = displayFilter.getRange();
         updateUI();
-
+        filterDrawer.closeDrawer(GravityCompat.START);
     }
 
 
@@ -364,13 +364,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void showAvailableNeeds() {
 
         //arrayCategories while the user choosing them is not implemented
-        ArrayList<Categories> arrayCategories = new ArrayList<>();
-        arrayCategories.add(Categories.ALL);
+        ArrayList<Categories> arrayCategories = displayFilter.getCategories();
         if(this.normalExec) {
             Log.d("DEBUG","normal code");
             this.availableNeeds = Database.getNeeds(mGeoPoint, range, arrayCategories);
             Log.d("DEBUG", "available needs number : "+this.availableNeeds.size());
         }
+
         for (Need need : availableNeeds) {
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
