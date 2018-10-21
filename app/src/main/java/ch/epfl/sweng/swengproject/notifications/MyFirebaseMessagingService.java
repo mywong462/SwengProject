@@ -22,9 +22,16 @@ import ch.epfl.sweng.swengproject.R;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
 
-    /**
-     * Called when message is received.
-     *
+    /** Called if InstanceID token is updated (and initially generated) */
+    @Override
+    public void onNewToken(String token) {
+        Log.d(TAG, "Refreshed token: " + token);
+
+        /** To send notifications to this application instance, we send the token to the app server */
+        sendRegistrationToServer(token);
+    }
+
+    /** Called when message is received.
      * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
     @Override
@@ -52,21 +59,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     */
 
 
-    /**
-     * Persist token to third-party servers.
-     *
+    /** Persist token to third-party servers.
      * Modify this method to associate the user's FCM InstanceID token with any server-side account
      * maintained by your application.
-     *
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
         // TODO: Implement this method to send token to your app server.
     }
 
-    /**
-     * Create and show a simple notification containing the received FCM message.
-     *
+    /** Create and show a simple notification containing the received FCM message.
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String messageBody) {

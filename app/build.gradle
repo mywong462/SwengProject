@@ -45,7 +45,7 @@ dependencies {
     //password and email registration
     implementation 'com.google.firebase:firebase-database:16.0.3'
     //sending notifications to users
-    implementation 'com.google.firebase:firebase-messaging:10.2.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.3'
     //database connection
     implementation 'com.google.firebase:firebase-firestore:17.1.1'
     implementation 'com.google.firebase:firebase-core:16.0.4'

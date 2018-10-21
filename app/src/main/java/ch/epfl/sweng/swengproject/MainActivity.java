@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -25,6 +26,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,5 +56,23 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        get_fcm_InstanceId();
+    }
+
+    /** To retrieve the current registration token of the client app */
+    public void get_fcm_InstanceId() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.d(LOGTAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+                        String token = task.getResult().getToken();
+                        Log.d(LOGTAG, "success getting new InstanceId:" + token);
+                    }
+                });
     }
 }
