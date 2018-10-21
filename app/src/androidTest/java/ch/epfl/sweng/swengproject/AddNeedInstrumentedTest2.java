@@ -5,6 +5,7 @@ import android.arch.core.util.Function;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 
@@ -49,6 +50,9 @@ public class AddNeedInstrumentedTest2 {
         LocationServer locServ = new FakeLocation();
 
         mDevice = UiDevice.getInstance(getInstrumentation());
+
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("settings put location_providers_allowed +gps");
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("settings put location_providers_allowed +network");
 
         mActivityRule.launchActivity(new Intent());
         mActivityRule.getActivity().setAddNeedActivity(true, locServ);
