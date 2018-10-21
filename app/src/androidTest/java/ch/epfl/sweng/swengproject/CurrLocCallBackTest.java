@@ -70,8 +70,28 @@ public class CurrLocCallBackTest {
 
 
     @Test
-    public void testCallbackNonNull() throws InterruptedException{
+    public void testgetLocationNonNull() {
 
+        Location loc = mock(Location.class);
+        when(loc.getLatitude()).thenReturn(40.0);
+        when(loc.getLongitude()).thenReturn(7.0);
+
+        ArrayList<Location> locList = new ArrayList<>();
+        locList.add(loc);
+
+        MyApplication.currentLocation.setFunction(null);
+
+        LocationResult lr = LocationResult.create(locList);
+        MyApplication.currentLocation.getCallBack().onLocationResult(lr);
+
+        LatLng res = MyApplication.currentLocation.getLastLocation();
+
+        assertEquals(new LatLng(40.0, 7.0), res);
+
+    }
+
+    @Test
+    public void testVerifyFunction(){
         Location loc = mock(Location.class);
         when(loc.getLatitude()).thenReturn(40.0);
         when(loc.getLongitude()).thenReturn(7.0);
@@ -83,13 +103,10 @@ public class CurrLocCallBackTest {
 
         LocationResult lr = LocationResult.create(locList);
         MyApplication.currentLocation.getCallBack().onLocationResult(lr);
-
-        LatLng res = MyApplication.currentLocation.getLastLocation();
-        Thread.sleep(3000);
+        
         assertTrue(test);
-        assertEquals(new LatLng(40.0, 7.0), res);
-
     }
+
 
     @Test
     public void testCallbackNull(){
