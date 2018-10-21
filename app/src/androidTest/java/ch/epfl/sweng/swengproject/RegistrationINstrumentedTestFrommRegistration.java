@@ -18,9 +18,6 @@ import org.junit.Test;
 
 import java.util.concurrent.Executor;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class RegistrationINstrumentedTestFrommRegistration {
 
@@ -36,18 +33,11 @@ public class RegistrationINstrumentedTestFrommRegistration {
         mActivityRule.getActivity().setTestMode();
     }
 
+
+
     @Test
-    public void master(){
-       // Looper.prepare();
-        testListenerSuccess();
-        testListenerFail();
-
-    }
-
-
-
-    private void testListenerSuccess(){
-
+    public void testListenerSuccess(){
+        Looper.prepare();
 
         Task<Void> t = new Task<Void>() {
             @Override
@@ -128,106 +118,9 @@ public class RegistrationINstrumentedTestFrommRegistration {
 
 
         t.addOnCompleteListener(mActivityRule.getActivity().listener);
-       // mActivityRule.getActivity().listener.onComplete(t);
+        mActivityRule.getActivity().listener.onComplete(t);
     }
 
 
-
-    private void testListenerFail(){
-
-
-        Task<Void> t = new Task<Void>() {
-            @Override
-            public boolean isComplete() {
-
-                return true;
-            }
-
-            @Override
-            public boolean isSuccessful() {
-                return false;
-            }
-
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
-
-            @Nullable
-            @Override
-            public Void getResult() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public <X extends Throwable> Void getResult(@NonNull Class<X> aClass) throws X {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Exception getException() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnSuccessListener(@NonNull OnSuccessListener<? super Void> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super Void> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super Void> onSuccessListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Task<Void> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
-                return null;
-            }
-
-            public Task<Void> addOnCompleteListener(OnCompleteListener listener){
-                return null;
-
-            }
-
-        };
-
-
-        t.addOnCompleteListener(mActivityRule.getActivity().listener);
-
-       // mActivityRule.getActivity().listener.onComplete(t);
-
-
-    }
-
-
-   /* @Test
-    public void canClick(){
-
-        onView(withId(R.id.register_btn2)).perform(click());
-
-    }*/
 
 }
