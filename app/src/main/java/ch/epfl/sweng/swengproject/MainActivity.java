@@ -109,9 +109,25 @@ public class MainActivity extends AppCompatActivity {
         double factor1 = Math.random();
         double factor2 = Math.random();
 
+        double imageHeight = logo.getMeasuredHeight();
+        double imageWidth = logo.getMeasuredWidth();
 
         x = (float)( screenWidth * factor1);
         y = (float)(screenHeight * factor2);
+
+        if(x > screenWidth - imageWidth){
+            x = (float)(x - imageWidth);
+        }
+        else if(x < imageWidth){
+            x = (float)(x + imageWidth);
+        }
+
+        if(y > screenWidth - imageHeight){
+            y = (float)(y - imageHeight);
+        }
+        else if(y < imageHeight){
+            y = (float)(y + imageHeight);
+        }
 
         return new Pair<>(x,y);
     }
