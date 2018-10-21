@@ -222,6 +222,7 @@ public class RegistrationInstrumentedTest {
         }
     };
 
+    /*
     @Mock
     private ConnectivityManager connMan = mock(ConnectivityManager.class);
 
@@ -249,6 +250,6 @@ public class RegistrationInstrumentedTest {
         when(netInfo.isConnected()).thenReturn(true);
 
         regAct.createUserEmailPass(taskAuthNotSucc);
-    }
+    }*/
 
 }

@@ -183,7 +183,7 @@ public class AddNeedInstrumentedTest {
     @Mock
     private EditText editNbPeople = mock(EditText.class);
     @Mock
-    private LatLng latLong = mock(LatLng.class);
+    private LatLng latLong = new LatLng(0.0, 0.0);
     @Mock
     private LocationServer locServ = mock(LocationServer.class);
 
