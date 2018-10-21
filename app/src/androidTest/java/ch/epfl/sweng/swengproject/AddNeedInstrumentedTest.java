@@ -1,25 +1,17 @@
 package ch.epfl.sweng.swengproject;
 
 
-import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.text.Editable;
-import android.util.Log;
-import android.widget.EditText;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiSelector;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +22,7 @@ import java.util.concurrent.Executor;
 
 import ch.epfl.sweng.swengproject.util.FakeLocation;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -53,14 +46,23 @@ public class AddNeedInstrumentedTest {
     public final ActivityTestRule<AddNeedActivity> mActivityRule =
             new ActivityTestRule<>(AddNeedActivity.class,false,false);
 
+    private UiDevice mDevice;
+
     @Before
     public void create(){
+
+        mDevice = UiDevice.getInstance(getInstrumentation());
 
         LocationServer ls = new FakeLocation();
 
         //inject the mocked object in the activity
         mActivityRule.launchActivity(new Intent().putExtra("loc",ls));
 
+    }
+
+    @After
+    public void after(){
+        clickOKLocationIfAsked();
     }
 
     @Test
@@ -173,6 +175,34 @@ public class AddNeedInstrumentedTest {
 
         onView(withId(R.id.choose_loc_btn)).perform(click());
 
+    }
+
+
+    private void clickOKLocationIfAsked(){
+        try {
+            UiObject OKBtn = mDevice.findObject(new UiSelector()
+                    .text("OK")
+                    .className("android.widget.Button"));
+            OKBtn.waitForExists(500);
+            if (OKBtn.exists()) {
+                OKBtn.click();
+            }
+            clickAgreeImproveLocationAccuracy();
+        }catch(UiObjectNotFoundException e){}
+    }
+
+    private void clickAgreeImproveLocationAccuracy() throws UiObjectNotFoundException {
+        UiObject agreeImprove = mDevice.findObject(new UiSelector()
+                .text("AGREE")
+                .index(1)
+                .resourceId("android:id/button1")
+                .className("android.widget.Button")
+                .clickable(true)
+                .packageName("com.google.android.gms"));
+        agreeImprove.waitForExists(500);
+        if (agreeImprove.exists()) {
+            agreeImprove.click();
+        }
     }
 
 }
