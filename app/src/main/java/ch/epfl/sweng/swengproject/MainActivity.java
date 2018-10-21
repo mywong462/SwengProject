@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /** For testing and developing purpose, generates and logs the InstanceId token */
         get_fcm_InstanceId();
     }
 
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
                         String token = task.getResult().getToken();
-                        Log.d(LOGTAG, "success getting new InstanceId:" + token);
+                        Log.d(LOGTAG, "success getting new InstanceId: " + token);
                     }
                 });
     }

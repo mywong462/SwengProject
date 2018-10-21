@@ -31,32 +31,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         sendRegistrationToServer(token);
     }
 
-    /** Called when message is received.
-     * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
-     */
+    /** Callback to handle fc_messages when app is in the foreground */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // TODO(developer): Handle FCM messages here.
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-
+        sendNotification(remoteMessage.toString());
     }
 
-    /**
-     * Called if InstanceID token is updated. This may occur if the security of
-     * the previous token had been compromised. Note that this is called when the InstanceID token
-     * is initially generated so this is where you would retrieve the token.
-
-    @Override
-    public void onNewToken(String token) {
-        Log.d(TAG, "Refreshed token: " + token);
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // Instance ID token to your app server.
-        sendRegistrationToServer(token);
-    }
-    // [END on_new_token]
-    */
 
 
     /** Persist token to third-party servers.
@@ -68,9 +50,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // TODO: Implement this method to send token to your app server.
     }
 
-    /** Create and show a simple notification containing the received FCM message.
-     * @param messageBody FCM message body received.
-     */
+    /** Create and show a simple notification containing the received FCM message (when app is in the foreground) */
     private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
