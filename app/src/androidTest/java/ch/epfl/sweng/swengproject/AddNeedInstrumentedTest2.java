@@ -91,7 +91,7 @@ public class AddNeedInstrumentedTest2 {
 
         Looper.prepare();
         scrollTo();
-        onView(withId(R.id.descr_txt)).perform(typeText("abcdefghijkl")).perform(closeSoftKeyboard());
+        onView(withId(R.id.descr_txt)).perform(typeText("abcdefhijkl")).perform(closeSoftKeyboard());
         onView(withId(R.id.validity_txt)).perform(typeText("0")).perform(closeSoftKeyboard());
         onView(withId(R.id.nbPeople_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
 
