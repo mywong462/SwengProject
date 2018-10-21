@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.lang.Math.atan2;
@@ -371,6 +372,74 @@ public class DBTools {
         }
 
         return totalNbrParticipants(list) / list.size();
+
+    }
+
+
+    /**
+     * @brief Merge sort implementation for needs
+     * @param needList
+     * @param c
+     * @return
+     */
+
+    public static List<Need> sort(List<Need> needList, Comparator<Need> c){
+
+        if(needList.size() == 1){
+            return needList;
+        }
+        else{
+
+            int middle = needList.size()/2;
+
+            List<Need> first = needList.subList(0,middle);
+            List<Need> second = needList.subList(middle,needList.size());
+
+            List<Need> s1 = sort(first,c);
+            List<Need> s2 = sort(second,c);
+
+            return merge(s1,s2, c);
+        }
+
+
+
+    }
+
+    private static List<Need> merge(List<Need> s1, List<Need> s2, Comparator<Need> c){
+
+
+        int c1 = 0;
+        int c2 = 0;
+
+        List<Need> res = new ArrayList<>();
+
+
+        while(res.size() != s1.size() + s2.size()){
+
+            if(c1 >= s1.size()){
+                res.addAll(c2,s2);
+                return res;
+            }
+
+            if(c2 >= s2.size()){
+                res.addAll(c1,s1);
+                return res;
+            }
+
+            if(c.compare(s1.get(c1), s2.get(c2)) == -1){
+
+                res.add(s2.get(c2));
+                c2++;
+
+            }
+            else{
+                res.add(s1.get(c1));
+                c1++;
+            }
+
+        }
+
+        return res;
 
     }
 
