@@ -42,7 +42,7 @@ public class ResetPasswordInstrumentedTest {
 
             Looper.prepare();
 
-            onClickWork();
+          //  onClickWork();
             ListenerWork();
 
     }

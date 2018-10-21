@@ -335,12 +335,12 @@ public class LoginInstrumentedTestFromLogin {
     }
 
 
-    @Test
+   /* @Test
     public  void canClick(){
 
         FirebaseAuth mock = mock(FirebaseAuth.class);
         mActivityRule.getActivity().setAuth(mock);
         onView(withId(R.id.login_btn1)).perform(click());
-    }
+    }*/
 
 }

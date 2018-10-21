@@ -225,11 +225,11 @@ public class RegistrationINstrumentedTestFrommRegistration {
     }
 
 
-    @Test
+   /* @Test
     public void canClick(){
 
         onView(withId(R.id.register_btn2)).perform(click());
 
-    }
+    }*/
 
 }
