@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.PopupWindow;
@@ -33,8 +34,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 
-import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
-import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
+import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 import java.util.ArrayList;
 
@@ -45,7 +46,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private LatLng lastLatLng;
 
-    private Boolean isOpening;
+    private boolean zoomIn;
 
     private GoogleMap mMap;
 
@@ -59,30 +60,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private  ArrayList<Need> availableNeeds = null;
 
-    private boolean normalExec = true;
+    private boolean normalExec = true;  //boolean used when injecting position
 
     private FirebaseAuth auth = Database.getDBauth;
-    private boolean test = false;
+
+    private boolean test = false;   //boolean used when calling functions from instrumented tests
 
     public void setAuth(FirebaseAuth fAuth){
         this.auth = fAuth;
-        this.test = true;
-    }
-    public void setAuth(FirebaseAuth fAuth, GoogleMap m){
-        this.auth = fAuth;
-        this.test = true;
-        this.mMap = m;
+        setTestMode();
     }
 
+    public void setMap(GoogleMap m){
+        this.mMap = m;
+        setTestMode();
+    }
+
+    public void setTestMode(){
+        this.test = true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(MainActivity.LOGTAG, "onCreate");
+        Log.d(LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
 
 
         setContentView(R.layout.activity_maps);
-        isOpening = true;
+        zoomIn = true;
         //TODO: get range in user settings
         range = 3000;
 
@@ -97,9 +102,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else {
             this.normalExec = true;
-            Log.d(MainActivity.LOGTAG,"Normal code section");
+            Log.d(LOGTAG,"Normal code section");
             currLoc = currentLocation;
-            launchCurrentLocation();
         }
 
         bindAddNeedButton();
@@ -112,13 +116,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void bindAddNeedButton(){
+    public void bindAddNeedButton(){
         //button with listener to create new needs
         createNeed_btn = findViewById(R.id.create_need_btn);
         createNeed_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MapsActivity.this, AddNeedActivity.class));
+                if(currLoc.getLocationPermissionStatus()) {
+                    startActivity(new Intent(MapsActivity.this, AddNeedActivity.class));
+                }
             }
         });
     }
@@ -132,13 +138,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this, function);
+        currLoc.setCurrentLocationParameters(this.getApplicationContext(), this, function);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (mMap != null) {
-            Log.d(MainActivity.LOGTAG, "saving instance of map");
+            Log.d(LOGTAG, "saving instance of map");
             outState.putParcelable(KEY_LOCATION, lastLatLng);
         }
         super.onSaveInstanceState(outState);
@@ -148,7 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            Log.d(MainActivity.LOGTAG, "getting old instance");
+            Log.d(LOGTAG, "getting old instance");
             lastLatLng = savedInstanceState.getParcelable(KEY_LOCATION);
         }
     }
@@ -159,48 +165,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap = googleMap;
 
+        Log.d(LOGTAG, "Map is ready");
 
         if (lastLatLng != null) {
             updateUI();
         }
 
-        currentLocation.callerActivityReady();
+        currLoc.callerActivityReady();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        currentLocation.callerOnPause();
+        currLoc.callerOnPause();
     }
 
     @Override
     protected void onResume() {
-        //Log.d(MainActivity.LOGTAG, "onResume before super");
         super.onResume();
-        //Log.d(MainActivity.LOGTAG, "onResume after super");
-        if(!isOpening) {
-            launchCurrentLocation();
-        }
-        currentLocation.callerOnResume();
-        //Log.d(MainActivity.LOGTAG, "onResume before super");
+        launchCurrentLocation();
+        currLoc.callerOnResume();
     }
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        currentLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        currLoc.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        currentLocation.onActivityResult(requestCode, resultCode, data);
+        currLoc.onActivityResult(requestCode, resultCode, data);
     }
 
 
     public void updateUI() {
 
-        Log.d(MainActivity.LOGTAG, "UPDATEUI");
+        Log.d(LOGTAG, "UPDATEUI");
 
         try {
             if (currLoc.getLocationPermissionStatus()) {
@@ -217,11 +219,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .strokeWidth(0)
                         .fillColor(0x300000cf);
                 mMap.clear();
-                mMap.addCircle(mCircleOptions);
-                showAvailableNeeds();
-                if (isOpening) {
-                    isOpening = false;
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
+                if(!test) {
+                    mMap.addCircle(mCircleOptions);
+                    showAvailableNeeds();
+                }
+
+                if (zoomIn) {
+                    zoomIn = false;
+                  if(!test) {
+                      mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
+                  }
                 }
             } else {
                 Log.d("ERROR", "NO PERMISSION TO UPDATEUI");
@@ -246,16 +253,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .position(new LatLng(need.getLatitude(), need.getLongitude()))
                     .title("TITLE"));
 
-           if(!test) {
                // TODO: change color depending on the type of need
                marker.setTag(need);
-           }
+
         }
 
          mMap.setOnMarkerClickListener(this);
     }
 
-    private void displayOnMenu(View menuView, GeoPoint tempGeo) {
+    public void displayOnMenu(View menuView, GeoPoint tempGeo) {
         //  TODO: need to update this function when more fields from the needs are available
         //The field to be update
         TextView description = menuView.findViewById(R.id.needDescription);
@@ -266,12 +272,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ArrayList<Categories> arrayCategories = new ArrayList<>();
         arrayCategories.add(Categories.ALL);
 
+        ArrayList<Need> currentNeed;
 
         //Searching for the need
-
-        ArrayList<Need> currentNeed = Database.getNeeds(tempGeo, range, arrayCategories);
+        if(!test) {
+             currentNeed = Database.getNeeds(tempGeo, range, arrayCategories);
+        }
+        else{
+            currentNeed = new ArrayList<>();
+            currentNeed.add(new Need("yolo@gmail.com",
+                    "good and long description",
+                    0,  tempGeo.getLatitude(),
+                    tempGeo.getLongitude(),
+                    Categories.ALL,
+                    1,
+                    "simon@epfl.ch"));
+        }
         for (int i = 0; i < currentNeed.size(); i++){
-            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude()) && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
+            if ((currentNeed.get(i).getLongitude() == tempGeo.getLongitude())
+                    && (currentNeed.get(i).getLatitude() == tempGeo.getLatitude())){
+
                 selectedNeed = currentNeed.get(i);
                 break;
             }
@@ -288,46 +308,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean onMarkerClick(final Marker marker) {
         // TODO: decide what to do on marker click and see https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMarkerClickListener.html#onMarkerClick(com.google.android.gms.maps.model.Marker) for behaviour
         //Get the size of screen and pop up a window
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
-        final PopupWindow pw = new PopupWindow(layout, (int) (width * 0.8), (int) (height * 0.7), true);
-
-        //Get the marker information
-        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
-        displayOnMenu(layout, needRequest);
-
-        //Implement the close button
-        (layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                pw.dismiss();
-            }
-        });
-
-        Log.d(LOGTAG,"before check");
+        Pair<View, PopupWindow> p = popUp(marker);
+        final View layout = p.first;
+        final PopupWindow pw = p.second;
         //enable the button only if the need is not full and we haven't yet accepted this need
 
         boolean canAccept = DBTools.notAlreadyAccepted(this.availableNeeds,marker.getPosition(), this.auth.getCurrentUser().getEmail())
                 && DBTools.isNotFull(this.availableNeeds, marker.getPosition());
-    if(!test) {
-        layout.findViewById(R.id.acceptBtn).setClickable(canAccept);
-        layout.findViewById(R.id.acceptBtn).setEnabled(canAccept);
-    }
-        Log.d(LOGTAG,"checks have passes now ready to query DB on click");
-        //Implement the accept button
-        (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
 
-                Database.addParticipant(marker.getPosition());  //add the participant to the need. the need now contains participants in CSV format.
+        if(!test) {
+            layout.findViewById(R.id.acceptBtn).setClickable(canAccept);
+            layout.findViewById(R.id.acceptBtn).setEnabled(canAccept);
+
+            //Implement the accept button
+            (layout.findViewById(R.id.acceptBtn)).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Database.addParticipant(marker.getPosition());  //add the participant to the need. the need now contains participants in CSV format.
                     pw.dismiss();
 
-            }
-        });
-
+                }
+            });
+        }
         //Clicking outside the window will close the window
         pw.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         pw.setTouchInterceptor(new View.OnTouchListener() {
@@ -342,12 +344,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         pw.setOutsideTouchable(true);
 
-        if (!test) {
+        if(!test) {
             //Display the pop-up window
             pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
         }
 
         return true;
+    }
+
+
+
+    public Pair<View,PopupWindow> popUp(Marker marker){
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        View layout = null;
+        if(!test){
+            LayoutInflater inflater = (LayoutInflater) MapsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            layout = inflater.inflate(R.layout.activity_pin_popup_window, null);
+        }
+
+        final PopupWindow pw = new PopupWindow(layout, (int) (width * 0.8), (int) (height * 0.7), true);
+
+        //Get the marker information
+        GeoPoint needRequest = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
+        if(!test) {
+
+            displayOnMenu(layout, needRequest);
+
+            //Implement the close button
+            (layout.findViewById(R.id.declineBtn)).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    pw.dismiss();
+                }
+            });
+        }
+
+        Log.d(LOGTAG,"before check");
+
+        return new Pair<>(layout, pw);
+
     }
 
 }

@@ -24,6 +24,8 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 
+import ch.epfl.sweng.swengproject.MyApplication;
+
 /**
  * Contains the database holder and serves as the main access point for the underlying
  * connection to your app's persisted, relational data.
@@ -32,28 +34,61 @@ import android.arch.persistence.room.RoomDatabase;
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static AppDatabase INSTANCE;
-
+    private static AppDatabase MEMORY_INSTANCE;
+    private static AppDatabase HD_INSTANCE;
     public abstract UserDao userDao();
 
+    private static boolean isUnderTest = false;
 
-    public static AppDatabase getInMemoryDatabase(Context context) {
-        if(context == null){
-            throw new NullPointerException();
-        }
-        if (INSTANCE == null) {
-            INSTANCE =
-                    Room.inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class)
-                            // To simplify the codelab, allow queries on the main thread.
-                            // Don't do this on a real app! See PersistenceBasicSample for an example.
-                            //.allowMainThreadQueries()
-                            .build();
-        }
-        return INSTANCE;
+    /**
+     * Setting isUnderTest to true will result that each subsequent call of getInstance() will
+     * return a database that is just in memory, so mocked...
+     * @param isUnderTest
+     */
+    public static void setUnderTest(boolean isUnderTest){
+        AppDatabase.isUnderTest = isUnderTest;
     }
 
+    /**
+     *
+     * @return the database instance that interact with the device (hard disk) for this application
+     */
+    public static AppDatabase getInstance() {
+        if(AppDatabase.isUnderTest){
+            return getInMemoryInstance();
+        }else{
+            return getInHDInstance();
+        }
+    }
+
+    private static AppDatabase getInHDInstance() {
+        Context context = MyApplication.getAppContext();
+        if (HD_INSTANCE == null) {
+            HD_INSTANCE =
+                    Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class,"MyDataBase")
+                            .build();
+        }
+        System.out.println("AppDatabase is returning a real database that will persist on disk");
+        return HD_INSTANCE;
+    }
+
+    private static AppDatabase getInMemoryInstance() {
+        Context context = MyApplication.getAppContext();
+        if (MEMORY_INSTANCE == null) {
+            MEMORY_INSTANCE =
+                    Room.inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class).build();
+        }
+        System.out.println("AppDatabase is returning a instance that will stay just in memory for testing purpose");
+        return MEMORY_INSTANCE;
+    }
+
+    /**
+     *
+     * free the memory
+     */
     public static void destroyInstance() {
-        INSTANCE = null;
+        MEMORY_INSTANCE = null;
+        HD_INSTANCE = null;
     }
 
 }
