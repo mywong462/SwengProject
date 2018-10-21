@@ -31,15 +31,24 @@ import static org.mockito.Mockito.when;
 
 public class ResetPasswordInstrumentedTest {
 
+    private boolean once = true;
 
     @Rule
     public final ActivityTestRule<ResetPasswordActivity> mActivityRule = new ActivityTestRule<>(ResetPasswordActivity.class);
 
 
+    @Before
+    public void init(){
+        if(once){
+            Looper.prepare();
+            once = false;
+        }
+    }
+
+
     @Test
     public void onClickWork(){
 
-        Looper.prepare();
 
         String email = "";
 

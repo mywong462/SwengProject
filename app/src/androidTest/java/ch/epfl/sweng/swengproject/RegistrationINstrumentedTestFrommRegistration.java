@@ -25,6 +25,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 public class RegistrationINstrumentedTestFrommRegistration {
 
 
+    private boolean once = true;
+
     @Rule
     public final ActivityTestRule<RegistrationActivity> mActivityRule =
             new ActivityTestRule<>(RegistrationActivity.class);
@@ -32,13 +34,16 @@ public class RegistrationINstrumentedTestFrommRegistration {
     @Before
     public void testMode(){
         mActivityRule.getActivity().setTestMode();
-
+        if(once){
+            Looper.prepare();
+            once = false;
+        }
     }
 
 
     @Test
     public void testListenerSuccess(){
-        Looper.prepare();
+
 
         Task<Void> t = new Task<Void>() {
             @Override

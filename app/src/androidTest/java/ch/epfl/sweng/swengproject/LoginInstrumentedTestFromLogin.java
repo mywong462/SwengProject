@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -26,15 +27,25 @@ import static org.mockito.Mockito.when;
 
 public class LoginInstrumentedTestFromLogin {
 
+    private boolean once = true;
+
 
     @Rule
     public final ActivityTestRule<LoginActivity> mActivityRule =
             new ActivityTestRule<>(LoginActivity.class);
 
+    @Before
+    public void init(){
+        if(once){
+            Looper.prepare();
+            once = false;
+        }
+    }
+
     @Test
     public void eMailNotVerified(){
 
-        Looper.prepare();
+
 
         FirebaseAuth mockF = mock(FirebaseAuth.class);
 
