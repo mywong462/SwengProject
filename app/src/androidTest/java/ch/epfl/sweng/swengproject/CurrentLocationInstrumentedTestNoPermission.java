@@ -104,7 +104,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
     }
 
-    @Ignore
+    @Test
     public void locationOkThenDisableTest() throws UiObjectNotFoundException, InterruptedException, RemoteException {
         //revokePermission();
         //clickAllow();
