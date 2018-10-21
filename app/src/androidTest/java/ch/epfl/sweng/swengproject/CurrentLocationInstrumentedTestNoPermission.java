@@ -15,6 +15,9 @@ import android.support.test.uiautomator.UiSelector;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,7 +28,6 @@ import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentLocationInstrumentedTestNoPermission {
-
     @Rule
     public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
 
@@ -39,7 +41,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
 
     @Before
-    public void before(){
+    public void before() {
 
         context = InstrumentationRegistry.getContext();
 
@@ -63,7 +65,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
     @Test
     public void locationOkThenDisableTest() throws UiObjectNotFoundException{
-        //clickAllow();
         clickOKLocation();
         disableLocation();
         clickOKLocation();
@@ -182,5 +183,10 @@ public class CurrentLocationInstrumentedTestNoPermission {
         mDevice.pressHome();
 
         return res;
+    }
+
+
+    private void injectCustomProvider(){
+
     }
 }

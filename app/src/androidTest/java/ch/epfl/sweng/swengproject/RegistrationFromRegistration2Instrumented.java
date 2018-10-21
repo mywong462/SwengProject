@@ -1,6 +1,7 @@
 package ch.epfl.sweng.swengproject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,69 +11,39 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.concurrent.Executor;
 
-import static android.support.test.espresso.Espresso.closeSoftKeyboard;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.action.ViewActions.typeTextIntoFocusedView;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-public class ResetPasswordInstrumentedTest {
-
+public class RegistrationFromRegistration2Instrumented {
 
 
     @Rule
-    public final ActivityTestRule<ResetPasswordActivity> mActivityRule = new ActivityTestRule<>(ResetPasswordActivity.class);
+    public final ActivityTestRule<RegistrationActivity> mActivityRule =
+            new ActivityTestRule<>(RegistrationActivity.class,false,false);
+
+
+    @Before
+
+    public void init(){
+        mActivityRule.launchActivity(new Intent());
+        mActivityRule.getActivity().setTestMode();
+
+    }
 
 
     @Test
-    public void master(){
+    public void testListenerFail(){
 
-            //Looper.prepare();
-
-            onClickWork();
-            ListenerWork();
-
-    }
-
-
-
-
-    private void onClickWork(){
-
-
-        String email = "";
-
-        FirebaseAuth mockF = mock(FirebaseAuth.class);
-
-        mActivityRule.getActivity().setAuth(mockF);
-
-        onView(withId(R.id.email3)).perform(typeText(email));
-
-        onView(withId(R.id.resetPassword_btn3)).perform(click());
-
-    }
-
-
-
-
-    private void ListenerWork(){
+       // Looper.prepare();
 
         Task<Void> t = new Task<Void>() {
             @Override
             public boolean isComplete() {
+
                 return true;
             }
 
@@ -140,15 +111,19 @@ public class ResetPasswordInstrumentedTest {
                 return null;
             }
 
-            public Task<Void> addOnCompleteListener(OnCompleteListener o){
+            public Task<Void> addOnCompleteListener(OnCompleteListener listener){
                 return null;
+
             }
+
         };
+
 
         t.addOnCompleteListener(mActivityRule.getActivity().listener);
 
-        mActivityRule.getActivity().listener.onComplete(t);
-    }
+         mActivityRule.getActivity().listener.onComplete(t);
 
+
+    }
 
 }
