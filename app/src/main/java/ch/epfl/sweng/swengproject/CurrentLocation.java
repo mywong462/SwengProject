@@ -38,8 +38,6 @@ import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 public class CurrentLocation implements LocationServer, ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private boolean test = false;
-
     private static final int LOCATION_REQUEST_CODE = 99;
 
     private static final int REQUEST_CHECK_SETTINGS = 555;
@@ -145,9 +143,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
-        if(test){
-            mFusedLocationProviderClient.setMockMode(true);
-        }
+
         updatingLocation = false;
 
         checkLocationPermission();
@@ -352,12 +348,12 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     }
 
 //For test purpose
-    public void testMode(){
-        test = true;
+
+    public void setFunction(Function<Void, Void> newFunction){
+        function = newFunction;
     }
 
-    public void triggerInjectLocation(Location mockLocation) throws SecurityException{
-        mFusedLocationProviderClient.setMockLocation(mockLocation);
-        mFusedLocationProviderClient.flushLocations();
+    public LocationCallback getCallBack(){
+        return mLocationCallback;
     }
 }
