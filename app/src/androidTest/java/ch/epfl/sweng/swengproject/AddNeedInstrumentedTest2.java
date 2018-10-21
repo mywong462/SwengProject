@@ -75,6 +75,8 @@ public class AddNeedInstrumentedTest2 {
         StringBuilder sb = new StringBuilder();
         sb.append("");
 
+        scrollTo();
+
         onView(withId(R.id.descr_txt)).perform(typeText(sb.toString())).perform(closeSoftKeyboard());
         onView(withId(R.id.validity_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
         onView(withId(R.id.nbPeople_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
@@ -88,7 +90,7 @@ public class AddNeedInstrumentedTest2 {
     public void createWithInvalidValidity(){
 
         Looper.prepare();
-
+        scrollTo();
         onView(withId(R.id.descr_txt)).perform(typeText("abcdefghijkl")).perform(closeSoftKeyboard());
         onView(withId(R.id.validity_txt)).perform(typeText("0")).perform(closeSoftKeyboard());
         onView(withId(R.id.nbPeople_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
@@ -100,7 +102,7 @@ public class AddNeedInstrumentedTest2 {
 
     @Test
     public void createWithInvalidNbPeople(){
-
+        scrollTo();
         onView(withId(R.id.descr_txt)).perform(typeText("abcdefghijkl")).perform(closeSoftKeyboard());
         onView(withId(R.id.validity_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
         onView(withId(R.id.nbPeople_txt)).perform(typeText("0")).perform(closeSoftKeyboard());
@@ -113,6 +115,7 @@ public class AddNeedInstrumentedTest2 {
 
     @Test
     public void createWithOk(){
+        scrollTo();
         onView(withId(R.id.descr_txt)).perform(typeText("abcdefghijkl")).perform(closeSoftKeyboard());
         onView(withId(R.id.validity_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
         onView(withId(R.id.nbPeople_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
