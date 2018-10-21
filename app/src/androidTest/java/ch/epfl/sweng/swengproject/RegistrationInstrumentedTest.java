@@ -149,6 +149,7 @@ public class RegistrationInstrumentedTest {
 
 
 
+
     //Mocking the database part
     @Mock
     private Task<AuthResult> taskAuthNotSucc = new Task<AuthResult>() {
@@ -251,5 +252,4 @@ public class RegistrationInstrumentedTest {
 
         regAct.createUserEmailPass(taskAuthNotSucc);
     }*/
-
 }

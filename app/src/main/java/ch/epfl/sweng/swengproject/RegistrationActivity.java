@@ -22,6 +22,38 @@ public class RegistrationActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private EditText inputEmail, inputPassword;
     private Button btnLogin, btnRegister, btnResetPassword;
+    private boolean test = false;
+
+    public OnCompleteListener listener = new OnCompleteListener<AuthResult>(){
+
+        @Override
+        public void onComplete(@NonNull Task<AuthResult> task) {
+            if (task.isSuccessful()) {
+
+                //return to main activity for login
+
+                startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
+
+            } else {
+                Toast fail = Toast.makeText(RegistrationActivity.this, "Registration Failed", Toast.LENGTH_SHORT);
+                fail.show();
+
+                ConnectivityManager conMan = (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+                NetworkInfo info = conMan.getActiveNetworkInfo();
+
+                if(info == null ||!info.isConnected()){ //check if the error was caused by network connectivity problems
+
+                    Toast failConnection = Toast.makeText(RegistrationActivity.this, "Please verify you are connected to a network",Toast.LENGTH_LONG);
+                    failConnection.show();
+                }
+
+            }
+        }
+    };
+
+    public void setTestMode(){
+        this.test = true;
+    }
 
     private boolean test = false;
     public void setTest(boolean b){
@@ -65,59 +97,12 @@ public class RegistrationActivity extends AppCompatActivity {
                 //additional password requirements can be added
                 passwordStrengthCheck(password);
 
-
                 infoCheck(email, password);
 
-
-                auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<AuthResult>(){
-
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                createUserEmailPass(task);
-                            }
-                        });
-            }
-        });
-    }
-
-
-    /**
-     * @brief Modularisation, easier to test
-     * @param task, Task<AuthResult>
-     */
-    public void createUserEmailPass(Task<AuthResult> task){
-
-        if (task.isSuccessful()) {
-            //return to main activity for login
-            startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
-        } else {
-            RegistrationActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast fail = Toast.makeText(RegistrationActivity.this, "Registration Failed", Toast.LENGTH_SHORT);
-                    fail.show();
+                if(!test) {
+                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegistrationActivity.this, listener);
                 }
-            });
 
-            ConnectivityManager conMan;
-
-            if(test){
-                conMan = null;
-            }else{
-                conMan = (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
-            }
-
-            NetworkInfo info = conMan.getActiveNetworkInfo();
-
-            if(info == null ||!info.isConnected()){ //check if the error was caused by network connectivity problems
-                RegistrationActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast failConnection = Toast.makeText(RegistrationActivity.this, "Please verify you are connected to a network",Toast.LENGTH_LONG);
-                        failConnection.show();
-                    }
-                });
             }
         }
 
