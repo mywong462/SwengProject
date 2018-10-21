@@ -1,8 +1,10 @@
 package ch.epfl.sweng.swengproject;
 
 import android.Manifest;
+import android.arch.core.util.Function;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.RemoteException;
 import android.support.test.InstrumentationRegistry;
@@ -19,12 +21,16 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentLocationInstrumentedTestNoPermission {
+    @Rule
+    public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
+
     @Rule
     public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
 
@@ -38,7 +44,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
 
     @Before
-    public void before() {
+    public void before() throws InterruptedException{
 
         context = InstrumentationRegistry.getContext();
 
@@ -180,10 +186,5 @@ public class CurrentLocationInstrumentedTestNoPermission {
         mDevice.pressHome();
 
         return res;
-    }
-
-
-    private void injectCustomProvider(){
-
     }
 }
