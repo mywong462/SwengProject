@@ -41,15 +41,15 @@ public class RegistrationINstrumentedTestFrommRegistration {
     @Test
     public void master(){
 
-        Looper.prepare();
-        testListenerFail();
         testListenerSuccess();
+        testListenerFail();
+
     }
 
 
 
     private void testListenerSuccess(){
-
+        Looper.prepare();
 
         Task<Void> t = new Task<Void>() {
             @Override
