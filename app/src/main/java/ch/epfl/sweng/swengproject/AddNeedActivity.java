@@ -64,14 +64,14 @@ public class AddNeedActivity extends AppCompatActivity {
     //All the categories in the array listCategory
     private ArrayList<Categories> listCategory = new ArrayList<>(EnumSet.allOf(Categories.class));
 
-    public AddNeedActivity(LocationServer locationServer){
-        this.currLoc = locationServer;
-    }
+    public AddNeedActivity(LocationServer locationServer){ this.currLoc = locationServer; }
     public AddNeedActivity(){}
 
     private boolean test = false;
-    public AddNeedActivity(boolean test){
+
+    public void setAddNeedActivity(boolean test, LocationServer loc){
         this.test = test;
+        this.currLoc = loc;
     }
 
 
@@ -139,20 +139,18 @@ public class AddNeedActivity extends AppCompatActivity {
                 EditText nbPeopleNeeded = findViewById(R.id.nbPeople_txt);
 
                 Log.d(LOGTAG, "VALUE IS : " + validity.getText() + " // null? " + validity.getText().length());
-                Log.d("TAMERE", "AAAAAAAA");
+
                 if(validity.getText().length() == 0 || description.getText().length() == 0 || nbPeopleNeeded.getText().length() == 0){
-                    Log.d("TAMERE", "At least one field is NULL");
                     Toast.makeText(AddNeedActivity.this, "Incorrect input. Don't let anything blank !", Toast.LENGTH_LONG).show();
                     return;
                 }
-                Log.d("TAMERE", "before calling");
+
                 getAndSetToDatabase(validity, description, nbPeopleNeeded);
             }
         });
     }
 
     public void getAndSetToDatabase(EditText validity, EditText description, EditText nbPeopleNeeded){
-        Log.d("TAMERE", "HI IM CALLED");
         String descr = description.getText().toString();
         int valid = 0;
         int nbPeople = 0;
@@ -160,7 +158,6 @@ public class AddNeedActivity extends AppCompatActivity {
             valid = Integer.parseInt(validity.getText().toString());
             nbPeople = Integer.parseInt(nbPeopleNeeded.getText().toString());
         } catch (NumberFormatException e) {
-            Log.d("TAMERE","inGetAndSetToDatabase, sth is not a number");
             Toast.makeText(AddNeedActivity.this, "The validity and the number of people needed must be numbers", Toast.LENGTH_LONG).show();
             return;
         }
@@ -173,16 +170,15 @@ public class AddNeedActivity extends AppCompatActivity {
         } else {  //try to do something for the concurrency bug
             LatLng currPos;
             if (setLocation != null) {
-                Log.d("TAMERE", "Setting user set location");
                 currPos = setLocation;
             } else {
                 currPos = currLoc.getLastLocation();
             }
 
-            Log.d("TAMERE", "position is null " + (currPos == null));
             if(!test){
                 writeNewNeed(descr, (long) (valid * MILLS_IN_MINUTES) + System.currentTimeMillis(), currPos, nbPeople);
             }
+
             finish();
         }
     }
