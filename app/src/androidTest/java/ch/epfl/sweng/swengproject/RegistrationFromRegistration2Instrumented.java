@@ -1,6 +1,7 @@
 package ch.epfl.sweng.swengproject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,20 +23,22 @@ public class RegistrationFromRegistration2Instrumented {
 
     @Rule
     public final ActivityTestRule<RegistrationActivity> mActivityRule =
-            new ActivityTestRule<>(RegistrationActivity.class);
+            new ActivityTestRule<>(RegistrationActivity.class,false,false);
 
 
     @Before
 
     public void init(){
+        mActivityRule.launchActivity(new Intent());
         mActivityRule.getActivity().setTestMode();
+
     }
 
 
     @Test
     public void testListenerFail(){
 
-        Looper.prepare();
+       // Looper.prepare();
 
         Task<Void> t = new Task<Void>() {
             @Override
