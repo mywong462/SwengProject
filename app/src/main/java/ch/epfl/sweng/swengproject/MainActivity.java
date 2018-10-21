@@ -57,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent m) {
 
                 timer.cancel();
-               // timer.purge();
-                timer = null;
+                timer.purge();
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.transition.slide_in_left, R.transition.slide_out_left);
