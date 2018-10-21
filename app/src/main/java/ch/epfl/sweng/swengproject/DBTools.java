@@ -385,7 +385,7 @@ public class DBTools {
 
     public static List<Need> sort(List<Need> needList, Comparator<Need> c){
 
-        if(needList.size() == 1){
+        if(needList.size() <= 1){
             return needList;
         }
         else{
@@ -398,7 +398,7 @@ public class DBTools {
             List<Need> s1 = sort(first,c);
             List<Need> s2 = sort(second,c);
 
-            return merge(s1,s2, c);
+            return reverseArray(toArrayList(merge(s1,s2, c)));
         }
 
 
@@ -417,16 +417,16 @@ public class DBTools {
         while(res.size() != s1.size() + s2.size()){
 
             if(c1 >= s1.size()){
-                res.addAll(c2,s2);
+                res.addAll(s2.subList(c2,s2.size()));
                 return res;
             }
 
             if(c2 >= s2.size()){
-                res.addAll(c1,s1);
+                res.addAll(s1.subList(c1,s1.size()));
                 return res;
             }
 
-            if(c.compare(s1.get(c1), s2.get(c2)) == -1){
+            if(c.compare(s1.get(c1), s2.get(c2)) == 1){
 
                 res.add(s2.get(c2));
                 c2++;
@@ -441,6 +441,18 @@ public class DBTools {
 
         return res;
 
+    }
+
+
+    public static ArrayList<Need> toArrayList(List<Need> list){
+
+        ArrayList<Need> res = new ArrayList<>();
+
+        for(Need n : list){
+            res.add(n);
+        }
+
+        return reverseArray(res);
     }
 
 

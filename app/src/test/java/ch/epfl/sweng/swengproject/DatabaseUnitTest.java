@@ -343,6 +343,9 @@ public class DatabaseUnitTest {
         String participants = "specialuser@gmail.com,simon@epfl.ch,noreply@hotmail.com";
 
         long timeValid =  System.currentTimeMillis() + 100000;
+
+        listNeeds.add(new Need("specialuser@gmail.com","random description",timeValid + 24, 12, 34,Categories.NEED, 12,participants ));
+        listNeeds.add(new Need("specialuser@gmail.com","random description",timeValid, 12, 34,Categories.NEED, 12,participants ));
         listNeeds.add(new Need("email@hotmail.ch","random description",timeValid -1, 0, 0,Categories.MEET, 12,participants ));
         listNeeds.add(new Need("specialuser@gmail.com","random description",timeValid, 12, 34,Categories.NEED, 12,participants ));
         listNeeds.add(new Need("specialuser@gmail.com","random description",timeValid+1, 12, 34,Categories.NEED, 12,participants ));
@@ -368,7 +371,9 @@ public class DatabaseUnitTest {
 
         assertTrue(res.get(0).getTimeToLive() < res.get(1).getTimeToLive());
         assertTrue(res.get(1).getTimeToLive() < res.get(3).getTimeToLive());
-
+        assertTrue(res.get(0).getTimeToLive() < res.get(3).getTimeToLive());
+        assertTrue(res.get(0).getTimeToLive() < res.get(2).getTimeToLive());
+        assertTrue(res.get(2).getTimeToLive() < res.get(4).getTimeToLive());
     }
 
 }
