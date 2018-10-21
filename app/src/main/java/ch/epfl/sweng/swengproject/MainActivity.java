@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final int second = 1000;
 
-    private  Timer timer = new Timer();
+   // private  Timer timer = new Timer();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent m) {
 
-                timer.cancel();
-                timer.purge();
+               // timer.cancel();
+               // timer.purge();
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.transition.slide_in_left, R.transition.slide_out_left);
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         logo = findViewById(R.id.logo);
 
-        TimerTask move = new TimerTask() {
+      /*  TimerTask move = new TimerTask() {
 
             @Override
 
@@ -82,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
         long delay = 0;
 
 
-        timer.scheduleAtFixedRate(move, delay, second);
+        timer.scheduleAtFixedRate(move, delay, second);*/
+
+      moveLogo();
 
     }
 
