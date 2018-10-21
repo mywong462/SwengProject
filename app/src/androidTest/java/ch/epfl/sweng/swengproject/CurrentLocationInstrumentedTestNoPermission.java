@@ -61,8 +61,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
         disabled = disableLocation();
         Log.d(LOGTAG, "Location disabled = " + disabled);
 
-        revokePermission();
-
         //Start from home
         mDevice.pressHome();
         Log.d(LOGTAG, "crash0");
@@ -82,39 +80,34 @@ public class CurrentLocationInstrumentedTestNoPermission {
     }
 
     @After
-    public void after() throws RemoteException, InterruptedException, UiObjectNotFoundException {
-        //closeApp();
+    public void after() throws InterruptedException{
+        revokePermission();
         Thread.sleep(1000);
     }
 
 
     @Test
-    public void okLocationTest() {
+    public void okLocationTest() throws UiObjectNotFoundException{
 
-        try {
-            clickOKLocation();
-        } catch (UiObjectNotFoundException e) {
-            fail();
-        }
+        clickAllow();
+        clickOKLocation();
+
     }
 
     @Test
-    public void refuseTwiceTest() {
-        try {
-            clickAllow();
-            clickNoThanksLocation();
-            clickNoThanksLocation();
-            clickOKLocation();
-        } catch (UiObjectNotFoundException e) {
-            fail();
-        }
+    public void refuseTwiceTest() throws UiObjectNotFoundException{
+
+        clickAllow();
+        clickNoThanksLocation();
+        clickNoThanksLocation();
+        clickOKLocation();
 
     }
 
     @Test
     public void locationOkThenDisableTest() throws UiObjectNotFoundException, InterruptedException, RemoteException {
 
-        //clickAllow();
+        clickAllow();
         clickOKLocation();
         disableLocation();
         Thread.sleep(500);
@@ -124,7 +117,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
     }
 
-    @Test
+    @Ignore
     public void denyPermissionThenManuallyAllow() throws InterruptedException {
         try {
             clickDeny();
