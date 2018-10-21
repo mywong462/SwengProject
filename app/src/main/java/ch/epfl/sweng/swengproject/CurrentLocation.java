@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -44,20 +46,21 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private Location mLastKnownLocation;
 
-    private boolean isLocationSettingsDemandDisplayed = false;
-
     private boolean callerActivityReady = false;
 
     private boolean updatingLocation = false;
+
+    private boolean alreadyAskingForLocation = false;
 
     private Context context;
 
     private Activity activity;
 
+    private LocationSettingsRequest request;
+
     private Function<Void, Void> function;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
-
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -86,42 +89,24 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                 SettingsClient client = LocationServices.getSettingsClient(activity);
                 Task<LocationSettingsResponse> task = client.checkLocationSettings(requestBuilder.build());
 
-                task.addOnSuccessListener(activity, new OnSuccessListener<LocationSettingsResponse>() {
-                    @Override
-                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-
-                    }
-                });
-
                 task.addOnFailureListener(activity, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        activity.setContentView(R.layout.page_location_services_up_demand);
-                        isLocationSettingsDemandDisplayed = true;
-
+                        controlLocationRequest();
                         Log.d(LOGTAG, "ask to enable location services");
-
                     }
                 });
 
-            } else {
-                if (isLocationSettingsDemandDisplayed) {
-                    isLocationSettingsDemandDisplayed = false;
-
-                    Log.d(LOGTAG, "location services re-enabled");
-
-                    activity.setContentView(R.layout.activity_maps);
-                }
             }
         }
     };
 
 
-    private Function<Void, Void> done = new Function<Void, Void>() {
+    private Function<Void, Void> donePermission = new Function<Void, Void>() {
         @Override
         public Void apply(Void input) {
-            permissionDialog.hide();
-            dialogUp = false;
+            permissionDialog.dismiss();
+            permDialogUp = false;
             checkLocationPermission();
             return null;
         }
@@ -130,15 +115,20 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     private Function<Void, Void> bringMeToManagement = new Function<Void, Void>() {
         @Override
         public Void apply(Void input) {
-            activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_SETTINGS));
+            activity.startActivity(new Intent()
+                    .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    .setData(Uri.fromParts("package", "ch.epfl.sweng.swengproject", null)));
             return null;
         }
     };
 
     private AlertDialog permissionDialog;
 
-    private boolean dialogUp = false;
+    private boolean permDialogUp = false;
 
+    public CurrentLocation(){
+        createLocationRequest();
+    }
 
     public void setCurrentLocationParameters(Context context, Activity activity) {
         this.setCurrentLocationParameters(context, activity, null);
@@ -174,9 +164,13 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             startLocationUpdates();
         }
 
-        if (dialogUp && isPermissionGranted()) {
+        if (permDialogUp && isPermissionGranted()) {
             permissionDialog.dismiss();
-            dialogUp = false;
+            permDialogUp = false;
+        }
+        if(isPermissionGranted()) {
+            Log.d(LOGTAG, "controlLocationRequest call from onResume");
+            controlLocationRequest();
         }
     }
 
@@ -185,12 +179,12 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                 "To allow SwengProject to TRACKK U please go to the settings and allow" +
                         " SwngProject to use your location",
                 "Settings", "Done !",
-                bringMeToManagement, done, activity);
+                bringMeToManagement, donePermission, activity);
     }
 
+
     private boolean isPermissionGranted() {
-        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
 
@@ -205,7 +199,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                 Log.d(LOGTAG, "explain the need for location");
 
                 getNewPermissionDialog().show();
-                dialogUp = true;
+                permDialogUp = true;
 
             } else {
 
@@ -220,7 +214,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
             //Permission has already benn granted
             Log.d(LOGTAG, "permissions granted");
-            createLocationRequest();
+            controlLocationRequest();
         }
     }
 
@@ -237,13 +231,11 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         switch (requestCode) {
             case LOCATION_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //Permission was granted, go on
-                    createLocationRequest();
+                    controlLocationRequest();
                 } else {
                     Log.d(LOGTAG, "Permission denied, asking again");
-                    //explainForPermission();
                 }
                 return;
             }
@@ -251,48 +243,53 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     }
 
-
-    private void createLocationRequest() {
+    private void createLocationRequest(){
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(500);
         mLocationRequest.setFastestInterval(500);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        LocationSettingsRequest.Builder requestBuilder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
+        request = (new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest)).build();
+    }
 
-        SettingsClient client = LocationServices.getSettingsClient(activity);
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(requestBuilder.build());
 
-        task.addOnSuccessListener(activity, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // Location settings are satisfied
+    private void controlLocationRequest() {
+        Log.d(LOGTAG, "Who is asking for location : " + activity.getLocalClassName());
+        if(!alreadyAskingForLocation) {
+            alreadyAskingForLocation = true;
+            SettingsClient client = LocationServices.getSettingsClient(activity);
+            Task<LocationSettingsResponse> task = client.checkLocationSettings(request);
+            Log.d(LOGTAG, "Asking to enable location services");
+            task.addOnSuccessListener(activity, new OnSuccessListener<LocationSettingsResponse>() {
+                @Override
+                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                    // Location settings are satisfied
 
-                Log.d(LOGTAG, "createLocationRequest_true");
-                startLocationUpdates();
-            }
-        });
-
-        task.addOnFailureListener(activity, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Show a layout to ask for location settings to be on and explain why this is total shittery
-
-                if (e instanceof ResolvableApiException) {
-                    // Location settings are not satisfied, ask the user for it
-                    try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(activity,
-                                REQUEST_CHECK_SETTINGS);
-                    } catch (IntentSender.SendIntentException sendEx) {
-                    }
+                    Log.d(LOGTAG, "createLocationRequest_true");
+                    startLocationUpdates();
                 }
+            });
 
-            }
-        });
+            task.addOnFailureListener(activity, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Show a layout to ask for location settings to be on and explain why this is total shittery
 
+                    if (e instanceof ResolvableApiException) {
+                        // Location settings are not satisfied, ask the user for it
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            ResolvableApiException resolvable = (ResolvableApiException) e;
+                            resolvable.startResolutionForResult(activity,
+                                    REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException sendEx) {
+                        }
+                    }
+
+                }
+            });
+        }
     }
 
     @Override
@@ -304,14 +301,14 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                     case Activity.RESULT_OK:
                         // All required changes were successfully made
                         Log.d(LOGTAG, "createLocationRequestAfterAskingViaDialog_true");
+                        alreadyAskingForLocation = false;
                         startLocationUpdates();
 
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
                         Log.d(LOGTAG, "USER REFUSED TO ENABLE LOCATION SERVICES");
-
-                        startLocationUpdates();
+                        alreadyAskingForLocation = false;
                         break;
                     default:
                         break;
@@ -325,15 +322,12 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         try {
             if (isPermissionGranted()) {
                 Log.d(LOGTAG, "OK PERMISSION");
-
+                alreadyAskingForLocation = false;
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-
 
             } else {
                 Log.d(LOGTAG, "NO PERMISSION");
-
                 checkLocationPermission();
-
             }
         } catch (SecurityException e) {
         }
