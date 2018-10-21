@@ -1,13 +1,13 @@
 package ch.epfl.sweng.swengproject;
 
 import android.Manifest;
-import android.arch.core.util.Function;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -20,24 +20,23 @@ import android.support.test.uiautomator.Until;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentLocationInstrumentedTestNoPermission {
-
-    @Rule
-    public ActivityTestRule<MainActivity> mActivity = new ActivityTestRule<>(MainActivity.class);
 
     private static final String PACKAGE
             = "ch.epfl.sweng.swengproject";
@@ -53,22 +52,20 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
 
     @Before
-    public void before() throws InterruptedException{
+    public void before() {
 
         context = InstrumentationRegistry.getContext();
-       // MyApplication.currentLocation.testMode();
-
 
         //Disable location
         disabled = disableLocation();
         Log.d(LOGTAG, "Location disabled = " + disabled);
+        //Log.d(LOGTAG, "rvoked = " + revokePermission());
 
         //Start from home
         mDevice.pressHome();
 
         //Launch the app
-        //final Intent intent = context.getPackageManager().getLaunchIntentForPackage(PACKAGE).setAction("MapsActivity");
-        final Intent intent = new Intent(mActivity.getActivity(), MapsActivity.class);
+        final Intent intent = context.getPackageManager().getLaunchIntentForPackage(PACKAGE).setAction("MapsActivity");
 
         //Clear Previous instances
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -76,11 +73,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
         //Wait for app to appear
         mDevice.wait(Until.hasObject(By.pkg(PACKAGE).depth(0)), LAUNCH_TIMEOUT);
-    }
-
-    @After
-    public void after(){
-        //Log.d(LOGTAG, "rvoked = " + revokePermission());
     }
 
 
@@ -103,30 +95,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
         disableLocation();
         clickOKLocation();
     }
-
-    @Mock
-    Location mockLocation = mock(Location.class);
-
-   /* @Test
-    public void injectionTest() throws UiObjectNotFoundException{
-        clickOKLocation();
-        when(mockLocation.getLongitude()).thenReturn(44.0);
-        when(mockLocation.getLatitude()).thenReturn(56.0);
-
-        Function<Void, Void> newFunction = new Function<Void, Void>() {
-            @Override
-            public Void apply(Void input) {
-                Log.d(LOGTAG, "YEEEEEEEEEEEEEEEEE");
-                return null;
-            }
-        };
-
-        MyApplication.currentLocation.modifyFunction(newFunction);
-
-        MyApplication.currentLocation.triggerInjectLocation(mockLocation);
-
-        MyApplication.currentLocation.getLastLocation();
-    }*/
 
 
     private void clickAllow() throws UiObjectNotFoundException {
@@ -187,6 +155,8 @@ public class CurrentLocationInstrumentedTestNoPermission {
      * Can only be used once, otherwise it crashes...WHY??
      */
     private boolean revokePermission() {
+        //Log.d(LOGTAG, "not even once?? : " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED));
+
         getInstrumentation().getUiAutomation().executeShellCommand("pm revoke " + PACKAGE + " " + Manifest.permission.ACCESS_FINE_LOCATION);
 
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
@@ -241,5 +211,10 @@ public class CurrentLocationInstrumentedTestNoPermission {
         mDevice.pressHome();
 
         return res;
+    }
+
+
+    private void injectCustomProvider(){
+
     }
 }
