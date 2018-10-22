@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
-public class mytests {
+public class UserTests {
 
     //TODO: Test how the system handle the pictures of the users !
 
