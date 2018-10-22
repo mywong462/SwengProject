@@ -83,20 +83,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         public void onLocationAvailability(LocationAvailability locationAvailability) {
 
             if (!locationAvailability.isLocationAvailable()) {
-
-                LocationSettingsRequest.Builder requestBuilder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-
-                SettingsClient client = LocationServices.getSettingsClient(activity);
-                Task<LocationSettingsResponse> task = client.checkLocationSettings(requestBuilder.build());
-
-                task.addOnFailureListener(activity, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        controlLocationRequest();
-                        Log.d(LOGTAG, "ask to enable location services");
-                    }
-                });
-
+                controlLocationRequest();
             }
         }
     };

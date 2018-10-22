@@ -43,7 +43,7 @@ public class CurrLocCallBackTest {
 
     private boolean test = false;
 
-    private Function<Void, Void> function = new Function<Void, Void>() {
+    public Function<Void, Void> function = new Function<Void, Void>() {
         @Override
         public Void apply(Void input) {
             test = true;
@@ -90,7 +90,7 @@ public class CurrLocCallBackTest {
 
     }
 
-    @Ignore
+    @Test
     public void testVerifyFunction(){
         Location loc = mock(Location.class);
         when(loc.getLatitude()).thenReturn(40.0);
@@ -113,16 +113,6 @@ public class CurrLocCallBackTest {
         MyApplication.currentLocation.getCallBack().onLocationResult(null);
     }
 
-    @Ignore
-    public void testLocationAvailabilityUnavailable() throws UiObjectNotFoundException{
-        disableLocation();
-        LocationAvailability loc = (LocationAvailability.CREATOR.newArray(0))[0];
-        when(loc.isLocationAvailable()).thenReturn(false);
-
-        MyApplication.currentLocation.getCallBack().onLocationAvailability(loc);
-
-        clickOKLocation();
-    }
 
 
     private void clickOKLocation() throws UiObjectNotFoundException {
