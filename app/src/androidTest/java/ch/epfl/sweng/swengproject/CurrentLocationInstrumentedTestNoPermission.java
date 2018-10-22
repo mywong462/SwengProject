@@ -1,8 +1,10 @@
 package ch.epfl.sweng.swengproject;
 
 import android.Manifest;
+import android.arch.core.util.Function;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.RemoteException;
 import android.support.test.InstrumentationRegistry;
@@ -180,10 +182,5 @@ public class CurrentLocationInstrumentedTestNoPermission {
         mDevice.pressHome();
 
         return res;
-    }
-
-
-    private void injectCustomProvider(){
-
     }
 }
