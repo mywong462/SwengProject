@@ -3,7 +3,6 @@ package ch.epfl.sweng.swengproject;
 import android.Manifest;
 import android.arch.core.util.Function;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -11,64 +10,42 @@ import android.os.RemoteException;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
-import android.support.test.uiautomator.Until;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentLocationInstrumentedTestNoPermission {
-
     @Rule
     public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
 
     private static final String PACKAGE
             = "ch.epfl.sweng.swengproject";
-    private static final int LAUNCH_TIMEOUT = 5000;
 
     private static final String androidBtn = "android.widget.Button";
 
-
     private UiDevice mDevice = UiDevice.getInstance(getInstrumentation());
     private Context context;
-    private boolean closed;
-    private boolean disabled;
 
 
     @Before
-    public void before() throws InterruptedException{
+    public void before() {
 
         context = InstrumentationRegistry.getContext();
-        //MyApplication.currentLocation.testMode();
-
 
         //Disable location
-        disabled = disableLocation();
-        Log.d(LOGTAG, "Location disabled = " + disabled);
-    }
-
-    @After
-    public void after(){
-        //Log.d(LOGTAG, "rvoked = " + revokePermission());
+        disableLocation();
     }
 
 
@@ -87,35 +64,9 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
     @Test
     public void locationOkThenDisableTest() throws UiObjectNotFoundException{
-        //clickAllow();
         clickOKLocation();
         disableLocation();
         clickOKLocation();
-    }
-
-
-    FusedLocationProviderClient mockFused = mock(FusedLocationProviderClient.class);
-
-    /*@Ignore
-    public void injectionTest() throws UiObjectNotFoundException{
-        setMock();
-        clickOKLocation();
-
-        Function<Void, Void> newFunction = new Function<Void, Void>() {
-            @Override
-            public Void apply(Void input) {
-                Log.d(LOGTAG, "YEEEEEEEEEEEEEEEEE");
-                return null;
-            }
-        };
-
-        //MyApplication.currentLocation.triggerInjectLocation(mockLocation);
-
-        MyApplication.currentLocation.getLastLocation();
-    }*/
-
-    private void setMock(){
-        //when(mockFused.requestLocationUpdates(mActivity.getActivity().))
     }
 
 
