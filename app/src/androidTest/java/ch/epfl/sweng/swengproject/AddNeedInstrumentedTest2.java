@@ -21,6 +21,7 @@ import com.google.firebase.firestore.DocumentReference;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -70,7 +71,7 @@ public class AddNeedInstrumentedTest2 {
 
     }
 
-    @Test
+    @Ignore
     public void canAccessActivityAndClickOnMap() {
 
         onView(withId(R.id.choose_loc_btn)).perform(click());
