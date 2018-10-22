@@ -63,35 +63,6 @@ public class MainActivityTests {
     public final ActivityTestRule<MainActivity> mainActivity =
             new ActivityTestRule<>(MainActivity.class, false, false);
 
-   /* @Test
-    public void noProfileInHDExist() throws InterruptedException{
-        StorageHelper.deleteAllDataStoredLocally();
-        //User me = UserTestUtil.randomUser();
-        //userDao.storeMyOwnProfile(me);
-
-        /*Instrumentation.ActivityMonitor aM =  new Instrumentation.ActivityMonitor();
-
-
-        mainActivity.launchActivity(new Intent());
-         Thread.sleep(5000);
-        assertEquals(MainActivity.class, aM.getLastActivity());*/
-    // Thread.sleep(1000);
-
-
-    //mainActivity.finishActivity();
-        /*mainActivity.launchActivity(new Intent());
-        //Thread.sleep(5000);
-        boolean passed = true;
-        try { //the activity should not have changed => login_btn isn't on the view and should return an error
-            onView(withId(R.id.inscription_src)).perform(click());
-
-        }catch (NoMatchingViewException e) {
-
-            passed = false;
-        }
-        assertEquals(true,passed);
-    }*/
-
     @Mock
     private FirebaseAuth mockFirebaseAuth;
 
@@ -121,34 +92,108 @@ public class MainActivityTests {
         when(mockAuthResultTask.getException()).thenReturn(new UITestException());
 
         when(mockFirebaseAuth.getCurrentUser()).thenReturn(mockFirebaseUser);
-
     }
 
+    /* @Test
+    public void noProfileInHDExist() throws InterruptedException{
+        StorageHelper.deleteAllDataStoredLocally();
+        //User me = UserTestUtil.randomUser();
+        //userDao.storeMyOwnProfile(me);
 
-   /* @Test
-    public void wrongProfileInHDExist() throws InterruptedException{
-        MyApplication.setFirebaseAuthMock(mockFirebaseAuth);
-        User realUser = new User();
-        realUser.setEmail("kaeser.jonathan@gmail.com");
-        realUser.setPassword("123456");
-        userDao.storeMyOwnProfile(realUser);
+        /*Instrumentation.ActivityMonitor aM =  new Instrumentation.ActivityMonitor();
+
+
         mainActivity.launchActivity(new Intent());
-        testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
-        assertEquals(true,true);
+         Thread.sleep(5000);
+        assertEquals(MainActivity.class, aM.getLastActivity());*/
+    // Thread.sleep(1000);
+
+
+    //mainActivity.finishActivity();
+        /*mainActivity.launchActivity(new Intent());
+        //Thread.sleep(5000);
+        boolean passed = true;
+        try { //the activity should not have changed => login_btn isn't on the view and should return an error
+            onView(withId(R.id.inscription_src)).perform(click());
+
+        }catch (NoMatchingViewException e) {
+
+            passed = false;
+        }
+        assertEquals(true,passed);
     }*/
 
+
     @Test
-    public void rightProfileInHDExist() throws InterruptedException{
+    public void authDoesNotSucceed() throws InterruptedException{
+
         MyApplication.setFirebaseAuthMock(mockFirebaseAuth);
+
         User realUser = new User();
         realUser.setEmail("kaeser.jonathan@gmail.com");
         realUser.setPassword("123456");
+
         userDao.storeMyOwnProfile(realUser);
+
         mainActivity.launchActivity(new Intent());
-        when(mockAuthResultTask.isSuccessful()).thenReturn(true);
-        when(mockFirebaseUser.isEmailVerified()).thenReturn(false);
+
         testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
+
+
+        //assertEqual we are in registerActivity
         assertEquals(true,true);
-        Thread.sleep(9000);
+        Thread.sleep(3000);
+    }
+
+    @Test
+    public void authSucceedButUserNotVerified() throws InterruptedException{
+
+        MyApplication.setFirebaseAuthMock(mockFirebaseAuth);
+
+        User realUser = new User();
+        realUser.setEmail("kaeser.jonathan@gmail.com");
+        realUser.setPassword("123456");
+
+        userDao.storeMyOwnProfile(realUser);
+
+        mainActivity.launchActivity(new Intent());
+
+        when(mockAuthResultTask.isSuccessful()).thenReturn(true);
+
+        when(mockFirebaseUser.isEmailVerified()).thenReturn(false);
+
+        when(mockFirebaseUser.getEmail()).thenReturn(realUser.email());
+
+        testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
+
+        //assert equal we are in login activity and the field in textfield is automatticaly filled
+        assertEquals(true,true);
+        Thread.sleep(3000);
+    }
+
+    @Test
+    public void authSucceedAndUserVerified() throws InterruptedException{
+
+        MyApplication.setFirebaseAuthMock(mockFirebaseAuth);
+
+        User realUser = new User();
+        realUser.setEmail("kaeser.jonathan@gmail.com");
+        realUser.setPassword("123456");
+
+        userDao.storeMyOwnProfile(realUser);
+
+        mainActivity.launchActivity(new Intent());
+
+        when(mockAuthResultTask.isSuccessful()).thenReturn(true);
+
+        when(mockFirebaseUser.isEmailVerified()).thenReturn(true);
+
+        when(mockFirebaseUser.getEmail()).thenReturn(realUser.email());
+
+        testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
+
+        //assert equal we are in map activity and the field in textfield is automatticaly filled
+        assertEquals(true,true);
+        Thread.sleep(3000);
     }
 }
