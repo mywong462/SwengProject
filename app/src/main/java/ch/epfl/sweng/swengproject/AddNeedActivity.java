@@ -203,6 +203,7 @@ public class AddNeedActivity extends AppCompatActivity {
             Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), "", descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
             set_fcm_InstanceId(newNeed);
             final long ttlCopy = new Long(ttl);
+            final int pplCopy = new Integer(nbPeopleNeeded);
 
             Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
@@ -210,6 +211,7 @@ public class AddNeedActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         //TODO: put a reference on the need created to listen to changes to the number of participants and notify the user who created the need)
                         updateTtl(ttlCopy);
+                        updatePpl(pplCopy);
                         Toast.makeText(AddNeedActivity.this, "Need Successfully added", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(AddNeedActivity.this, "Error : Please verify your connection", Toast.LENGTH_SHORT).show();
@@ -238,7 +240,10 @@ public class AddNeedActivity extends AppCompatActivity {
 
     private void updateTtl(long ttl) {
         ((MyApplication) this.getApplication()).setUser_need_ttl(ttl);
-        return;
+    }
+
+    private void updatePpl(int ppl) {
+        ((MyApplication) this.getApplication()).setUser_need_ppl(ppl);
     }
 
     /** This method uses the global variable accross the application state user_need_ttl

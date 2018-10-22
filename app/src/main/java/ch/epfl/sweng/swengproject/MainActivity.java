@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         ((MyApplication) this.getApplication()).setUser_need_ttl_OnStart(0L);
+        ((MyApplication) this.getApplication()).setUser_need_ppl_OnStart(0);
 
         scrWelcome = findViewById(R.id.welcome_scr);
         scrWelcome.setOnTouchListener(new View.OnTouchListener() {

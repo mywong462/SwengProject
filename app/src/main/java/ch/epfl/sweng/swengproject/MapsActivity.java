@@ -1,14 +1,18 @@
 package ch.epfl.sweng.swengproject;
 
+import android.app.NotificationManager;
 import android.arch.core.util.Function;
 import android.content.Context;
 import android.content.Intent;
 
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -20,6 +24,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +39,7 @@ import com.google.firebase.firestore.GeoPoint;
 
 import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
 import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
+import static ch.epfl.sweng.swengproject.DBTools.findUserNeed;
 
 import java.util.ArrayList;
 
@@ -205,6 +211,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 mMap.addCircle(mCircleOptions);
                 showAvailableNeeds();
+
+                // TODO: recup la liste des needs, check si mon need est dedans et si la liste des participants a été updaté
+                Need user_need = findUserNeed(availableNeeds, Database.getDBauth);
+                if (user_need != null) { // the user has created a need already
+                    createNotification();
+                    if (user_need.getNbPeopleNeeded() != ((MyApplication) this.getApplication()).getUser_need_ppl()) {
+                        // the number of participants has been updated
+                        ((MyApplication) this.getApplication()).setUser_need_ppl(user_need.getNbPeopleNeeded());
+                        createNotification();
+                        Toast.makeText(this, "Someone is coming to you!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Noone has answered to your need yet.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
                 if (isOpening) {
                     isOpening = false;
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 12));
@@ -214,6 +235,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         } catch (SecurityException e) {
         }
+    }
+
+    private void createNotification() {
+        String channelId = getString(R.string.default_notification_channel_id);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.drawable.ic_stat_ic_notification)
+                        .setContentTitle("Someone is coming!")
+                        .setSound(defaultSoundUri);
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
 

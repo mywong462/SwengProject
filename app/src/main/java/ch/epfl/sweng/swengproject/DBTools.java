@@ -4,6 +4,7 @@ import android.location.Location;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
@@ -81,6 +82,21 @@ public class DBTools {
             throw new NullPointerException();
         }
 
+    }
+
+    /**
+     * @Brief Finds the need created by the current user
+     * @param needList the list of needs
+     */
+    public static Need findUserNeed(List<Need> needList, FirebaseAuth DBauth) {
+        for (Need need: needList){
+            if(need.getEmitter() == DBauth.getCurrentUser().getEmail()) {
+                Log.d(LOGTAG_nn, "emitter found!");
+                return need;
+            }
+        }
+        Log.d(LOGTAG_nn, "issue encountered, can't seem to find the need and its emitter!");
+        return null;
     }
 
     /**

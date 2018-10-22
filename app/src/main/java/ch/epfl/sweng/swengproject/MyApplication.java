@@ -38,9 +38,7 @@ public class MyApplication extends Application {
     public void setUser_need_ppl(int user_need_ppl) {
         this.user_need_ppl = user_need_ppl;
     }
-    public void pplOnChange() {
-
-    }
+    public void setUser_need_ppl_OnStart(int user_need_ppl) { this.user_need_ppl = user_need_ppl; }
 
     private static Context context;
 
