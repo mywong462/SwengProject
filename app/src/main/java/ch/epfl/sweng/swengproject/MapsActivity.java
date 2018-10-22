@@ -78,7 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             currLoc = loc;
             ArrayList<Need> needList = new ArrayList<>();
             long ttl = System.currentTimeMillis() + 100000;
-            needList.add(new Need("hedi.sassi@epfl.ch", "my description", ttl, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ,""));
+            needList.add(new Need("hedi.sassi@epfl.ch", "", "my description", ttl, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ,""));
             availableNeeds = needList;
         }
         else {

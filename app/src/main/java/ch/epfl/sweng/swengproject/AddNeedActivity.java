@@ -22,8 +22,14 @@ import com.google.android.gms.tasks.Task;
 
 import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
 import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
+import static ch.epfl.sweng.swengproject.DBTools.*;
+import static ch.epfl.sweng.swengproject.Database.*;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -35,6 +41,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class AddNeedActivity extends AppCompatActivity {
+
+    // Get the cloud database and its reference
+    private static final FirebaseFirestore needsDB = FirebaseFirestore.getInstance();
+    private static CollectionReference needsRef = needsDB.collection("needs");
 
     //constant used for input checks
     protected static final int MIN_VALIDITY = 1;
@@ -190,13 +200,15 @@ public class AddNeedActivity extends AppCompatActivity {
     //method used to write in the DB
     private void writeNewNeed( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
         if (canAddNewNeed(((MyApplication) this.getApplication()).getUser_need_ttl())) {
-            Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
+            Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), "", descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
+            set_fcm_InstanceId(newNeed);
             final long ttlCopy = new Long(ttl);
 
             Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentReference> task) {
                     if (task.isSuccessful()) {
+                        //TODO: put a reference on the need created to listen to changes to the number of participants and notify the user who created the need)
                         updateTtl(ttlCopy);
                         Toast.makeText(AddNeedActivity.this, "Need Successfully added", Toast.LENGTH_SHORT).show();
                     } else {
@@ -205,6 +217,23 @@ public class AddNeedActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    /** To retrieve the current registration token of the client app */
+    public void set_fcm_InstanceId(final Need user_need) {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.d(LOGTAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+                        String token = task.getResult().getToken();
+                        user_need.setToken(token);
+                        Log.d(LOGTAG, "success getting new InstanceId: " + token);
+                    }
+                });
     }
 
     private void updateTtl(long ttl) {

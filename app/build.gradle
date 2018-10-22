@@ -46,6 +46,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:16.0.3'
     //sending notifications to users
     implementation 'com.google.firebase:firebase-messaging:17.3.3'
+    //implementation 'com.google.firebase:firebase-admin:6.5.0'
     //database connection
     implementation 'com.google.firebase:firebase-firestore:17.1.1'
     implementation 'com.google.firebase:firebase-core:16.0.4'

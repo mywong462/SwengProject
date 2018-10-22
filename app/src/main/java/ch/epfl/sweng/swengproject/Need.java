@@ -14,6 +14,7 @@ public class Need {
 
     //fields
     private String emitter;
+    private String token;
     private String description;
     private double longitude;
     private double latitude;
@@ -26,8 +27,9 @@ public class Need {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Need(String emitter, String descr, long ttl, double latitude, double longitude, Categories category, int nbPeopleNeeded, String participants) {
+    public Need(String emitter, String token, String descr, long ttl, double latitude, double longitude, Categories category, int nbPeopleNeeded, String participants) {
         this.emitter = emitter;
+        this.token = token;
         this.description = descr;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -42,6 +44,7 @@ public class Need {
     public String getEmitter(){
         return this.emitter;
     }
+    public String getToken() { return this.token; }
     public String getDescription(){
         return this.description;
     }
@@ -66,6 +69,7 @@ public class Need {
     public void setEmitter(String emitter){
         this.emitter = emitter;
     }
+    public void setToken(String token) { this.token = token; }
     public void setDescription(String description){
         this.description = description;
     }

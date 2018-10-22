@@ -32,7 +32,7 @@ import com.google.firebase.iid.InstanceIdResult;
 
 public class MainActivity extends AppCompatActivity {
     
-     private ConstraintLayout scrWelcome;
+    private ConstraintLayout scrWelcome;
     
     protected static final String LOGTAG = "HELLO";
     protected static final CurrentLocation currentLocation = new CurrentLocation();
@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         ((MyApplication) this.getApplication()).setUser_need_ttl_OnStart(0L);
 

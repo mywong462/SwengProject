@@ -88,12 +88,12 @@ public class DBTools {
      * @param needList the list of needs
      * @param pos the position of the current marker
      */
-    public static String findEmitter(ArrayList<Need> needList, LatLng pos) {
+    public static String findEmitterToken(List<Need> needList, LatLng pos) {
         for (Need need: needList){
             if(need.getPos().getLatitude() == pos.latitude &&
                     need.getPos().getLongitude() == pos.longitude) {
                 Log.d(LOGTAG_nn, "emitter found!");
-                return need.getEmitter();
+                return need.getToken();
             }
         }
         Log.d(LOGTAG_nn, "issue encountered, can't seem to find the need and its emitter!");
