@@ -65,7 +65,7 @@ public class AddNeedActivity extends AppCompatActivity {
     private long ttl;
 
     // Variables to allow user to set his own location for his need
-    private int REQUEST_LOCATION = 133;
+    public static int REQUEST_LOCATION = 133;
     private Button chooseLocation_btn;
     private LatLng setLocation;
     private Double lat;
