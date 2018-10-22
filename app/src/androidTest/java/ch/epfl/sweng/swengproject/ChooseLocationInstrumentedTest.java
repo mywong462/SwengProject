@@ -27,6 +27,7 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(AndroidJUnit4.class)
 public class ChooseLocationInstrumentedTest {
@@ -38,19 +39,48 @@ public class ChooseLocationInstrumentedTest {
     public final ActivityTestRule<ChooseLocationActivity> aActivityRule =
             new ActivityTestRule<>(ChooseLocationActivity.class,false,false);
 
-    @Rule
-    public final ActivityTestRule<AddNeedActivity> bActivityRule =
-            new ActivityTestRule<>(AddNeedActivity.class,false,false);
 
-    @Rule
-    public final ActivityTestRule<MainActivity> mActivityRule =
-            new ActivityTestRule<>(MainActivity.class);
+    @Before
+    public void setMock(){
+
+        LocationServer ls = new FakeLocation();
+
+        //inject the mocked object in the activity
+        aActivityRule.launchActivity(new Intent().putExtra("loc",ls));
+    }
+
 
 
     @Test
-    public void basicTest(){
-        return;
+    public void canAccessAndReturnFromActivity() {
+
+        onView(withId(R.id.map_ch_loc)).perform(click());
+
+
     }
+
+
+    @Test
+    public void NotTooFar(){
+
+
+       assertFalse(aActivityRule.getActivity().locationTooFar());
+
+    }
+
+    @Test
+    public void canClick(){
+
+        onView(withId(R.id.set_loc_btn)).perform(click());
+    }
+
+    @Test
+    public void canSetDefaultLoc(){
+
+        aActivityRule.getActivity().setDefaultLocation();
+
+    }
+
 
     /*
     @Before

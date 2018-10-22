@@ -1,8 +1,15 @@
 package ch.epfl.sweng.swengproject;
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
+
+import java.util.Objects;
 
 public class MyApplication extends Application {
     /**
@@ -43,6 +50,7 @@ public class MyApplication extends Application {
     private static Context context;
 
     public void onCreate() {
+        Log.d(LOGTAG, "MyApplication created");
         super.onCreate();
         MyApplication.context = getApplicationContext();
     }
@@ -50,4 +58,27 @@ public class MyApplication extends Application {
     public static Context getAppContext() {
         return MyApplication.context;
     }
+
+    public static AlertDialog showCustomAlert2Buttons(String title, String message, String neutralButtonText, String positiveButtonText, final Function<Void, Void> callOnNeutralClick, final Function<Void, Void> callOnPositiveClick, Activity activity){
+        return new AlertDialog.Builder(activity)
+                .setTitle(Objects.requireNonNull(title))
+                .setMessage(Objects.requireNonNull(message))
+                .setNeutralButton(Objects.requireNonNull(neutralButtonText), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        callOnNeutralClick.apply(null);
+                    }
+                })
+                .setPositiveButton(Objects.requireNonNull(positiveButtonText), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        callOnPositiveClick.apply(null);
+                    }
+                })
+                .create();
+    }
+
+    public static final String LOGTAG = "HELLO";
+    public static final CurrentLocation currentLocation = new CurrentLocation();
+
 }

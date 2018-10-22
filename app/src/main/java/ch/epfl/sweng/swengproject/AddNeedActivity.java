@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,10 +19,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import static ch.epfl.sweng.swengproject.MainActivity.LOGTAG;
-import static ch.epfl.sweng.swengproject.MainActivity.currentLocation;
 import static ch.epfl.sweng.swengproject.DBTools.*;
 import static ch.epfl.sweng.swengproject.Database.*;
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
+import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -33,18 +32,16 @@ import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-
 public class AddNeedActivity extends AppCompatActivity {
 
     // Get the cloud database and its reference
-    private static final FirebaseFirestore needsDB = FirebaseFirestore.getInstance();
-    private static CollectionReference needsRef = needsDB.collection("needs");
+    // private static final FirebaseFirestore needsDB = FirebaseFirestore.getInstance();
+    // private static CollectionReference needsRef = needsDB.collection("needs");
 
     //constant used for input checks
     protected static final int MIN_VALIDITY = 1;
@@ -79,6 +76,11 @@ public class AddNeedActivity extends AppCompatActivity {
     //All the categories in the array listCategory
     private ArrayList<Categories> listCategory = new ArrayList<>(EnumSet.allOf(Categories.class));
 
+    public AddNeedActivity(LocationServer locationServer){
+        this.currLoc = locationServer;
+    }
+    public AddNeedActivity(){}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,14 +111,16 @@ public class AddNeedActivity extends AppCompatActivity {
 
         LocationServer loc = (LocationServer) getIntent().getSerializableExtra("loc");
 
-        Log.d(MainActivity.LOGTAG, "got the Serializable : " + (loc == null));
-        if (loc != null) {
+        Log.d(LOGTAG,"got the Serializable : "+(loc == null));
+        if(loc != null){
             currLoc = loc;
-        } else {
-            Log.d(MainActivity.LOGTAG, "Normal code section");
+        }
+        else {
+            Log.d(LOGTAG,"Normal code section");
             currentLocation.setCurrentLocationParameters(this.getApplicationContext(), this);
             currLoc = currentLocation;
-            Log.d(MainActivity.LOGTAG, "currloc is null ? : " + (currLoc == null));
+            Log.d(LOGTAG,"currloc is null ? : "+(currLoc == null));
+
         }
         //Update text fields with local variables
         TextView validity = findViewById(R.id.need_validity);
@@ -141,10 +145,10 @@ public class AddNeedActivity extends AppCompatActivity {
                 EditText description = findViewById(R.id.descr_txt);
                 EditText nbPeopleNeeded = findViewById(R.id.nbPeople_txt);
 
-                Log.d(MainActivity.LOGTAG, "VALUE IS : " + validity.getText() + " // null? " + validity.getText().length());
+                Log.d(LOGTAG, "VALUE IS : " + validity.getText() + " // null? " + validity.getText().length());
 
-                if (validity.getText().length() == 0 || description.getText().length() == 0 || nbPeopleNeeded.getText().length() == 0) {
-                    Log.d(MainActivity.LOGTAG, "At least one field is NULL");
+                if(validity.getText().length() == 0 || description.getText().length() == 0 || nbPeopleNeeded.getText().length() == 0){
+                    Log.d(LOGTAG, "At least one field is NULL");
                     Toast.makeText(AddNeedActivity.this, "Incorrect input. Don't let anything blank !", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -183,7 +187,7 @@ public class AddNeedActivity extends AppCompatActivity {
                         currPos = currLoc.getLastLocation();
                     }
 
-                    Log.d(MainActivity.LOGTAG, "position is null " + (currPos == null));
+                    Log.d(LOGTAG,"position is null "+(currPos == null));
 
                     writeNewNeed(descr, (long) (valid * MILLS_IN_MINUTES) + System.currentTimeMillis(), currPos, nbPeople);
 
@@ -299,12 +303,12 @@ public class AddNeedActivity extends AppCompatActivity {
     @Override
     protected void onPause(){
         super.onPause();
-        currentLocation.callerOnPause();
+        currLoc.callerOnPause();
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        currentLocation.callerOnResume();
+        currLoc.callerOnResume();
     }
 }

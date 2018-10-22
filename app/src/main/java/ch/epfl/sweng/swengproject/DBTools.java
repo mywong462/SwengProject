@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.lang.Math.atan2;
@@ -247,6 +248,248 @@ public class DBTools {
         return c;
 
     }
+
+
+    // -------------------------------Statistics And queries on ArrayList<Need>--------------------------------
+
+
+    /**
+     * @brief function used to check if someone participate to a need
+     * @param list
+     * @param user
+     * @return
+     */
+    public static boolean participateToNeed(ArrayList<Need> list, String user){
+
+        if(list == null || user == null || user.isEmpty()){
+
+            throw new NullPointerException();
+        }
+
+        for(Need n: list){
+
+            ArrayList<String> participants = DBTools.convertCsvToArray(n.getParticipants());
+
+            if(participants.contains(user)){
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+
+    /**
+     * @brief compute the number of needs to which the user participates
+     * @param list
+     * @param user
+     * @return
+     */
+    public static int numberOfParticipation(ArrayList<Need> list, String user){
+
+        if(list == null || user == null || user.isEmpty()){
+
+            throw new NullPointerException();
+        }
+
+        int count = 0;
+
+        for(Need n: list){
+
+            ArrayList<String> participants = DBTools.convertCsvToArray(n.getParticipants());
+
+            if(participants.contains(user)){
+                count++;
+            }
+        }
+
+        return count;
+
+    }
+
+    /**
+     * @brief Compute the proportion of each category in the list
+     * @param list
+     * @return
+     */
+    public static int[] proportionOfCategories(ArrayList<Need> list){
+
+        if(list == null){
+            throw new NullPointerException();
+        }
+
+        int[] proportion = new int[CategoriesInfo.size];
+
+        for(int i = 0; i < CategoriesInfo.size; ++i){
+            proportion[i] = 0;
+        }
+
+        for(Need n : list){
+
+            proportion[CategoriesInfo.convert(n.getCategory())] +=1;
+        }
+
+        return proportion;
+
+    }
+
+    /**
+     * @brief Compute the total number of participants of all available needs
+     * @param list
+     * @return
+     */
+    public static int totalNbrParticipants(ArrayList<Need> list){
+
+        if(list == null){
+            throw new NullPointerException();
+        }
+
+        int total = 0;
+
+        for(Need n : list){
+
+            total += computeNumber(n.getParticipants());
+        }
+
+        return total;
+    }
+
+    /**
+     * @brief Method used to compute the closes Need
+     * @param list
+     * @param pos
+     * @return
+     */
+    public static Need findClosest(ArrayList<Need> list, GeoPoint pos){
+
+        if(list == null || pos == null){
+            throw new NullPointerException();
+        }
+        if(list.isEmpty()){
+            throw new IllegalArgumentException("List is empty. Cannot compute closest Need");
+        }
+
+        Need closest = new Need();
+
+        for(int i = 0; i < list.size(); ++i){
+
+            Need curr = list.get(i);
+
+            if(i == 0){
+                closest = curr;
+            }
+            else{
+
+                double currDist = DBTools.distanceBetween(pos,closest.getPos());
+
+                if(DBTools.distanceBetween(pos,curr.getPos()) < currDist){
+                    closest = curr;
+                }
+            }
+        }
+
+        return closest;
+
+    }
+
+    /**
+     * @Brief Compute the average number of people per need
+     * @param list
+     * @return
+     */
+    public static double averageNbrParticipants(ArrayList<Need> list){
+        if(list == null){
+            throw new NullPointerException();
+        }
+        if(list.isEmpty()){
+            throw new IllegalArgumentException("List is empty. Cannot compute average");
+        }
+
+        return totalNbrParticipants(list) / list.size();
+
+    }
+
+
+    /**
+     * @brief Merge sort implementation for needs
+     * @param needList
+     * @param c
+     * @return
+     */
+
+    public static List<Need> sort(List<Need> needList, Comparator<Need> c){
+
+        if(needList.size() <= 1){
+            return needList;
+        }
+        else{
+
+            int middle = needList.size()/2;
+
+            List<Need> first = needList.subList(0,middle);
+            List<Need> second = needList.subList(middle,needList.size());
+
+            List<Need> s1 = sort(first,c);
+            List<Need> s2 = sort(second,c);
+
+            return reverseArray(toArrayList(merge(s1,s2, c)));
+        }
+
+
+
+    }
+
+    private static List<Need> merge(List<Need> s1, List<Need> s2, Comparator<Need> c){
+
+
+        int c1 = 0;
+        int c2 = 0;
+
+        List<Need> res = new ArrayList<>();
+
+
+        while(res.size() != s1.size() + s2.size()){
+
+            if(c1 >= s1.size()){
+                res.addAll(s2.subList(c2,s2.size()));
+                return res;
+            }
+
+            if(c2 >= s2.size()){
+                res.addAll(s1.subList(c1,s1.size()));
+                return res;
+            }
+
+            if(c.compare(s1.get(c1), s2.get(c2)) == 1){
+
+                res.add(s2.get(c2));
+                c2++;
+
+            }
+            else{
+                res.add(s1.get(c1));
+                c1++;
+            }
+
+        }
+
+        return res;
+
+    }
+
+
+    public static ArrayList<Need> toArrayList(List<Need> list){
+
+        ArrayList<Need> res = new ArrayList<>();
+
+        for(Need n : list){
+            res.add(n);
+        }
+
+        return reverseArray(res);
+    }
+
 
 
 }
