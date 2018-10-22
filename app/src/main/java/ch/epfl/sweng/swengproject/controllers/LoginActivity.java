@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity implements AlertDialogGener
         setContentView(R.layout.activity_login);
 
         //connect the widgets
-        inputEmail = findViewById(R.id.email1);
+        inputEmail = findViewById(R.id.login_activity_email_edit_text);
         inputPassword = findViewById(R.id.password1);
         btnLogin = findViewById(R.id.login_btn1);
         btnRegister = findViewById(R.id.register_btn1);

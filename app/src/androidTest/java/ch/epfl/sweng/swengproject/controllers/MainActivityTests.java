@@ -48,7 +48,10 @@ import ch.epfl.sweng.swengproject.util.UITestException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.withHint;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -153,12 +156,10 @@ public class MainActivityTests {
 
         testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
 
-        //assert equal we are in login activity and the field in textfield is automatticaly filled
-        //check that inscription activity is displayed by clicking on it
-        EditText emailOnLogin =
-        onView(withId(R.id.inscription_src)).perform(click());
+        //assert that we are in the login activity and email edit text is automatically filled
+        onView(withId(R.id.login_activity_email_edit_text)).check(matches(withText(realUser.email())));
     }
-/*
+
     @Test
     public void authSucceedAndUserVerified() throws InterruptedException{
 
@@ -180,8 +181,7 @@ public class MainActivityTests {
 
         testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
 
-        //assert equal we are in map activity and the field in textfield is automatticaly filled
-        assertEquals(true,true);
-        Thread.sleep(3000);
-    }*/
+        //assert equal we are in maps activity
+        onView(withId(R.id.map_activity_main_view)).perform(click());
+    }
 }
