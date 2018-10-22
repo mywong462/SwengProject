@@ -22,12 +22,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.ProviderQueryResult;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -37,8 +40,11 @@ import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
+import ch.epfl.sweng.swengproject.util.UITestException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -69,10 +75,10 @@ public class MainActivityTests {
         mainActivity.launchActivity(new Intent());
          Thread.sleep(5000);
         assertEquals(MainActivity.class, aM.getLastActivity());*/
-       // Thread.sleep(1000);
+    // Thread.sleep(1000);
 
 
-        //mainActivity.finishActivity();
+    //mainActivity.finishActivity();
         /*mainActivity.launchActivity(new Intent());
         //Thread.sleep(5000);
         boolean passed = true;
@@ -86,147 +92,63 @@ public class MainActivityTests {
         assertEquals(true,passed);
     }*/
 
-    @Mock FirebaseAuth fireBaseAuthMock = mock(FirebaseAuth.class);
-
-    @Mock AuthResult mockAuthResult = new AuthResult() {
-        @Override
-        public FirebaseUser getUser() {
-            return null;
-        }
-
-        @Override
-        public AdditionalUserInfo getAdditionalUserInfo() {
-            return null;
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel parcel, int i) {
-
-        }
-    };
-
-    @Mock Task<AuthResult> failTask = new Task<AuthResult>() {
-
-//        @NonNull
-//        @Override
-//        public Task<AuthResult> addOnCompleteListener(@NonNull Activity activity, @NonNull OnCompleteListener<AuthResult> onCompleteListener) {
-//           System.out.println("maybe stuff to do here");
-//            return this;
-//        }
-
-        @Override
-        public boolean isComplete() {
-            return true;
-        }
-
-        @Override
-        public boolean isSuccessful() {
-            return false;
-        }
-
-        @Override
-        public boolean isCanceled() {
-            return false;
-        }
-
-        @Nullable
-        @Override
-        public AuthResult getResult() {
-            return mockAuthResult;
-        }
-
-        @Nullable
-        @Override
-        public <X extends Throwable> AuthResult getResult(@NonNull Class<X> aClass) throws X {
-            return mockAuthResult;
-        }
-
-        @Nullable
-        @Override
-        public Exception getException() {
-            return null;
-        }
-
-        @NonNull
-        @Override
-        public Task<AuthResult> addOnSuccessListener(@NonNull OnSuccessListener<? super AuthResult> onSuccessListener) {
-            return this;
-        }
-
-        @NonNull
-        @Override
-        public Task<AuthResult> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super AuthResult> onSuccessListener) {
-            return this;
-        }
-
-        @NonNull
-        @Override
-        public Task<AuthResult> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super AuthResult> onSuccessListener) {
-            return this;
-        }
-
-        @NonNull
-        @Override
-        public Task<AuthResult> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
-            return this;
-        }
-
-        @NonNull
-        @Override
-        public Task<AuthResult> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
-            return this;
-        }
-
-        @NonNull
-        @Override
-        public Task<AuthResult> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
-            return this;
-        }
-    };
+    @Mock
+    private FirebaseAuth mockFirebaseAuth;
 
     @Mock
-    Activity myAct;
+    private Task<AuthResult> mockAuthResultTask;
+
+    @Captor
+    private ArgumentCaptor<OnCompleteListener> testOnCompleteListener;
+
+    @Mock
+    private FirebaseUser mockFirebaseUser;
 
 
 
+    @Before
+    public void setup() {
 
-    @Test
+        MockitoAnnotations.initMocks(this);
+
+        testOnCompleteListener = ArgumentCaptor.forClass(OnCompleteListener.class);
+
+        when(mockFirebaseAuth.signInWithEmailAndPassword(any(String.class) , any(String.class)))
+                .thenReturn(mockAuthResultTask);
+
+        when(mockAuthResultTask.addOnCompleteListener(any(Activity.class), testOnCompleteListener.capture())).thenReturn(mockAuthResultTask);
+
+        when(mockAuthResultTask.getException()).thenReturn(new UITestException());
+
+        when(mockFirebaseAuth.getCurrentUser()).thenReturn(mockFirebaseUser);
+
+    }
+
+
+   /* @Test
     public void wrongProfileInHDExist() throws InterruptedException{
-
-
-        when(fireBaseAuthMock.signInWithEmailAndPassword(""  ,"")).thenReturn(failTask);
-        //when(failTask.addOnCompleteListener(myAct,)).thenReturn(failTask);
-        /*when(failTask.
-                addOnCompleteListener(act, l)).thenAnswer(new Answer() {
-
-
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                return null;
-            }
-        });*/
-
-
-        // when(fireBaseAuthMock.getCurrentUser()).thenReturn(user);
-
-
-
-        MyApplication.setFirebaseAuthMock(fireBaseAuthMock);
-
+        MyApplication.setFirebaseAuthMock(mockFirebaseAuth);
         User realUser = new User();
         realUser.setEmail("kaeser.jonathan@gmail.com");
         realUser.setPassword("123456");
         userDao.storeMyOwnProfile(realUser);
-
         mainActivity.launchActivity(new Intent());
-        Thread.sleep(5000);
-
-
+        testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
         assertEquals(true,true);
+    }*/
+
+    @Test
+    public void rightProfileInHDExist() throws InterruptedException{
+        MyApplication.setFirebaseAuthMock(mockFirebaseAuth);
+        User realUser = new User();
+        realUser.setEmail("kaeser.jonathan@gmail.com");
+        realUser.setPassword("123456");
+        userDao.storeMyOwnProfile(realUser);
+        mainActivity.launchActivity(new Intent());
+        when(mockAuthResultTask.isSuccessful()).thenReturn(true);
+        when(mockFirebaseUser.isEmailVerified()).thenReturn(false);
+        testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
+        assertEquals(true,true);
+        Thread.sleep(9000);
     }
 }

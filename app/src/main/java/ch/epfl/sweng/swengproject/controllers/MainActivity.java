@@ -87,12 +87,11 @@ public class MainActivity extends AppCompatActivity {
         String password = me.password();
         System.out.println("Trying to login automatically with email " + email + " and password " + password + " fetched from HD");
 
-        auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+    auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if (!task.isSuccessful()) {
                             System.out.println("After fetching a profile from the HD, the automatic login failed, so we send the user to the Inscription Activity. This is due to" +  task.getException().toString());
                             goToInscriptionActivity();
