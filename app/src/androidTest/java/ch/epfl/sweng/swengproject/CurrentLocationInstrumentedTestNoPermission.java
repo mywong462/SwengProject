@@ -2,53 +2,39 @@ package ch.epfl.sweng.swengproject;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.RemoteException;
-import android.provider.Settings;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
-import android.support.test.uiautomator.Until;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentLocationInstrumentedTestNoPermission {
+    @Rule
+    public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
 
     private static final String PACKAGE
             = "ch.epfl.sweng.swengproject";
-    private static final int LAUNCH_TIMEOUT = 5000;
 
     private static final String androidBtn = "android.widget.Button";
 
-
     private UiDevice mDevice = UiDevice.getInstance(getInstrumentation());
     private Context context;
-    private boolean closed;
-    private boolean disabled;
 
 
     @Before
@@ -57,22 +43,7 @@ public class CurrentLocationInstrumentedTestNoPermission {
         context = InstrumentationRegistry.getContext();
 
         //Disable location
-        disabled = disableLocation();
-        Log.d(LOGTAG, "Location disabled = " + disabled);
-        //Log.d(LOGTAG, "rvoked = " + revokePermission());
-
-        //Start from home
-        mDevice.pressHome();
-
-        //Launch the app
-        final Intent intent = context.getPackageManager().getLaunchIntentForPackage(PACKAGE).setAction("MapsActivity");
-
-        //Clear Previous instances
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
-
-        //Wait for app to appear
-        mDevice.wait(Until.hasObject(By.pkg(PACKAGE).depth(0)), LAUNCH_TIMEOUT);
+        disableLocation();
     }
 
 
@@ -155,8 +126,6 @@ public class CurrentLocationInstrumentedTestNoPermission {
      * Can only be used once, otherwise it crashes...WHY??
      */
     private boolean revokePermission() {
-        //Log.d(LOGTAG, "not even once?? : " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED));
-
         getInstrumentation().getUiAutomation().executeShellCommand("pm revoke " + PACKAGE + " " + Manifest.permission.ACCESS_FINE_LOCATION);
 
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;

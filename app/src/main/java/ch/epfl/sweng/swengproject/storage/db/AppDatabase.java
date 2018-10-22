@@ -61,7 +61,7 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     }
 
-    private static AppDatabase getInHDInstance() {
+    public static AppDatabase getInHDInstance() {
         Context context = MyApplication.getAppContext();
         if (HD_INSTANCE == null) {
             HD_INSTANCE =

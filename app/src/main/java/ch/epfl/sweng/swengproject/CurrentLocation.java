@@ -143,6 +143,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
+
         updatingLocation = false;
 
         checkLocationPermission();
@@ -323,6 +324,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             if (isPermissionGranted()) {
                 Log.d(LOGTAG, "OK PERMISSION");
                 alreadyAskingForLocation = false;
+
                 mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
             } else {
@@ -344,20 +346,14 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     public boolean getLocationPermissionStatus() {
         return isPermissionGranted();
     }
-/*
-    public void injectionForTest(Location mockLocation){
-        try {
-            Log.d(LOGTAG, "injection");
-            mFusedLocationProviderClient.setMockLocation(mockLocation);
-            mFusedLocationProviderClient.setMockMode(true);
-            mLocationRequest = new LocationRequest().
-            startLocationUpdates();
-            mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    Log.d(LOGTAG, location.toString());
-                }
-            });
-        }catch(SecurityException e){}
-    }*/
+
+//For test purpose
+
+    public void setFunction(Function<Void, Void> newFunction){
+        function = newFunction;
+    }
+
+    public LocationCallback getCallBack(){
+        return mLocationCallback;
+    }
 }
