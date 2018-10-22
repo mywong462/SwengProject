@@ -11,10 +11,14 @@ package ch.epfl.sweng.swengproject;
 
 public class Need {
 
+    /** In case we want to implement a notification system from the server to a specific device,
+     * a need should have a field "token" to store the instanceId for firebase cloud messaging
+     * of the creator of the need.
+     */
 
     //fields
     private String emitter;
-    private String token;
+    //private String token;
     private String description;
     private double longitude;
     private double latitude;
@@ -27,9 +31,10 @@ public class Need {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Need(String emitter, String token, String descr, long ttl, double latitude, double longitude, Categories category, int nbPeopleNeeded, String participants) {
+    //public Need(String emitter, String token, String descr, long ttl, double latitude, double longitude, Categories category, int nbPeopleNeeded, String participants) {
+    public Need(String emitter, String descr, long ttl, double latitude, double longitude, Categories category, int nbPeopleNeeded, String participants) {
         this.emitter = emitter;
-        this.token = token;
+        // this.token = token;
         this.description = descr;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -44,7 +49,7 @@ public class Need {
     public String getEmitter(){
         return this.emitter;
     }
-    public String getToken() { return this.token; }
+    // public String getToken() { return this.token; }
     public String getDescription(){
         return this.description;
     }
@@ -66,16 +71,10 @@ public class Need {
 
 
     //Setters, for .toObjects
-    public void setEmitter(String emitter){
-        this.emitter = emitter;
-    }
-    public void setToken(String token) { this.token = token; }
-    public void setDescription(String description){
-        this.description = description;
-    }
-    public void setLongitude(double longitude){
-        this.longitude = longitude;
-    }
+    public void setEmitter(String emitter){ this.emitter = emitter; }
+    //public void setToken(String token) { this.token = token; }
+    public void setDescription(String description){ this.description = description; }
+    public void setLongitude(double longitude){ this.longitude = longitude; }
     public void setLatitude(double latitude){ this.latitude = latitude; }
     public void setTimeToLive(long timeToLive){ this.timeToLive = timeToLive; }
     public void setCategory(Categories category) { this.category = category; }

@@ -200,8 +200,8 @@ public class AddNeedActivity extends AppCompatActivity {
     //method used to write in the DB
     private void writeNewNeed( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
         if (canAddNewNeed(((MyApplication) this.getApplication()).getUser_need_ttl())) {
-            Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), "", descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
-            set_fcm_InstanceId(newNeed);
+            Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
+            //set_fcm_InstanceId(newNeed);
             final long ttlCopy = new Long(ttl);
             final int pplCopy = new Integer(nbPeopleNeeded);
 
@@ -209,7 +209,6 @@ public class AddNeedActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<DocumentReference> task) {
                     if (task.isSuccessful()) {
-                        //TODO: put a reference on the need created to listen to changes to the number of participants and notify the user who created the need)
                         updateTtl(ttlCopy);
                         updatePpl(pplCopy);
                         Toast.makeText(AddNeedActivity.this, "Need Successfully added", Toast.LENGTH_SHORT).show();
@@ -221,7 +220,8 @@ public class AddNeedActivity extends AppCompatActivity {
         }
     }
 
-    /** To retrieve the current registration token of the client app */
+
+    /** To retrieve the current registration token of the client app
     public void set_fcm_InstanceId(final Need user_need) {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -236,7 +236,7 @@ public class AddNeedActivity extends AppCompatActivity {
                         Log.d(LOGTAG, "success getting new InstanceId: " + token);
                     }
                 });
-    }
+    }*/
 
     private void updateTtl(long ttl) {
         ((MyApplication) this.getApplication()).setUser_need_ttl(ttl);

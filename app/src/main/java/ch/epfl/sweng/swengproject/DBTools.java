@@ -103,7 +103,7 @@ public class DBTools {
      * @Brief Finds the emitter of the need corresponding to the marker
      * @param needList the list of needs
      * @param pos the position of the current marker
-     */
+     *
     public static String findEmitterToken(List<Need> needList, LatLng pos) {
         for (Need need: needList){
             if(need.getPos().getLatitude() == pos.latitude &&
@@ -115,6 +115,7 @@ public class DBTools {
         Log.d(LOGTAG_nn, "issue encountered, can't seem to find the need and its emitter!");
         return null;
     }
+    */
 
     /**
      * @Brief Check if there is a matching need with a number of participants less thant the max

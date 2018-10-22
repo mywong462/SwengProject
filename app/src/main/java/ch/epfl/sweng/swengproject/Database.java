@@ -27,7 +27,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import static ch.epfl.sweng.swengproject.DBTools.findEmitterToken;
+//import static ch.epfl.sweng.swengproject.DBTools.findEmitterToken;
 import com.google.firebase.messaging.*;
 
 
@@ -71,7 +71,7 @@ public final class Database {
                         current.setLongitude((double)dS.get("longitude"));
                         current.setLatitude((double)dS.get("latitude"));
                         current.setEmitter((String)dS.get("emitter"));
-                        current.setToken((String)dS.get("token"));
+                        //current.setToken((String)dS.get("token"));
                         current.setDescription((String)dS.get("description"));
 
                         current.setCategory(DBTools.convertStringToCat((String)dS.get("category")));

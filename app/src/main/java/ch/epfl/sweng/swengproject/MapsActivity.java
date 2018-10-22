@@ -84,7 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             currLoc = loc;
             ArrayList<Need> needList = new ArrayList<>();
             long ttl = System.currentTimeMillis() + 100000;
-            needList.add(new Need("hedi.sassi@epfl.ch", "", "my description", ttl, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ,""));
+            needList.add(new Need("hedi.sassi@epfl.ch", "my description", ttl, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ,""));
             availableNeeds = needList;
         }
         else {
@@ -212,7 +212,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addCircle(mCircleOptions);
                 showAvailableNeeds();
 
-                // TODO: recup la liste des needs, check si mon need est dedans et si la liste des participants a été updaté
+                // TODO: recup la liste des needs, check si mon need est dedans et si la liste des participants a été updatée
                 Need user_need = findUserNeed(availableNeeds, Database.getDBauth);
                 if (user_need != null) { // the user has created a need already
                     createNotification();
