@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,11 +39,16 @@ import org.mockito.stubbing.Answer;
 import java.util.concurrent.Executor;
 
 import ch.epfl.sweng.swengproject.MyApplication;
+import ch.epfl.sweng.swengproject.R;
+import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
 import ch.epfl.sweng.swengproject.storage.db.UserDao;
 import ch.epfl.sweng.swengproject.util.UITestException;
 
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -94,38 +101,20 @@ public class MainActivityTests {
         when(mockFirebaseAuth.getCurrentUser()).thenReturn(mockFirebaseUser);
     }
 
-    /* @Test
-    public void noProfileInHDExist() throws InterruptedException{
+
+    @Test
+    public void noProfileInHDExist(){
         StorageHelper.deleteAllDataStoredLocally();
-        //User me = UserTestUtil.randomUser();
-        //userDao.storeMyOwnProfile(me);
-
-        /*Instrumentation.ActivityMonitor aM =  new Instrumentation.ActivityMonitor();
-
 
         mainActivity.launchActivity(new Intent());
-         Thread.sleep(5000);
-        assertEquals(MainActivity.class, aM.getLastActivity());*/
-    // Thread.sleep(1000);
 
-
-    //mainActivity.finishActivity();
-        /*mainActivity.launchActivity(new Intent());
-        //Thread.sleep(5000);
-        boolean passed = true;
-        try { //the activity should not have changed => login_btn isn't on the view and should return an error
-            onView(withId(R.id.inscription_src)).perform(click());
-
-        }catch (NoMatchingViewException e) {
-
-            passed = false;
-        }
-        assertEquals(true,passed);
-    }*/
+        //check that inscription activity is displayed by clicking on it
+        onView(withId(R.id.inscription_src)).perform(click());
+    }
 
 
     @Test
-    public void authDoesNotSucceed() throws InterruptedException{
+    public void authDoesNotSucceed(){
 
         MyApplication.setFirebaseAuthMock(mockFirebaseAuth);
 
@@ -139,10 +128,8 @@ public class MainActivityTests {
 
         testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
 
-
-        //assertEqual we are in registerActivity
-        assertEquals(true,true);
-        Thread.sleep(3000);
+        //check that inscription activity is displayed by clicking on it
+        onView(withId(R.id.inscription_src)).perform(click());
     }
 
     @Test
@@ -167,10 +154,11 @@ public class MainActivityTests {
         testOnCompleteListener.getValue().onComplete(mockAuthResultTask);
 
         //assert equal we are in login activity and the field in textfield is automatticaly filled
-        assertEquals(true,true);
-        Thread.sleep(3000);
+        //check that inscription activity is displayed by clicking on it
+        EditText emailOnLogin =
+        onView(withId(R.id.inscription_src)).perform(click());
     }
-
+/*
     @Test
     public void authSucceedAndUserVerified() throws InterruptedException{
 
@@ -195,5 +183,5 @@ public class MainActivityTests {
         //assert equal we are in map activity and the field in textfield is automatticaly filled
         assertEquals(true,true);
         Thread.sleep(3000);
-    }
+    }*/
 }
