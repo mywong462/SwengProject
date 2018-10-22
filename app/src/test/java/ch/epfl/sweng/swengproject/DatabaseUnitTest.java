@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -331,6 +332,48 @@ public class DatabaseUnitTest {
     @Test(expected = IllegalArgumentException.class)
     public void wrongInput8(){
         DBTools.averageNbrParticipants(new ArrayList<Need>());
+    }
+
+
+
+    @Test
+    public void canSortNeedWithTime(){
+
+        ArrayList<Need> listNeeds = new ArrayList<>();
+        String participants = "specialuser@gmail.com,simon@epfl.ch,noreply@hotmail.com";
+
+        long timeValid =  System.currentTimeMillis() + 100000;
+
+        listNeeds.add(new Need("specialuser@gmail.com","random description",timeValid + 24, 12, 34,Categories.NEED, 12,participants ));
+        listNeeds.add(new Need("specialuser@gmail.com","random description",timeValid, 12, 34,Categories.NEED, 12,participants ));
+        listNeeds.add(new Need("email@hotmail.ch","random description",timeValid -1, 0, 0,Categories.MEET, 12,participants ));
+        listNeeds.add(new Need("specialuser@gmail.com","random description",timeValid, 12, 34,Categories.NEED, 12,participants ));
+        listNeeds.add(new Need("specialuser@gmail.com","random description",timeValid+1, 12, 34,Categories.NEED, 12,participants ));
+        listNeeds.add(new Need("specialuser@gmail.com","random description",timeValid + 20, 12, 34,Categories.NEED, 12,participants ));
+
+
+        Comparator<Need> c = new Comparator<Need>() {
+            @Override
+            public int compare(Need o1, Need o2) {
+                if(o1.getTimeToLive() > o2.getTimeToLive()){
+                    return 1;
+                }
+                else if(o1.getTimeToLive() == o2.getTimeToLive()){
+                    return 0;
+                }
+                else{
+                    return -1;
+                }
+            }
+        };
+
+        List<Need> res = DBTools.sort(listNeeds,c);
+
+        assertTrue(res.get(0).getTimeToLive() < res.get(1).getTimeToLive());
+        assertTrue(res.get(1).getTimeToLive() < res.get(3).getTimeToLive());
+        assertTrue(res.get(0).getTimeToLive() < res.get(3).getTimeToLive());
+        assertTrue(res.get(0).getTimeToLive() < res.get(2).getTimeToLive());
+        assertTrue(res.get(2).getTimeToLive() < res.get(4).getTimeToLive());
     }
 
 }
