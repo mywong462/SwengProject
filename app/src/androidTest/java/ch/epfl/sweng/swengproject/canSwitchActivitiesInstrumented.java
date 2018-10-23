@@ -27,6 +27,8 @@ public class canSwitchActivitiesInstrumented {
 
         onView(withId(R.id.login_btn2)).perform(click());
 
+        onView(withId(R.id.welcome_scr)).perform(click());
+
         onView(withId(R.id.register_btn1)).perform(click());
 
         onView(withId(R.id.resetPassword_btn2)).perform(click());
