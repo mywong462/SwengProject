@@ -36,6 +36,17 @@ import static org.mockito.Mockito.when;
 
 public class DatabaseTest {
 
+
+	private String lo = "longitude";
+	private String lat = "latitude";
+	private String emit = "emitter";
+	private String descr = "description";
+	private String nbP = "nbPeopleNeeded";
+	private String ttl = "timeToLive";
+	private String cat = "category";
+	private String part = "participants";
+	private String mail = "benoitknuchel@gmail.com";
+
     //EVERY MOCKED OBJECTS
     @Mock
     private FirebaseAuth dbAuth = mock(FirebaseAuth.class);
@@ -215,14 +226,14 @@ public class DatabaseTest {
     @Test
     public void testDefineTaskGetNeeds(){
 
-        when(docSnap.get("longitude")).thenReturn(1.0);
-        when(docSnap.get("latitude")).thenReturn(1.0);
-        when(docSnap.get("emitter")).thenReturn("emit");
-        when(docSnap.get("description")).thenReturn("descr");
-        when(docSnap.get("nbPeopleNeeded")).thenReturn(1);
-        when(docSnap.get("timeToLive")).thenReturn(1L);
-        when(docSnap.get("category")).thenReturn("HELP");
-        when(docSnap.get("participants")).thenReturn("");
+        when(docSnap.get(lo)).thenReturn(1.0);
+        when(docSnap.get(lat)).thenReturn(1.0);
+        when(docSnap.get(emit)).thenReturn("emit");
+        when(docSnap.get(descr)).thenReturn("descr");
+        when(docSnap.get(nbP)).thenReturn(1);
+        when(docSnap.get(ttl)).thenReturn(1L);
+        when(docSnap.get(cat)).thenReturn("HELP");
+        when(docSnap.get(part)).thenReturn("");
         when(docSnap.getReference()).thenReturn(docRef);
 
         listDocSnap.add(docSnap);
@@ -237,21 +248,21 @@ public class DatabaseTest {
         when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
         Database.setDbAuth(dbAuth);
 
-        when(docSnap.get("longitude")).thenReturn(0.0);
-        when(docSnap.get("latitude")).thenReturn(0.0);
-        when(docSnap.get("emitter")).thenReturn("emit");
-        when(docSnap.get("description")).thenReturn("descr");
-        when(docSnap.get("nbPeopleNeeded")).thenReturn(1);
-        when(docSnap.get("timeToLive")).thenReturn(1L);
-        when(docSnap.get("category")).thenReturn("HELP");
-        when(docSnap.get("participants")).thenReturn("");
+        when(docSnap.get(lo)).thenReturn(0.0);
+        when(docSnap.get(lat)).thenReturn(0.0);
+        when(docSnap.get(emit)).thenReturn("emit");
+        when(docSnap.get(descr)).thenReturn("descr");
+        when(docSnap.get(nbP)).thenReturn(1);
+        when(docSnap.get(ttl)).thenReturn(1L);
+        when(docSnap.get(cat)).thenReturn("HELP");
+        when(docSnap.get(part)).thenReturn("");
         when(docSnap.getReference()).thenReturn(docRef);
 
         when(docSnap.getReference()).thenReturn(docRef);
         when(dbAuth.getCurrentUser()).thenReturn(user);
-        when(user.getEmail()).thenReturn("benoitknuchel@gmail.com");
+        when(user.getEmail()).thenReturn(mail);
 
-        when(docRef.update("participants", dbAuth.getCurrentUser().getEmail())).thenReturn(new Task<Void>() {
+        when(docRef.update(part, dbAuth.getCurrentUser().getEmail())).thenReturn(new Task<Void>() {
             @Override
             public boolean isComplete() {
                 return true;
@@ -331,21 +342,21 @@ public class DatabaseTest {
         when(queryDocumentSnapshots.getDocuments()).thenReturn(listDocSnap);
         Database.setDbAuth(dbAuth);
 
-        when(docSnap.get("longitude")).thenReturn(0.0);
-        when(docSnap.get("latitude")).thenReturn(0.0);
-        when(docSnap.get("emitter")).thenReturn("emit");
-        when(docSnap.get("description")).thenReturn("descr");
-        when(docSnap.get("nbPeopleNeeded")).thenReturn(1);
-        when(docSnap.get("timeToLive")).thenReturn(1L);
-        when(docSnap.get("category")).thenReturn("HELP");
-        when(docSnap.get("participants")).thenReturn("benoitknuchel@gmail.com");
+        when(docSnap.get(lo)).thenReturn(0.0);
+        when(docSnap.get(lat)).thenReturn(0.0);
+        when(docSnap.get(emit)).thenReturn("emit");
+        when(docSnap.get(descr)).thenReturn("descr");
+        when(docSnap.get(nbP)).thenReturn(1);
+        when(docSnap.get(ttl)).thenReturn(1L);
+        when(docSnap.get(cat)).thenReturn("HELP");
+        when(docSnap.get(part)).thenReturn(mail);
         when(docSnap.getReference()).thenReturn(docRef);
 
         when(docSnap.getReference()).thenReturn(docRef);
         when(dbAuth.getCurrentUser()).thenReturn(user);
-        when(user.getEmail()).thenReturn("benoitknuchel@gmail.com");
+        when(user.getEmail()).thenReturn(mail);
 
-        when(docRef.update("participants", dbAuth.getCurrentUser().getEmail())).thenReturn(new Task<Void>() {
+        when(docRef.update(part, dbAuth.getCurrentUser().getEmail())).thenReturn(new Task<Void>() {
             @Override
             public boolean isComplete() {
                 return true;
@@ -433,14 +444,14 @@ public class DatabaseTest {
     public void testSetNeedFromSnapshotNotNull(){
 
 
-        when(docSnap.get("longitude")).thenReturn(1.0);
-        when(docSnap.get("latitude")).thenReturn(1.0);
-        when(docSnap.get("emitter")).thenReturn("emit");
-        when(docSnap.get("description")).thenReturn("descr");
-        when(docSnap.get("nbPeopleNeeded")).thenReturn(1);
-        when(docSnap.get("timeToLive")).thenReturn(1L);
-        when(docSnap.get("category")).thenReturn("HELP");
-        when(docSnap.get("participants")).thenReturn("");
+        when(docSnap.get(lo)).thenReturn(1.0);
+        when(docSnap.get(lat)).thenReturn(1.0);
+        when(docSnap.get(emit)).thenReturn("emit");
+        when(docSnap.get(descr)).thenReturn("descr");
+        when(docSnap.get(nbP)).thenReturn(1);
+        when(docSnap.get(ttl)).thenReturn(1L);
+        when(docSnap.get(cat)).thenReturn("HELP");
+        when(docSnap.get(part)).thenReturn("");
         when(docSnap.getReference()).thenReturn(docRef);
 
         Database.setNeedFromSnapshot(docSnap);
