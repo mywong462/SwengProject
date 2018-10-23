@@ -42,8 +42,6 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private LocationResult mockLR;
 
-    private boolean permTest = true;
-
     private static final int LOCATION_REQUEST_CODE = 99;
 
     private static final int REQUEST_CHECK_SETTINGS = 555;
@@ -144,7 +142,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     @Override
     public void callerOnPause() {
-        if (isPermissionGranted() && permTest) {
+        if (isPermissionGranted()) {
             Log.d(LOGTAG, "callerOnPause" + activity.getLocalClassName());
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
@@ -168,7 +166,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         }
     }
 
-    private AlertDialog getNewPermissionDialog() {
+    public AlertDialog getNewPermissionDialog() {
         return permissionDialog = MyApplication.showCustomAlert2Buttons("SwengProject needs your location to continue :(",
                 "To allow SwengProject to TRACKK U please go to the settings and allow" +
                         " SwngProject to use your location",
@@ -184,7 +182,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private void checkLocationPermission() {
 
-        if (!isPermissionGranted() && !permTest) {
+        if (!isPermissionGranted()) {
             //Permission not granted
 
             //Should the app give an explanation?
@@ -311,7 +309,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private void startLocationUpdates() {
         try {
-            if (isPermissionGranted() && permTest) {
+            if (isPermissionGranted()) {
                 Log.d(LOGTAG, "OK PERMISSION");
                 alreadyAskingForLocation = false;
                 if(!test) {
@@ -354,9 +352,6 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         this.test = test;
     }
 
-    public void setTestPermission(boolean permTest){
-        this.permTest = permTest;
-    }
 
     public void injectMockLocationResult(LocationResult lr){
         mockLR = lr;

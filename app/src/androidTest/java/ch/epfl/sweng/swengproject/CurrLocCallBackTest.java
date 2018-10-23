@@ -123,6 +123,22 @@ public class CurrLocCallBackTest {
         assertEquals(new LatLng(40.0, 7.0), MyApplication.currentLocation.getLastLocation());
     }
 
+    @Test
+    public void testDialogButtonSettings() throws UiObjectNotFoundException{
+        MyApplication.currentLocation.getNewPermissionDialog().show();
+        UiObject settingsBtn = mDevice.findObject(new UiSelector().text("SETTINGS"));
+        settingsBtn.clickAndWaitForNewWindow();
+        UiObject appInfoTextField = mDevice.findObject(new UiSelector().text("App info"));
+        assertTrue(appInfoTextField.exists());
+    }
+
+    @Test
+    public void testDialogButtonDone() throws UiObjectNotFoundException{
+        MyApplication.currentLocation.getNewPermissionDialog().show();
+        UiObject doneBtn = mDevice.findObject(new UiSelector().text("DONE !"));
+        doneBtn.click();
+    }
+
 
     private void clickOKLocation() throws UiObjectNotFoundException {
         UiObject OKBtn = mDevice.findObject(new UiSelector()
