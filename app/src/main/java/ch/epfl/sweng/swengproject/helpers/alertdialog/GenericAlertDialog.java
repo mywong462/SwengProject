@@ -39,6 +39,7 @@ public class GenericAlertDialog extends DialogFragment  {
         String neutral = getArguments().getString("neutralButton");
         String negative = getArguments().getString("negativeButton");
         final int myIdentifier = getArguments().getInt("dialogID", -2);
+        boolean isCancelable = getArguments().getBoolean("cancelable", true);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         if(title != null){
@@ -79,7 +80,7 @@ public class GenericAlertDialog extends DialogFragment  {
             }
         });
 
-
+        ad.setCanceledOnTouchOutside(isCancelable);
         return ad;
         }
 }

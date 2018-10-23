@@ -237,7 +237,9 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                 "Before continuing to use this application, we must ensure that you provided your real email account. For this, please check your mailbox and click on the link you received from us. \nNo email received ? Maybe you made an error when typing your email...");
         bundle.putString("positiveButton","That's done !");
         bundle.putString("neutralButton","Check my email");
+        bundle.putBoolean("cancelable", false);
         bundle.putInt("dialogID",1);
+
         df.setArguments(bundle);
         df.show(getSupportFragmentManager(), "validate_email");
     }
@@ -251,15 +253,14 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
         bundle.putString("positiveButton","Login with this email");
         bundle.putString("neutralButton","Change Email");
+        bundle.putBoolean("cancelable", false);
         bundle.putInt("dialogID", 2);
-        System.out.println("KKKKK-KKKK");
         df.setArguments(bundle);
         df.show(getSupportFragmentManager(), "email_already_exist");
     }
 
     @Override
     public void onPositiveClick(int id) {
-        System.out.println("öJLöJLöJöLJöLJöLJL" + id);
 
         if(id == 1){//validate email alert dialog
             //the user pretend he verified his email
@@ -282,8 +283,6 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                     });
         }else if(id == 2) {//email exist alert dialog
             //the user want to log with this email instead of register
-            System.out.println("HHHHHHHHHHHHHHH");
-
             finish();
             startActivity(new Intent(this, LoginActivity.class)
                     .putExtra("email_to_propose", emailEditText.getText().toString()));
