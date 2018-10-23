@@ -163,6 +163,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
         NetworkInfo info = conMan.getActiveNetworkInfo();
         if (info == null || !info.isConnected()) { //check if the error was caused by network connectivity problems
             Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network", Toast.LENGTH_LONG).show();
+
             userCanInteract = true;
             return;
         }
@@ -194,7 +195,8 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                     if(exception instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException){
                         showEmailExistAlertDialog();
                     }else{
-                        Toast.makeText(MyApplication.getAppContext(), "Your inscription failed ! We are sorry for that, please try later", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(MyApplication.getAppContext(), "Your inscription failed ! We are sorry for that, please try later", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MyApplication.getAppContext(), "Hello", Toast.LENGTH_LONG).show();
                         userCanInteract = true;
                         System.out.println("The inscription failed because : " + exception.toString());
                     }
