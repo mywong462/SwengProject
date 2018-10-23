@@ -39,7 +39,7 @@ public class LoginInstrumentedTestFromLogin {
     @Test
     public void master(){
 
-        Looper.prepare();
+        //Looper.prepare();
 
         eMailNotVerified();
         emailVerified();
