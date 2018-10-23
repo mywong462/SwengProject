@@ -17,6 +17,7 @@ import android.support.test.uiautomator.UiSelector;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,6 +47,11 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
         //Disable location
         disableLocation();
+    }
+
+    @After
+    public void after() throws InterruptedException{
+        enableLocation();
     }
 
 

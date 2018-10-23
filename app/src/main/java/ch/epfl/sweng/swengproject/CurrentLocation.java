@@ -285,7 +285,6 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(LOGTAG, "HEHOHEHOHEOHEOHOHO");
         switch (requestCode) {
             case CurrentLocation.REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
