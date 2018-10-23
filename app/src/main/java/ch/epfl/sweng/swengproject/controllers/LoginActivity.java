@@ -16,17 +16,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import ch.epfl.sweng.swengproject.Database;
 import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.ResetPasswordActivity;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.AlertDialogGenericListener;
-import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginAlertDialog;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.GenericAlertDialog;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
 
-// TO DO: import the method checkInfo ect from Registration activity to call them here
-// (code repetition)
+
 
 public class LoginActivity extends AppCompatActivity implements AlertDialogGenericListener {
 
@@ -97,8 +95,7 @@ public class LoginActivity extends AppCompatActivity implements AlertDialogGener
                                     finish();
                                     startActivity(new Intent(LoginActivity.this, MapsActivity.class));
                                 } else if(task.isSuccessful() && !auth.getCurrentUser().isEmailVerified()){
-                                    DialogFragment df = new LoginAlertDialog();
-                                    df.show(getSupportFragmentManager(), "validate_email");
+                                    showConfirmEmailAlertDialog();
                                     btnLogin.setEnabled(true);
                                 }else {
                                     Toast fail = Toast.makeText(LoginActivity.this, "Login Failed",Toast.LENGTH_LONG);
@@ -114,19 +111,31 @@ public class LoginActivity extends AppCompatActivity implements AlertDialogGener
 
     }
 
+    private void showConfirmEmailAlertDialog(){
+        DialogFragment df = new GenericAlertDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString("title", "Please certify your email");
+        bundle.putString("message",
+                "You cannot log in to this app with an email that has not been validate. Please open your mailbox and click the link you received from us.");
+        bundle.putString("positive", "Send me an email again");
+        bundle.putString("neutral","Ok");
+        bundle.putInt("dialogID",1);
+        df.setArguments(bundle);
+        df.show(getSupportFragmentManager(), "validate_email_in_login");
+    }
 
     @Override
-    public void onPositiveClick(DialogFragment dialog) {
+    public void onPositiveClick(int id) {
         auth.getCurrentUser().sendEmailVerification();
     }
 
     @Override
-    public void onNeutralClick(DialogFragment dialog) {
+    public void onNeutralClick(int id) {
 
     }
 
     @Override
-    public void onNegativeClick(DialogFragment dialog) {
+    public void onNegativeClick(int id) {
 
     }
 

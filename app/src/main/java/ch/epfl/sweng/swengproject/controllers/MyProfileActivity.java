@@ -31,11 +31,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
-import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.AlertDialogGenericListener;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.LogOutAlertDialog;
-import ch.epfl.sweng.swengproject.helpers.alertdialog.LoginAlertDialog;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
