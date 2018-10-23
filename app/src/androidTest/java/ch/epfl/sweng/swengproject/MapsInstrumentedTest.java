@@ -5,9 +5,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiSelector;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -63,6 +68,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.GeoPoint;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -74,6 +80,7 @@ import java.util.List;
 
 import ch.epfl.sweng.swengproject.util.FakeLocation;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -94,13 +101,25 @@ public class MapsInstrumentedTest {
     @Rule
     public final ActivityTestRule<MapsActivity> mActivityRule = new ActivityTestRule<>(MapsActivity.class,false,false);
 
+    private UiDevice mDevice;
+
     @Before
     public void injectLocation(){
 
+        mDevice = UiDevice.getInstance(getInstrumentation());
+
         LocationServer ls = new FakeLocation();
+
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("settings put location_providers_allowed +gps");
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("settings put location_providers_allowed +network");
 
         //inject the mocked object in the activity
         mActivityRule.launchActivity(new Intent().putExtra("loc",ls));
+    }
+
+    @After
+    public void after(){
+        clickOKLocationIfAsked();
     }
 
     @Test
@@ -813,6 +832,33 @@ public class MapsInstrumentedTest {
         mActivityRule.getActivity().setMap(m);
         mActivityRule.getActivity().updateUI();
 
+    }
+
+    private void clickOKLocationIfAsked(){
+        try {
+            UiObject OKBtn = mDevice.findObject(new UiSelector()
+                    .text("OK")
+                    .className("android.widget.Button"));
+            OKBtn.waitForExists(500);
+            if (OKBtn.exists()) {
+                OKBtn.click();
+            }
+            clickAgreeImproveLocationAccuracy();
+        }catch(UiObjectNotFoundException e){}
+    }
+
+    private void clickAgreeImproveLocationAccuracy() throws UiObjectNotFoundException {
+        UiObject agreeImprove = mDevice.findObject(new UiSelector()
+                .text("AGREE")
+                .index(1)
+                .resourceId("android:id/button1")
+                .className("android.widget.Button")
+                .clickable(true)
+                .packageName("com.google.android.gms"));
+        agreeImprove.waitForExists(500);
+        if (agreeImprove.exists()) {
+            agreeImprove.click();
+        }
     }
 
 }
