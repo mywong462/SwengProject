@@ -17,7 +17,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,7 +59,9 @@ public class CurrLocCallBackTest {
             clickAllow();
             clickOKLocation();
             Thread.sleep(2000);
-        }catch (UiObjectNotFoundException e){}
+        }catch (UiObjectNotFoundException e){
+            e.printStackTrace();
+        }
 
         when(loc.getLatitude()).thenReturn(40.0);
         when(loc.getLongitude()).thenReturn(7.0);
@@ -71,7 +72,9 @@ public class CurrLocCallBackTest {
         try{
             clickAllow();
             clickOKLocation();
-        }catch (UiObjectNotFoundException e){}
+        }catch (UiObjectNotFoundException e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -119,7 +122,6 @@ public class CurrLocCallBackTest {
         assertTrue(test);
         assertEquals(new LatLng(40.0, 7.0), MyApplication.currentLocation.getLastLocation());
     }
-
 
 
     private void clickOKLocation() throws UiObjectNotFoundException {

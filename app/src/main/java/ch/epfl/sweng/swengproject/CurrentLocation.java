@@ -42,6 +42,8 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private LocationResult mockLR;
 
+    private boolean permTest = true;
+
     private static final int LOCATION_REQUEST_CODE = 99;
 
     private static final int REQUEST_CHECK_SETTINGS = 555;
@@ -142,7 +144,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     @Override
     public void callerOnPause() {
-        if (isPermissionGranted()) {
+        if (isPermissionGranted() && permTest) {
             Log.d(LOGTAG, "callerOnPause" + activity.getLocalClassName());
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
@@ -182,7 +184,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private void checkLocationPermission() {
 
-        if (!isPermissionGranted()) {
+        if (!isPermissionGranted() && !permTest) {
             //Permission not granted
 
             //Should the app give an explanation?
@@ -216,10 +218,9 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
         Log.d(LOGTAG, "resquest permission result");
-
         switch (requestCode) {
             case LOCATION_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty
@@ -229,7 +230,6 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                 } else {
                     Log.d(LOGTAG, "Permission denied, asking again");
                 }
-                return;
             }
         }
 
@@ -275,6 +275,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                             resolvable.startResolutionForResult(activity,
                                     REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException sendEx) {
+                            sendEx.printStackTrace();
                         }
                     }
 
@@ -310,7 +311,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private void startLocationUpdates() {
         try {
-            if (isPermissionGranted()) {
+            if (isPermissionGranted() && permTest) {
                 Log.d(LOGTAG, "OK PERMISSION");
                 alreadyAskingForLocation = false;
                 if(!test) {
@@ -323,6 +324,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                 checkLocationPermission();
             }
         } catch (SecurityException e) {
+            e.printStackTrace();
         }
     }
 
@@ -350,6 +352,10 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     public void setTestMode(boolean test){
         this.test = test;
+    }
+
+    public void setTestPermission(boolean permTest){
+        this.permTest = permTest;
     }
 
     public void injectMockLocationResult(LocationResult lr){

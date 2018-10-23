@@ -45,12 +45,23 @@ public class CurrentLocationInstrumentedTestNoPermission {
 
         context = InstrumentationRegistry.getContext();
 
+        try{
+            clickOKLocation();
+        }catch (UiObjectNotFoundException e){
+            e.printStackTrace();
+        }
+
         //Disable location
         disableLocation();
     }
 
     @After
     public void after() throws InterruptedException{
+        try{
+            clickOKLocation();
+        }catch (UiObjectNotFoundException e){
+            e.printStackTrace();
+        }
         enableLocation();
     }
 

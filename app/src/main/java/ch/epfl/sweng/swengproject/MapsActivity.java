@@ -234,6 +234,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("ERROR", "NO PERMISSION TO UPDATEUI");
             }
         } catch (SecurityException e) {
+            e.printStackTrace();
         }
     }
 
