@@ -46,6 +46,9 @@ public class DatabaseTest {
 	private String cat = "category";
 	private String part = "participants";
 	private String mail = "benoitknuchel@gmail.com";
+	private String d = "descr";
+	private String e = "emit";
+	private String h = "HELP";
 
     //EVERY MOCKED OBJECTS
     @Mock
@@ -228,11 +231,11 @@ public class DatabaseTest {
 
         when(docSnap.get(lo)).thenReturn(1.0);
         when(docSnap.get(lat)).thenReturn(1.0);
-        when(docSnap.get(emit)).thenReturn("emit");
-        when(docSnap.get(descr)).thenReturn("descr");
+        when(docSnap.get(emit)).thenReturn(e);
+        when(docSnap.get(descr)).thenReturn(d);
         when(docSnap.get(nbP)).thenReturn(1);
         when(docSnap.get(ttl)).thenReturn(1L);
-        when(docSnap.get(cat)).thenReturn("HELP");
+        when(docSnap.get(cat)).thenReturn(h);
         when(docSnap.get(part)).thenReturn("");
         when(docSnap.getReference()).thenReturn(docRef);
 
@@ -250,11 +253,11 @@ public class DatabaseTest {
 
         when(docSnap.get(lo)).thenReturn(0.0);
         when(docSnap.get(lat)).thenReturn(0.0);
-        when(docSnap.get(emit)).thenReturn("emit");
-        when(docSnap.get(descr)).thenReturn("descr");
+        when(docSnap.get(emit)).thenReturn(e);
+        when(docSnap.get(descr)).thenReturn(d);
         when(docSnap.get(nbP)).thenReturn(1);
         when(docSnap.get(ttl)).thenReturn(1L);
-        when(docSnap.get(cat)).thenReturn("HELP");
+        when(docSnap.get(cat)).thenReturn(h);
         when(docSnap.get(part)).thenReturn("");
         when(docSnap.getReference()).thenReturn(docRef);
 
@@ -344,11 +347,11 @@ public class DatabaseTest {
 
         when(docSnap.get(lo)).thenReturn(0.0);
         when(docSnap.get(lat)).thenReturn(0.0);
-        when(docSnap.get(emit)).thenReturn("emit");
-        when(docSnap.get(descr)).thenReturn("descr");
+        when(docSnap.get(emit)).thenReturn(e);
+        when(docSnap.get(descr)).thenReturn(d);
         when(docSnap.get(nbP)).thenReturn(1);
         when(docSnap.get(ttl)).thenReturn(1L);
-        when(docSnap.get(cat)).thenReturn("HELP");
+        when(docSnap.get(cat)).thenReturn(h);
         when(docSnap.get(part)).thenReturn(mail);
         when(docSnap.getReference()).thenReturn(docRef);
 
@@ -446,11 +449,11 @@ public class DatabaseTest {
 
         when(docSnap.get(lo)).thenReturn(1.0);
         when(docSnap.get(lat)).thenReturn(1.0);
-        when(docSnap.get(emit)).thenReturn("emit");
-        when(docSnap.get(descr)).thenReturn("descr");
+        when(docSnap.get(emit)).thenReturn(e);
+        when(docSnap.get(descr)).thenReturn(d);
         when(docSnap.get(nbP)).thenReturn(1);
         when(docSnap.get(ttl)).thenReturn(1L);
-        when(docSnap.get(cat)).thenReturn("HELP");
+        when(docSnap.get(cat)).thenReturn(h);
         when(docSnap.get(part)).thenReturn("");
         when(docSnap.getReference()).thenReturn(docRef);
 
