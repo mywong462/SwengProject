@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,13 +32,10 @@ import java.lang.ref.WeakReference;
 
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.AlertDialogGenericListener;
-import ch.epfl.sweng.swengproject.helpers.alertdialog.LogOutAlertDialog;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.GenericAlertDialog;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 import ch.epfl.sweng.swengproject.storage.db.User;
-import ch.epfl.sweng.swengproject.storage.db.UserDao;
-
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class MyProfileActivity extends AppCompatActivity implements AlertDialogGenericListener {
 
@@ -62,7 +58,7 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logOutButtonPressed();
+                showLogOutAlertDialog();
             }
         });
 
@@ -137,25 +133,31 @@ public class MyProfileActivity extends AppCompatActivity implements AlertDialogG
     }
 
 
-    private void logOutButtonPressed(){
-        DialogFragment df = new LogOutAlertDialog();
-        df.show(getSupportFragmentManager(), "want_logout");
-    }
-
-
-
-    @Override
-    public void onPositiveClick(DialogFragment dialog) {
-        //do nothing
-    }
-
-    @Override
-    public void onNeutralClick(DialogFragment dialog) {
-        //do nothing
+    private void showLogOutAlertDialog(){
+        DialogFragment df = new GenericAlertDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString("title", "Warning");
+        bundle.putString("message",
+                "Login Out will delete everything that is stored locally.\n Do you really want to log out ?");
+        bundle.putString("negativeButton", "Log Out");
+        bundle.putString("neutralButton","Cancel");
+        bundle.putInt("dialogID",1);
+        df.setArguments(bundle);
+        df.show(getSupportFragmentManager(), "validate_email_in_login");
     }
 
     @Override
-    public void onNegativeClick(DialogFragment dialog) {
+    public void onPositiveClick(int id) {
+
+    }
+
+    @Override
+    public void onNeutralClick(int id) {
+
+    }
+
+    @Override
+    public void onNegativeClick(int id) {
         new LogOutTask(this).execute();
     }
 

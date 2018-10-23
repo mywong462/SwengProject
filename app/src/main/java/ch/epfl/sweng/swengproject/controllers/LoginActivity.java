@@ -117,21 +117,22 @@ public class LoginActivity extends AppCompatActivity implements AlertDialogGener
         bundle.putString("title", "Please certify your email");
         bundle.putString("message",
                 "You cannot log in to this app with an email that has not been validate. Please open your mailbox and click the link you received from us.");
-        bundle.putString("positive", "Send me an email again");
-        bundle.putString("neutral","Ok");
-        bundle.putInt("dialogID",1);
+        bundle.putString("positiveButton", "Send me an email again");
+        bundle.putString("neutralButton","Ok");
+        bundle.putInt("dialogID", 1);
         df.setArguments(bundle);
         df.show(getSupportFragmentManager(), "validate_email_in_login");
     }
 
     @Override
     public void onPositiveClick(int id) {
+
         auth.getCurrentUser().sendEmailVerification();
     }
 
     @Override
     public void onNeutralClick(int id) {
-
+        System.out.println(id);
     }
 
     @Override

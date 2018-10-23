@@ -38,7 +38,7 @@ public class GenericAlertDialog extends DialogFragment  {
         String positive = getArguments().getString("positiveButton");
         String neutral = getArguments().getString("neutralButton");
         String negative = getArguments().getString("negativeButton");
-        final int id = getArguments().getInt("dialogID", -1);
+        final int myIdentifier = getArguments().getInt("dialogID", -2);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         if(title != null){
@@ -50,21 +50,21 @@ public class GenericAlertDialog extends DialogFragment  {
         if(positive != null){
             builder.setPositiveButton(positive, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    mListener.onPositiveClick(id);
+                    mListener.onPositiveClick(myIdentifier);
                 }
             });
         }
         if(neutral != null){
-            builder.setPositiveButton(neutral, new DialogInterface.OnClickListener() {
+            builder.setNeutralButton(neutral, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    mListener.onNeutralClick(id);
+                    mListener.onNeutralClick(myIdentifier);
                 }
             });
         }
         if(negative != null){
-            builder.setPositiveButton(negative, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(negative, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    mListener.onNegativeClick(id);
+                    mListener.onNegativeClick(myIdentifier);
                 }
             });
         }
@@ -78,6 +78,7 @@ public class GenericAlertDialog extends DialogFragment  {
                 ad.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
             }
         });
+
 
         return ad;
         }
