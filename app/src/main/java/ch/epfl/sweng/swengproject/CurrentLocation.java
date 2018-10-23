@@ -40,6 +40,8 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private boolean test = false;
 
+    private boolean permTest = true;
+
     private LocationResult mockLR;
 
     private static final int LOCATION_REQUEST_CODE = 99;
@@ -166,7 +168,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         }
     }
 
-    public AlertDialog getNewPermissionDialog() {
+    private AlertDialog getNewPermissionDialog() {
         return permissionDialog = MyApplication.showCustomAlert2Buttons("SwengProject needs your location to continue :(",
                 "To allow SwengProject to TRACKK U please go to the settings and allow" +
                         " SwngProject to use your location",
@@ -182,7 +184,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private void checkLocationPermission() {
 
-        if (!isPermissionGranted()) {
+        if (!isPermissionGranted() || !permTest) {
             //Permission not granted
 
             //Should the app give an explanation?
@@ -352,12 +354,8 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
         this.test = test;
     }
 
-
     public void injectMockLocationResult(LocationResult lr){
         mockLR = lr;
     }
 
-    public FusedLocationProviderClient getmFusedLocationProviderClient(){
-        return mFusedLocationProviderClient;
-    }
 }

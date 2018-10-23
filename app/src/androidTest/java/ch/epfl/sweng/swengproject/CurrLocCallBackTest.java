@@ -1,9 +1,11 @@
 package ch.epfl.sweng.swengproject;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.arch.core.util.Function;
 import android.location.Location;
+import android.os.Looper;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
@@ -17,6 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,23 +41,18 @@ public class CurrLocCallBackTest {
     public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
 
     private UiDevice mDevice = UiDevice.getInstance(getInstrumentation());
-
-    private boolean test = false;
-
+    
     private final int REQUEST_CHECK_SETTINGS = 555;
 
-    public Function<Void, Void> function = new Function<Void, Void>() {
-        @Override
-        public Void apply(Void input) {
-            test = true;
-            return null;
-        }
-    };
+    private static final String PACKAGE
+            = "ch.epfl.sweng.swengproject";
+
 
     private Location loc = mock(Location.class);
 
     @Before
     public void before() throws InterruptedException{
+
         try{
             clickAllow();
             clickOKLocation();
@@ -112,32 +110,29 @@ public class CurrLocCallBackTest {
         LocationResult lr = LocationResult.create(locList);
         MyApplication.currentLocation.setTestMode(true);
         MyApplication.currentLocation.injectMockLocationResult(lr);
-        MyApplication.currentLocation.setFunction(function);
         clickOKLocation();
         MyApplication.currentLocation.onActivityResult(REQUEST_CHECK_SETTINGS, Activity.RESULT_OK, null);
 
         Log.d(LOGTAG, "AAAAAAAAAAAAAAAAAAAAAAAH");
         MyApplication.currentLocation.setTestMode(false);
 
-        assertTrue(test);
         assertEquals(new LatLng(40.0, 7.0), MyApplication.currentLocation.getLastLocation());
     }
 
-    @Test
-    public void testDialogButtonSettings() throws UiObjectNotFoundException{
-        MyApplication.currentLocation.getNewPermissionDialog().show();
+    @Ignore
+    public void testDialogButton() throws UiObjectNotFoundException, InterruptedException{
+        getInstrumentation().getUiAutomation().executeShellCommand("pm revoke " + PACKAGE + " " + Manifest.permission.ACCESS_FINE_LOCATION);
         UiObject settingsBtn = mDevice.findObject(new UiSelector().text("SETTINGS"));
         settingsBtn.clickAndWaitForNewWindow();
         UiObject appInfoTextField = mDevice.findObject(new UiSelector().text("App info"));
         assertTrue(appInfoTextField.exists());
-    }
-
-    @Test
-    public void testDialogButtonDone() throws UiObjectNotFoundException{
-        MyApplication.currentLocation.getNewPermissionDialog().show();
+        mDevice.pressBack();
         UiObject doneBtn = mDevice.findObject(new UiSelector().text("DONE !"));
+        getInstrumentation().getUiAutomation().executeShellCommand("pm grant " + PACKAGE + " " + Manifest.permission.ACCESS_FINE_LOCATION);
+        Thread.sleep(2000);
         doneBtn.click();
     }
+
 
 
     private void clickOKLocation() throws UiObjectNotFoundException {
@@ -169,6 +164,15 @@ public class CurrLocCallBackTest {
     private void clickAllow() throws UiObjectNotFoundException {
         UiObject allowBtn = mDevice.findObject(new UiSelector()
                 .text("ALLOW")
+                .className("android.widget.Button"));
+
+        allowBtn.waitForExists(500);
+        allowBtn.click();
+    }
+
+    private void clickDeny() throws UiObjectNotFoundException {
+        UiObject allowBtn = mDevice.findObject(new UiSelector()
+                .text("DENY")
                 .className("android.widget.Button"));
 
         allowBtn.waitForExists(500);
