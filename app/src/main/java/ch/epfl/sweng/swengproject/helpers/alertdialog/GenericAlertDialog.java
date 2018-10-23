@@ -13,13 +13,6 @@ import android.support.v4.app.DialogFragment;
  */
 public class GenericAlertDialog extends DialogFragment  {
 
-    String title = getArguments().getString("title");
-    String message = getArguments().getString("message");
-    String positive = getArguments().getString("positiveButton");
-    String neutral = getArguments().getString("neutralButton");
-    String negative = getArguments().getString("negativeButton");
-    private final int id = getArguments().getInt("dialogID", -1);
-
     // Use this instance of the interface to deliver action events
     private AlertDialogGenericListener mListener;
 
@@ -40,6 +33,13 @@ public class GenericAlertDialog extends DialogFragment  {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
+        String title = getArguments().getString("title");
+        String message = getArguments().getString("message");
+        String positive = getArguments().getString("positiveButton");
+        String neutral = getArguments().getString("neutralButton");
+        String negative = getArguments().getString("negativeButton");
+        final int id = getArguments().getInt("dialogID", -1);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         if(title != null){
             builder.setTitle(title);

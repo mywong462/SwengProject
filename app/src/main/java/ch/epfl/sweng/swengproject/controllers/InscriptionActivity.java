@@ -30,13 +30,11 @@ import com.google.firebase.auth.FirebaseUser;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import ch.epfl.sweng.swengproject.Database;
 import ch.epfl.sweng.swengproject.MapsActivity;
 import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.AlertDialogGenericListener;
-import ch.epfl.sweng.swengproject.helpers.alertdialog.EmailAlreadyExistAlertDialog;
-import ch.epfl.sweng.swengproject.helpers.alertdialog.InscriptionAlertDialog;
+import ch.epfl.sweng.swengproject.helpers.alertdialog.GenericAlertDialog;
 import ch.epfl.sweng.swengproject.helpers.inputvalidation.InscriptionValidator;
 import ch.epfl.sweng.swengproject.storage.StorageHelper;
 import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
@@ -53,19 +51,21 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
     private EditText lastNameEditText;
     private  Button registerButton;
 
-
+    //set to false once the user pressed the register button
     private boolean userCanInteract = true;
 
+    //our profile that will be sent to the server if no error occurred
     private User meToSend = null;
 
     //Firebase auth
-    private final FirebaseAuth auth = Database.getDBauth;
+    private final FirebaseAuth auth = MyApplication.getFirebaseAuth();
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        //blocks the event to reach the buttons when the Toast is displayed
+        //blocks the event to reach the buttons when the alert dialogs are displayed
         return userCanInteract && super.dispatchTouchEvent(ev);
     }
+
     @Override
     public void onClick(View v) {
     }
@@ -96,7 +96,6 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                registerButton.setEnabled(false);
                 userCanInteract = false;
                 checkBeforeRegister();
             }
@@ -154,7 +153,6 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
             register();
         }else{
             userCanInteract = true;
-            registerButton.setEnabled(true);
         }
     }
 
@@ -166,7 +164,6 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
         if (info == null || !info.isConnected()) { //check if the error was caused by network connectivity problems
             Toast.makeText(MyApplication.getAppContext(), "Your inscription failed! Please make sure that you are connected to a network", Toast.LENGTH_LONG).show();
             userCanInteract = true;
-            registerButton.setEnabled(true);
             return;
         }
 
@@ -188,20 +185,17 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                     Bitmap bm = ((BitmapDrawable) profilePictureButton.getDrawable()).getBitmap();
                     meToSend.setPicture(bm);
 
-                    new StoreMyProfileTask().execute(meToSend);
+                    new StoreMyProfileAsyncTask().execute(meToSend);
 
-                    DialogFragment df = new InscriptionAlertDialog();
-                    df.show(getSupportFragmentManager(), "validate_email");
+                    showValidateEmailAlertDialog();
 
                 } else {
                     Exception exception = task.getException();
                     if(exception instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException){
-                        DialogFragment df = new EmailAlreadyExistAlertDialog();
-                        df.show(getSupportFragmentManager(), "email_already_exist");
+                        showEmailExistAlertDialog();
                     }else{
                         Toast.makeText(MyApplication.getAppContext(), "Your inscription failed ! We are sorry for that, please try later", Toast.LENGTH_LONG).show();
                         userCanInteract = true;
-                        registerButton.setEnabled(true);
                         System.out.println("The inscription failed because : " + exception.toString());
                     }
                 }
@@ -211,7 +205,7 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
 
 
 
-    private static class StoreMyProfileTask extends AsyncTask<User, Void, Void> {
+    private static class StoreMyProfileAsyncTask extends AsyncTask<User, Void, Void> {
 
         UserDao userDao = AppDatabase.getInstance().userDao();
 
@@ -235,10 +229,38 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
         }
     }
 
+    private void showValidateEmailAlertDialog(){
+        DialogFragment df = new GenericAlertDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString("title", "Please certify your email");
+        bundle.putString("message",
+                "Before continuing to use this application, we must ensure that you provided your real email account. For this, please check your mailbox and click on the link you received from us. \nNo email received ? Maybe you made an error when typing your email...");
+        bundle.putString("positive","That's done !");
+        bundle.putString("neutral","Check my email");
+        bundle.putInt("dialogID",1);
+        df.setArguments(bundle);
+        df.show(getSupportFragmentManager(), "validate_email");
+    }
+
+    private void showEmailExistAlertDialog(){
+        DialogFragment df = new GenericAlertDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString("title", "This email already exist in our database");
+        bundle.putString("message",
+                "If you want to use an other email address, please click the \"Change Email\" button below. If you want to use this address, please login with it");
+
+        bundle.putString("positive","Login with this email");
+        bundle.putString("neutral","Change Email");
+        bundle.putInt("dialogID",2);
+        df.setArguments(bundle);
+        df.show(getSupportFragmentManager(), "email_already_exist");
+    }
 
     @Override
-    public void onPositiveClick(DialogFragment dialog) {
-        if(dialog instanceof InscriptionAlertDialog){
+    public void onPositiveClick(int id) {
+
+        if(id == 1){//validate email alert dialog
+            //the user pretend he verified his email
             auth.getCurrentUser()
                     .reload()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -252,36 +274,34 @@ public class InscriptionActivity extends AppCompatActivity implements AlertDialo
                                 finish();
                                 startActivity(new Intent(InscriptionActivity.this, MapsActivity.class));
                             }else{
-                                DialogFragment df = new InscriptionAlertDialog();
-                                df.show(getSupportFragmentManager(), "validate_email");
+                                showValidateEmailAlertDialog();
                             }
                         }
                     });
-        }else if(dialog instanceof EmailAlreadyExistAlertDialog){
-            userCanInteract = true;
-            registerButton.setEnabled(true);
-        }
-
-    }
-
-    @Override
-    public void onNeutralClick(DialogFragment dialog) {
-
-    }
-
-    @Override
-    public void onNegativeClick(DialogFragment dialog) {
-        if(dialog instanceof InscriptionAlertDialog){
-            new DeleteAllOnDisk().execute();
-            auth.getCurrentUser().delete();
-            userCanInteract = true;
-            registerButton.setEnabled(true);
-        } else  if(dialog instanceof EmailAlreadyExistAlertDialog) {
-
+        }else if(id == 2) {//email exist alert dialog
+            //the user want to log with this email instead of register
             finish();
             startActivity(new Intent(this, LoginActivity.class)
                     .putExtra("email_to_propose", emailEditText.getText().toString()));
         }
+
+    }
+
+    @Override
+    public void onNeutralClick(int id) {
+        if(id == 1) {//validate email alert dialog
+            //the user believes he mistyped his email
+            new DeleteAllOnDisk().execute();
+            auth.getCurrentUser().delete();
+            userCanInteract = true;
+        }else if(id == 2) {//email exist alert dialog
+            //the user want to log with this email instead of register
+            userCanInteract = true;
+        }
+    }
+    @Override
+    public void onNegativeClick(int id) {
+
     }
 }
 
