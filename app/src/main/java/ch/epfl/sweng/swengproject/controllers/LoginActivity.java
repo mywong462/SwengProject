@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import ch.epfl.sweng.swengproject.Database;
 import ch.epfl.sweng.swengproject.MapsActivity;
+import ch.epfl.sweng.swengproject.MyApplication;
 import ch.epfl.sweng.swengproject.R;
 import ch.epfl.sweng.swengproject.ResetPasswordActivity;
 import ch.epfl.sweng.swengproject.helpers.alertdialog.AlertDialogGenericListener;
@@ -29,7 +30,7 @@ import ch.epfl.sweng.swengproject.storage.StorageHelper;
 
 public class LoginActivity extends AppCompatActivity implements AlertDialogGenericListener {
 
-    private final FirebaseAuth auth = Database.getDBauth;
+    private final FirebaseAuth auth = MyApplication.getFirebaseAuth();
     private EditText inputEmail, inputPassword;
     private Button btnLogin, btnRegister, btnResetPassword;
 
