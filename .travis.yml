@@ -13,6 +13,8 @@ android:
     - addon-google_apis-google-26
     # The system image, to run an emulator during the tests
     - sys-img-armeabi-v7a-android-22
+sudo: required
+dist: precise 
 before_script:
   # Emulator Management: Create, Start and Wait
   - echo no | android create avd --force -n test -t  android-22 --abi armeabi-v7a
