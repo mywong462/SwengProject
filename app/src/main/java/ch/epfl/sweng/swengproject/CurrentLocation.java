@@ -38,6 +38,10 @@ import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 public class CurrentLocation implements LocationServer, ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private boolean test = false;
+
+    private LocationResult mockLR;
+
     private static final int LOCATION_REQUEST_CODE = 99;
 
     private static final int REQUEST_CHECK_SETTINGS = 555;
@@ -234,7 +238,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
     private void createLocationRequest(){
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(500);
-        mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setFastestInterval(700);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         request = (new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest)).build();
@@ -252,7 +256,6 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                 @Override
                 public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                     // Location settings are satisfied
-
                     Log.d(LOGTAG, "createLocationRequest_true");
                     startLocationUpdates();
                 }
@@ -282,7 +285,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        Log.d(LOGTAG, "HEHOHEHOHEOHEOHOHO");
         switch (requestCode) {
             case CurrentLocation.REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
@@ -311,9 +314,11 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             if (isPermissionGranted()) {
                 Log.d(LOGTAG, "OK PERMISSION");
                 alreadyAskingForLocation = false;
-
-                mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-
+                if(!test) {
+                    mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+                }else{
+                    mLocationCallback.onLocationResult(mockLR);
+                }
             } else {
                 Log.d(LOGTAG, "NO PERMISSION");
                 checkLocationPermission();
@@ -342,5 +347,17 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     public LocationCallback getCallBack(){
         return mLocationCallback;
+    }
+
+    public void setTestMode(boolean test){
+        this.test = test;
+    }
+
+    public void injectMockLocationResult(LocationResult lr){
+        mockLR = lr;
+    }
+
+    public FusedLocationProviderClient getmFusedLocationProviderClient(){
+        return mFusedLocationProviderClient;
     }
 }

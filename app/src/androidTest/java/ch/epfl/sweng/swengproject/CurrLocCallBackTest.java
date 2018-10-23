@@ -1,19 +1,17 @@
 package ch.epfl.sweng.swengproject;
 
 
+import android.app.Activity;
 import android.arch.core.util.Function;
-import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
+import android.util.Log;
 
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -28,6 +26,7 @@ import java.util.ArrayList;
 
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -43,6 +42,8 @@ public class CurrLocCallBackTest {
 
     private boolean test = false;
 
+    private final int REQUEST_CHECK_SETTINGS = 555;
+
     public Function<Void, Void> function = new Function<Void, Void>() {
         @Override
         public Void apply(Void input) {
@@ -51,6 +52,8 @@ public class CurrLocCallBackTest {
         }
     };
 
+    private Location loc = mock(Location.class);
+
     @Before
     public void before() throws InterruptedException{
         try{
@@ -58,6 +61,9 @@ public class CurrLocCallBackTest {
             clickOKLocation();
             Thread.sleep(2000);
         }catch (UiObjectNotFoundException e){}
+
+        when(loc.getLatitude()).thenReturn(40.0);
+        when(loc.getLongitude()).thenReturn(7.0);
     }
 
     @After
@@ -71,10 +77,6 @@ public class CurrLocCallBackTest {
 
     @Test
     public void testgetLocationNonNull() {
-
-        Location loc = mock(Location.class);
-        when(loc.getLatitude()).thenReturn(40.0);
-        when(loc.getLongitude()).thenReturn(7.0);
 
         ArrayList<Location> locList = new ArrayList<>();
         locList.add(loc);
@@ -91,26 +93,31 @@ public class CurrLocCallBackTest {
     }
 
     @Test
-    public void testVerifyFunction(){
-        Location loc = mock(Location.class);
-        when(loc.getLatitude()).thenReturn(40.0);
-        when(loc.getLongitude()).thenReturn(7.0);
-
-        ArrayList<Location> locList = new ArrayList<>();
-        locList.add(loc);
-
-        MyApplication.currentLocation.setFunction(function);
-
-        LocationResult lr = LocationResult.create(locList);
-        MyApplication.currentLocation.getCallBack().onLocationResult(lr);
-
-        assertTrue(test);
-    }
-
-
-    @Test
     public void testCallbackNull(){
         MyApplication.currentLocation.getCallBack().onLocationResult(null);
+    }
+
+    @Test
+    public void permissionTest(){
+        assertTrue(MyApplication.currentLocation.getLocationPermissionStatus());
+    }
+
+    @Test
+    public void completeFlowTest() throws UiObjectNotFoundException{
+        ArrayList<Location> locList = new ArrayList<>();
+        locList.add(loc);
+        LocationResult lr = LocationResult.create(locList);
+        MyApplication.currentLocation.setTestMode(true);
+        MyApplication.currentLocation.injectMockLocationResult(lr);
+        MyApplication.currentLocation.setFunction(function);
+        clickOKLocation();
+        MyApplication.currentLocation.onActivityResult(REQUEST_CHECK_SETTINGS, Activity.RESULT_OK, null);
+
+        Log.d(LOGTAG, "AAAAAAAAAAAAAAAAAAAAAAAH");
+        MyApplication.currentLocation.setTestMode(false);
+
+        assertTrue(test);
+        assertEquals(new LatLng(40.0, 7.0), MyApplication.currentLocation.getLastLocation());
     }
 
 
