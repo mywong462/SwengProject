@@ -13,8 +13,6 @@ android:
     - addon-google_apis-google-26
     # The system image, to run an emulator during the tests
     - sys-img-armeabi-v7a-android-22
-sudo: required
-dist: precise 
 before_script:
   # Emulator Management: Create, Start and Wait
   - echo no | android create avd --force -n test -t  android-22 --abi armeabi-v7a
@@ -30,7 +28,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - travis_wait 30 ./gradlew build connectedCheck jacocoTestReport
+  - travis_wait 40 ./gradlew build connectedCheck jacocoTestReport
 after_script:
   - cp ./app/build/generated/source/apt/release/ch/epfl/sweng/swengproject/storage/db/AppDatabase_Impl.java ./app/src/main/java/ch/epfl/sweng/swengproject/storage/db/
   - cp ./app/build/generated/source/apt/release/ch/epfl/sweng/swengproject/storage/db/UserDao_Impl.java ./app/src/main/java/ch/epfl/sweng/swengproject/storage/db/
