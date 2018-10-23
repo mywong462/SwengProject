@@ -55,6 +55,13 @@ public class RegistrationActivity extends AppCompatActivity {
         this.test = true;
     }
 
+    public void setTest(boolean b){
+        test = b;
+    }
+
+    public RegistrationActivity(){
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +101,10 @@ public class RegistrationActivity extends AppCompatActivity {
                 if(!test) {
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegistrationActivity.this, listener);
                 }
+
             }
         });
+
     }
 
 

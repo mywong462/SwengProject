@@ -21,7 +21,6 @@ import java.util.concurrent.Executor;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +38,7 @@ public class LoginInstrumentedTestFromLogin {
     @Test
     public void master(){
 
-        Looper.prepare();
+        //Looper.prepare();
 
         eMailNotVerified();
         emailVerified();
@@ -334,4 +333,6 @@ public class LoginInstrumentedTestFromLogin {
 
     }
 
+
 }
+

@@ -2,7 +2,6 @@ package ch.epfl.sweng.swengproject;
 
 
 import android.content.Intent;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
@@ -17,6 +16,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+
+import java.util.concurrent.Executor;
 
 import ch.epfl.sweng.swengproject.util.FakeLocation;
 
@@ -30,6 +32,8 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -171,9 +175,8 @@ public class AddNeedInstrumentedTest {
 
         onView(withId(R.id.choose_loc_btn)).perform(click());
 
-        //onView(withId(R.id.map_ch_loc)).perform(click());
-
     }
+
 
     private void clickOKLocationIfAsked(){
         try {
@@ -201,6 +204,5 @@ public class AddNeedInstrumentedTest {
             agreeImprove.click();
         }
     }
-
 
 }
