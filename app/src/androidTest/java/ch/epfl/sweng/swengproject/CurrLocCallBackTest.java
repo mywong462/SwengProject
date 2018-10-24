@@ -1,19 +1,19 @@
 package ch.epfl.sweng.swengproject;
 
 
+import android.Manifest;
+import android.app.Activity;
 import android.arch.core.util.Function;
-import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
-import android.support.test.InstrumentationRegistry;
+import android.os.Looper;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
+import android.util.Log;
 
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -40,24 +41,28 @@ public class CurrLocCallBackTest {
     public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
 
     private UiDevice mDevice = UiDevice.getInstance(getInstrumentation());
+    
+    private final int REQUEST_CHECK_SETTINGS = 555;
 
-    private boolean test = false;
+    private static final String PACKAGE
+            = "ch.epfl.sweng.swengproject";
 
-    private Function<Void, Void> function = new Function<Void, Void>() {
-        @Override
-        public Void apply(Void input) {
-            test = true;
-            return null;
-        }
-    };
+
+    private Location loc = mock(Location.class);
 
     @Before
     public void before() throws InterruptedException{
+
         try{
             clickAllow();
             clickOKLocation();
             Thread.sleep(2000);
-        }catch (UiObjectNotFoundException e){}
+        }catch (UiObjectNotFoundException e){
+            e.printStackTrace();
+        }
+
+        when(loc.getLatitude()).thenReturn(40.0);
+        when(loc.getLongitude()).thenReturn(7.0);
     }
 
     @After
@@ -65,16 +70,14 @@ public class CurrLocCallBackTest {
         try{
             clickAllow();
             clickOKLocation();
-        }catch (UiObjectNotFoundException e){}
+        }catch (UiObjectNotFoundException e){
+            e.printStackTrace();
+        }
     }
 
 
     @Test
     public void testgetLocationNonNull() {
-
-        Location loc = mock(Location.class);
-        when(loc.getLatitude()).thenReturn(40.0);
-        when(loc.getLongitude()).thenReturn(7.0);
 
         ArrayList<Location> locList = new ArrayList<>();
         locList.add(loc);
@@ -90,39 +93,46 @@ public class CurrLocCallBackTest {
 
     }
 
-    @Ignore
-    public void testVerifyFunction(){
-        Location loc = mock(Location.class);
-        when(loc.getLatitude()).thenReturn(40.0);
-        when(loc.getLongitude()).thenReturn(7.0);
-
-        ArrayList<Location> locList = new ArrayList<>();
-        locList.add(loc);
-
-        MyApplication.currentLocation.setFunction(function);
-
-        LocationResult lr = LocationResult.create(locList);
-        MyApplication.currentLocation.getCallBack().onLocationResult(lr);
-
-        assertTrue(test);
-    }
-
-
     @Test
     public void testCallbackNull(){
         MyApplication.currentLocation.getCallBack().onLocationResult(null);
     }
 
-    @Ignore
-    public void testLocationAvailabilityUnavailable() throws UiObjectNotFoundException{
-        disableLocation();
-        LocationAvailability loc = (LocationAvailability.CREATOR.newArray(0))[0];
-        when(loc.isLocationAvailable()).thenReturn(false);
-
-        MyApplication.currentLocation.getCallBack().onLocationAvailability(loc);
-
-        clickOKLocation();
+    @Test
+    public void permissionTest(){
+        assertTrue(MyApplication.currentLocation.getLocationPermissionStatus());
     }
+
+    @Test
+    public void completeFlowTest() throws UiObjectNotFoundException{
+        ArrayList<Location> locList = new ArrayList<>();
+        locList.add(loc);
+        LocationResult lr = LocationResult.create(locList);
+        MyApplication.currentLocation.setTestMode(true);
+        MyApplication.currentLocation.injectMockLocationResult(lr);
+        clickOKLocation();
+        MyApplication.currentLocation.onActivityResult(REQUEST_CHECK_SETTINGS, Activity.RESULT_OK, null);
+
+        Log.d(LOGTAG, "AAAAAAAAAAAAAAAAAAAAAAAH");
+        MyApplication.currentLocation.setTestMode(false);
+
+        assertEquals(new LatLng(40.0, 7.0), MyApplication.currentLocation.getLastLocation());
+    }
+
+    @Ignore
+    public void testDialogButton() throws UiObjectNotFoundException, InterruptedException{
+        getInstrumentation().getUiAutomation().executeShellCommand("pm revoke " + PACKAGE + " " + Manifest.permission.ACCESS_FINE_LOCATION);
+        UiObject settingsBtn = mDevice.findObject(new UiSelector().text("SETTINGS"));
+        settingsBtn.clickAndWaitForNewWindow();
+        UiObject appInfoTextField = mDevice.findObject(new UiSelector().text("App info"));
+        assertTrue(appInfoTextField.exists());
+        mDevice.pressBack();
+        UiObject doneBtn = mDevice.findObject(new UiSelector().text("DONE !"));
+        getInstrumentation().getUiAutomation().executeShellCommand("pm grant " + PACKAGE + " " + Manifest.permission.ACCESS_FINE_LOCATION);
+        Thread.sleep(2000);
+        doneBtn.click();
+    }
+
 
 
     private void clickOKLocation() throws UiObjectNotFoundException {
@@ -154,6 +164,15 @@ public class CurrLocCallBackTest {
     private void clickAllow() throws UiObjectNotFoundException {
         UiObject allowBtn = mDevice.findObject(new UiSelector()
                 .text("ALLOW")
+                .className("android.widget.Button"));
+
+        allowBtn.waitForExists(500);
+        allowBtn.click();
+    }
+
+    private void clickDeny() throws UiObjectNotFoundException {
+        UiObject allowBtn = mDevice.findObject(new UiSelector()
+                .text("DENY")
                 .className("android.widget.Button"));
 
         allowBtn.waitForExists(500);
