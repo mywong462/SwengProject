@@ -234,6 +234,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // TODO: recup la liste des needs, check si mon need est dedans et si la liste des participants a été updatée
                 Need user_need = findUserNeed(availableNeeds, Database.getDBauth);
                 if (user_need != null) { // the user has created a need already
+                    //createNotification();
                     if (user_need.getNbPeopleNeeded() != ((MyApplication) this.getApplication()).getUser_need_ppl()) {
                         // the number of participants has been updated
                         ((MyApplication) this.getApplication()).setUser_need_ppl(user_need.getNbPeopleNeeded());
