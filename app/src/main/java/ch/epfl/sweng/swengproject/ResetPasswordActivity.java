@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -66,6 +67,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 }
             }
         });
+
+        String emailFromRegistration  = getIntent().getStringExtra("email_to_propose");
+        if(emailFromRegistration != null){
+            inputEmail.setText(emailFromRegistration, TextView.BufferType.EDITABLE);
+        }
     }
 
     private String getAndCheckEmail(String email){
