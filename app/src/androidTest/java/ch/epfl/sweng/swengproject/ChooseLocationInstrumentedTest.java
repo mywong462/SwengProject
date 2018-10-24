@@ -82,17 +82,6 @@ public class ChooseLocationInstrumentedTest {
     }
 
 
-    /*
-    @Before
-    public void create(){
-
-        //LocationServer ls = new FakeLocation();
-
-        //inject the mocked object in the activity
-        //bActivityRule.launchActivity(new Intent().putExtra("loc",ls));
-        //bActivityRule.launchActivity(new Intent());
-    }*/
-
 
     @Ignore
     public void activityFlowTest() {
