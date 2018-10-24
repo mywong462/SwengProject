@@ -163,7 +163,7 @@ public class InscriptionActivityTests {
                 .perform(typeText("ohThatsMyEmail@email.com")).perform(closeSoftKeyboard());
     }
 
-    //TODO: MAKE THIS TEST PASS! who to catch the toast ??
+    //TODO: MAKE THIS TEST PASS! how to catch the toast ??
 //    @Test
 //    public void inscriptionFailedWithUnknownError() throws Throwable {
 //        StorageHelper.deleteAllDataStoredLocally();
@@ -247,7 +247,7 @@ public class InscriptionActivityTests {
     }
 
     @Test
-    public void successFullInscriptionAndUserVerifyEmail() throws InterruptedException {
+    public void successFullInscriptionAndUserVerifyEmail(){
         StorageHelper.deleteAllDataStoredLocally();
 
         String email = "correctNouveauEmail@mondomaine.com";
