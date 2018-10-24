@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (me == null || me.password() == null || me.email() == null) {
             System.out.println("First decision taken, no profile found in HD (or founded but with email or password null), go to Login Activity");
-            goToInscriptionActivity();
+            goToRegistrationActivity();
         } else {
             System.out.println("First decision taken, a profile found in HD, should try to login automatically");
             tryAutomaticLogin();
@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()) {
-                            System.out.println("After fetching a profile from the HD, the automatic login failed, so we send the user to the Inscription Activity. This is due to" +  task.getException().toString());
-                            goToInscriptionActivity();
+                            System.out.println("After fetching a profile from the HD, the automatic login failed, so we send the user to the Registration Activity. This is due to" +  task.getException().toString());
+                            goToRegistrationActivity();
                         } else {
                             System.out.println("After fetching a profile from the HD, the automatic login succeeded, it's time to check if the user verified his email already");
                             checkUserEmailIsConfirmed();
@@ -115,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void goToInscriptionActivity() {
+    private void goToRegistrationActivity() {
         new DeleteAllOnDisk().execute();
         finish();
-        startActivity(new Intent(MainActivity.this, InscriptionActivity.class));
+        startActivity(new Intent(MainActivity.this, RegistrationActivity.class));
     }
 
     private void goToLoginActivity(String emailToPropose) {

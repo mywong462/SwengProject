@@ -44,9 +44,9 @@ public class LoginActivity extends AppCompatActivity implements AlertDialogGener
         btnRegister = findViewById(R.id.register_btn1);
         btnResetPassword = findViewById(R.id.resetPassword_btn1);
 
-        String emailFromInscription  = getIntent().getStringExtra("email_to_propose");
-        if(emailFromInscription != null){
-            inputEmail.setText(emailFromInscription, TextView.BufferType.EDITABLE);
+        String emailFromRegistration  = getIntent().getStringExtra("email_to_propose");
+        if(emailFromRegistration != null){
+            inputEmail.setText(emailFromRegistration, TextView.BufferType.EDITABLE);
         }
         addListeners();
     }
@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity implements AlertDialogGener
             public void onClick(View v) {
                 String emailToPropose = inputEmail.getText().toString();
                 finish();
-                startActivity(new Intent(LoginActivity.this, InscriptionActivity.class)
+                startActivity(new Intent(LoginActivity.this, RegistrationActivity.class)
                         .putExtra("email_to_propose", emailToPropose));
             }
         });

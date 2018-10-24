@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/registration_scr"
+    tools:context=".controllers.RegistrationActivity">
+    <!--
+    Android:layout_weight. C'est un attribut spécifique aux enfants d'un LinearLayout.
+     Il permet de préciser le poids d'un élément par rapport aux autres.
+      Je m'explique. Si vous assignez un poids identique pour tous les éléments
+      (par exemple 1), tous ces éléments auront la même taille.
+      Si vous assignez un poids égal à 2 à l'un des éléments, alors sa taille sera
+       deux fois plus importante que celle des  autres.
+
+
+    -->
+
+    <ImageButton
+        android:id="@+id/activity_main_profile_image_input"
+        android:contentDescription="my_profile_picture"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/emptyprofile"/>
+
+    <EditText
+        android:id="@+id/registration_activity_email"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:layout_weight="2"
+        android:background="@null"
+        android:gravity="center"
+        android:hint="Your Email (Required)"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/registration_activity_password"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:layout_margin="5dp"
+        android:inputType="textPassword"
+        android:background="@null"
+        android:hint="Your Password (Required)"/>
+
+    <EditText
+        android:id="@+id/registration_activity_first_name"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:layout_margin="5dp"
+        android:inputType="textPersonName"
+        android:background="@null"
+        android:hint="Your First Name"/>
+
+    <EditText
+        android:id="@+id/registration_activity_last_name"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:layout_margin="5dp"
+        android:inputType="textPersonName"
+        android:background="@null"
+        android:hint="Your Last Name"/>
+
+    <Button
+        android:id="@+id/registration_activity_register_button"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:layout_weight="2"
+        android:background="@android:color/white"
+        android:backgroundTint="@color/colorAccent"
+        android:text="Register"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/registration_activity_go_to_login_activity"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:text="Already registered? Sign up here!"
+        android:textColor="#000000"
+        android:textSize="15sp" />
+
+
+</LinearLayout>
