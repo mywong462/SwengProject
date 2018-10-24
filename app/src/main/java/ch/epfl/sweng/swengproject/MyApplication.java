@@ -9,7 +9,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.Objects;
+
+import ch.epfl.sweng.swengproject.storage.db.AppDatabase;
 
 public class MyApplication extends Application {
     /**
@@ -23,18 +27,49 @@ public class MyApplication extends Application {
      * https://developer.android.com/reference/android/app/Application
      */
 
-    private static Context context;
+    private static boolean isUnderTest = false;
+    private static Context context = null;
+    private static FirebaseAuth firebaseAuth = null;
 
     public void onCreate() {
-        Log.d(LOGTAG, "MyApplication created");
         super.onCreate();
         MyApplication.context = getApplicationContext();
+        firebaseAuth = FirebaseAuth.getInstance();
+    }
+
+    /**
+     *
+     * @param isUnderTest set it to true to specify that the application is under tests
+     */
+    public static void setUnderTest(boolean isUnderTest){
+        //broadcast this event to all required classes of the application
+        MyApplication.isUnderTest = isUnderTest;
+        AppDatabase.setUnderTest(isUnderTest);
     }
 
     public static Context getAppContext() {
         return MyApplication.context;
     }
 
+    /**
+     *
+     * @return the object used to authenticate user with Firebase
+     */
+    public static FirebaseAuth getFirebaseAuth() {
+        return firebaseAuth;
+    }
+
+
+    /**
+     * This method is used only from UITests when we want to mock FirebaseAuth
+     * @param firebaseAuth the object used to authenticate user with Firebase that the App will use
+     */
+    public static void setFirebaseAuthMock(FirebaseAuth firebaseAuth) {
+        MyApplication.firebaseAuth = firebaseAuth;
+    }
+
+
+    //--------------------some mystic stuff :)--------------------
     public static AlertDialog showCustomAlert2Buttons(String title, String message, String neutralButtonText, String positiveButtonText, final Function<Void, Void> callOnNeutralClick, final Function<Void, Void> callOnPositiveClick, Activity activity){
         return new AlertDialog.Builder(activity)
                 .setTitle(Objects.requireNonNull(title))
@@ -54,7 +89,7 @@ public class MyApplication extends Application {
                 .create();
     }
 
-    public static final String LOGTAG = "HELLO";
-    public static final CurrentLocation currentLocation = new CurrentLocation();
+    //public static final String LOGTAG = "HELLO";
+   // public static final CurrentLocation currentLocation = new CurrentLocation();
 
 }
