@@ -189,7 +189,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         currLoc.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -234,6 +234,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("ERROR", "NO PERMISSION TO UPDATEUI");
             }
         } catch (SecurityException e) {
+            e.printStackTrace();
         }
     }
 
