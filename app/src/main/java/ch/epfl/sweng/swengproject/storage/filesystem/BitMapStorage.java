@@ -16,13 +16,6 @@ public class BitMapStorage {
     private BitMapStorage() {
     }
 
-    private static Context  context = MyApplication.getAppContext();
-    private static boolean test = false;
-
-    public static void setContext(Context cont){
-        context = cont;
-        test = true;
-    }
 
     /**
      * Store a Bitmap on disk in the private folder of the application
@@ -33,9 +26,7 @@ public class BitMapStorage {
      */
     public static boolean saveImage(Bitmap image, String atPath) {
 
-        if(image == null || atPath.isEmpty() || atPath == null){
-            throw new NullPointerException();
-        }
+        Context context = MyApplication.getAppContext();
         File file = new File(context.getFilesDir(), atPath);
 
         try {
@@ -57,13 +48,8 @@ public class BitMapStorage {
      * @return the Bitmap instance if it could have been found, else null
      */
     public static Bitmap getImage(String atRelativePath) {
-
-        if(atRelativePath == null || atRelativePath.isEmpty()){
-            throw new NullPointerException();
-        }
+        Context context = MyApplication.getAppContext();
         File f = new File(context.getFilesDir(), atRelativePath);
-
-        if(test){return null;}
         return  BitmapFactory.decodeFile(f.getPath());
     }
 }

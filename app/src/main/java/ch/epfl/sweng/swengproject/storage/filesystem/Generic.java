@@ -10,14 +10,6 @@ import ch.epfl.sweng.swengproject.MyApplication;
 public class Generic {
     private Generic(){}
 
-    private static Context context =  MyApplication.getAppContext();
-
-    public static void setContext(Context c){
-        if(c == null){
-            throw new NullPointerException();
-        }
-        context = c;
-    }
 
     /**
      * Delete a file at the path atRelativePath in the private folder of the application
@@ -26,11 +18,7 @@ public class Generic {
      * the end of the invocation of this method, else false
      */
     public static boolean deleteFile(String atRelativePath){
-
-        if(atRelativePath == null || atRelativePath.isEmpty()){
-            throw new NullPointerException();
-        }
-
+        Context context = MyApplication.getAppContext();
         File f = new File(context.getFilesDir(), atRelativePath);
         if(f.exists() && f.isDirectory()){
             return false;
@@ -48,11 +36,7 @@ public class Generic {
      * the end of the invocation of this method, else false
      */
     public static boolean deleteFolder(String atRelativePath){
-
-        if(atRelativePath == null || atRelativePath.isEmpty()){
-            throw new NullPointerException();
-        }
-
+        Context context = MyApplication.getAppContext();
         File f = new File(context.getFilesDir(), atRelativePath);
         if(f.exists() && f.isFile()){
             return false;
