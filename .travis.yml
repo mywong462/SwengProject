@@ -28,7 +28,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - travis_wait 30 ./gradlew build connectedCheck jacocoTestReport
+  - travis_wait 45 ./gradlew build connectedCheck jacocoTestReport
 after_script:
   - cp ./app/build/generated/source/apt/release/ch/epfl/sweng/swengproject/storage/db/AppDatabase_Impl.java ./app/src/main/java/ch/epfl/sweng/swengproject/storage/db/
   - cp ./app/build/generated/source/apt/release/ch/epfl/sweng/swengproject/storage/db/UserDao_Impl.java ./app/src/main/java/ch/epfl/sweng/swengproject/storage/db/
