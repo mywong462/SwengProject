@@ -40,8 +40,6 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private boolean test = false;
 
-    private boolean permTest = true;
-
     private LocationResult mockLR;
 
     private static final int LOCATION_REQUEST_CODE = 99;
@@ -184,7 +182,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private void checkLocationPermission() {
 
-        if (!isPermissionGranted() || !permTest) {
+        if (!isPermissionGranted()) {
             //Permission not granted
 
             //Should the app give an explanation?

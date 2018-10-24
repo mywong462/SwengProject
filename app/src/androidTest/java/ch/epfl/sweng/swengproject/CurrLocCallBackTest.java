@@ -41,7 +41,7 @@ public class CurrLocCallBackTest {
     public ActivityTestRule<MapsActivity> mActivity = new ActivityTestRule<>(MapsActivity.class);
 
     private UiDevice mDevice = UiDevice.getInstance(getInstrumentation());
-    
+
     private final int REQUEST_CHECK_SETTINGS = 555;
 
     private static final String PACKAGE
