@@ -30,11 +30,15 @@ public class MyApplication extends Application {
     private static boolean isUnderTest = false;
     private static Context context = null;
     private static FirebaseAuth firebaseAuth = null;
+    private static  CurrentLocation currentLocation = null;
+    public static final String LOGTAG = "HELLO";
 
     public void onCreate() {
         super.onCreate();
         MyApplication.context = getApplicationContext();
         firebaseAuth = FirebaseAuth.getInstance();
+
+        currentLocation = new CurrentLocation();
     }
 
     /**
@@ -89,7 +93,9 @@ public class MyApplication extends Application {
                 .create();
     }
 
-    //public static final String LOGTAG = "HELLO";
-   // public static final CurrentLocation currentLocation = new CurrentLocation();
+
+    public static CurrentLocation getCurrentLocation(){
+        return currentLocation;
+    }
 
 }

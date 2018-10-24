@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.GeoPoint;
 
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
-import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
 
 
 public class ChooseLocationActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -36,6 +35,9 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
     private boolean isOpening;
     private LocationServer currLoc;
     private boolean test = false;
+
+    private CurrentLocation currentLocation  = MyApplication.getCurrentLocation();
+
 
 
     @Override

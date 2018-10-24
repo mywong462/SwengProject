@@ -34,7 +34,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 
-import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
 
 import java.util.ArrayList;
@@ -65,6 +64,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseAuth auth = Database.getDBauth;
 
     private boolean test = false;   //boolean used when calling functions from instrumented tests
+
+    private CurrentLocation currentLocation  = MyApplication.getCurrentLocation();
 
     public void setAuth(FirebaseAuth fAuth){
         this.auth = fAuth;

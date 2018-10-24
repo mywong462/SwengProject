@@ -20,17 +20,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
-import static ch.epfl.sweng.swengproject.MyApplication.currentLocation;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+
 
 public class AddNeedActivity extends AppCompatActivity {
 
@@ -60,6 +55,9 @@ public class AddNeedActivity extends AppCompatActivity {
     private Double lng;
 
     private LocationServer currLoc;
+
+    private CurrentLocation currentLocation  = MyApplication.getCurrentLocation();
+
 
     //All the categories in the array listCategory
     private ArrayList<Categories> listCategory = new ArrayList<>(EnumSet.allOf(Categories.class));
