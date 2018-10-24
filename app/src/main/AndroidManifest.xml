@@ -53,6 +53,7 @@
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".ChooseLocationActivity" />
         <activity android:name=".AddNeedActivity" />
+        <activity android:name=".controllers.LoginActivity"></activity>
     </application>
 
 </manifest>
