@@ -82,12 +82,12 @@ public class CurrLocCallBackTest {
         ArrayList<Location> locList = new ArrayList<>();
         locList.add(loc);
 
-        MyApplication.currentLocation.setFunction(null);
+        MyApplication.getCurrentLocation().setFunction(null);
 
         LocationResult lr = LocationResult.create(locList);
-        MyApplication.currentLocation.getCallBack().onLocationResult(lr);
+        MyApplication.getCurrentLocation().getCallBack().onLocationResult(lr);
 
-        LatLng res = MyApplication.currentLocation.getLastLocation();
+        LatLng res = MyApplication.getCurrentLocation().getLastLocation();
 
         assertEquals(new LatLng(40.0, 7.0), res);
 
@@ -95,12 +95,12 @@ public class CurrLocCallBackTest {
 
     @Test
     public void testCallbackNull(){
-        MyApplication.currentLocation.getCallBack().onLocationResult(null);
+        MyApplication.getCurrentLocation().getCallBack().onLocationResult(null);
     }
 
     @Test
     public void permissionTest(){
-        assertTrue(MyApplication.currentLocation.getLocationPermissionStatus());
+        assertTrue(MyApplication.getCurrentLocation().getLocationPermissionStatus());
     }
 
     @Test
@@ -108,15 +108,15 @@ public class CurrLocCallBackTest {
         ArrayList<Location> locList = new ArrayList<>();
         locList.add(loc);
         LocationResult lr = LocationResult.create(locList);
-        MyApplication.currentLocation.setTestMode(true);
-        MyApplication.currentLocation.injectMockLocationResult(lr);
+        MyApplication.getCurrentLocation().setTestMode(true);
+        MyApplication.getCurrentLocation().injectMockLocationResult(lr);
         clickOKLocation();
-        MyApplication.currentLocation.onActivityResult(REQUEST_CHECK_SETTINGS, Activity.RESULT_OK, null);
+        MyApplication.getCurrentLocation().onActivityResult(REQUEST_CHECK_SETTINGS, Activity.RESULT_OK, null);
 
         Log.d(LOGTAG, "AAAAAAAAAAAAAAAAAAAAAAAH");
-        MyApplication.currentLocation.setTestMode(false);
+        MyApplication.getCurrentLocation().setTestMode(false);
 
-        assertEquals(new LatLng(40.0, 7.0), MyApplication.currentLocation.getLastLocation());
+        assertEquals(new LatLng(40.0, 7.0), MyApplication.getCurrentLocation().getLastLocation());
     }
 
     @Ignore

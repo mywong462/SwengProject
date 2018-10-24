@@ -57,13 +57,13 @@ public class CurrentLocationInstrumentedTest {
 
     @Test
     public void setCurrentLocationParametersValidTest(){
-        MyApplication.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity());
+        MyApplication.getCurrentLocation().setCurrentLocationParameters(mActivityRule.getActivity(), mActivityRule.getActivity());
     }
 
     @Test
     public void setCurrentLocationParametersInvalidTest1() {
         try {
-            MyApplication.currentLocation.setCurrentLocationParameters(null, mActivityRule.getActivity());
+            MyApplication.getCurrentLocation().setCurrentLocationParameters(null, mActivityRule.getActivity());
         }catch(NullPointerException e){
             return;
         }
@@ -73,7 +73,7 @@ public class CurrentLocationInstrumentedTest {
     @Test
     public void setCurrentLocationParametersInvalidTest2() {
         try {
-            MyApplication.currentLocation.setCurrentLocationParameters(mActivityRule.getActivity(), null);
+            MyApplication.getCurrentLocation().setCurrentLocationParameters(mActivityRule.getActivity(), null);
         }catch(NullPointerException e){
             return;
         }

@@ -37,8 +37,6 @@ public class MyApplication extends Application {
         super.onCreate();
         MyApplication.context = getApplicationContext();
         firebaseAuth = FirebaseAuth.getInstance();
-
-        currentLocation = new CurrentLocation();
     }
 
     /**
@@ -95,6 +93,9 @@ public class MyApplication extends Application {
 
 
     public static CurrentLocation getCurrentLocation(){
+        if(currentLocation == null){
+            currentLocation = new CurrentLocation();
+        }
         return currentLocation;
     }
 
