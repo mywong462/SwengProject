@@ -31,16 +31,16 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Objects;
-
 import static ch.epfl.sweng.swengproject.MyApplication.LOGTAG;
+
+import java.util.Objects;
 
 
 public class CurrentLocation implements LocationServer, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private boolean test = false;
 
-    private LocationResult mockLR;
+    private LocationResult mockLr;
 
     private static final int LOCATION_REQUEST_CODE = 99;
 
@@ -80,7 +80,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                 function.apply(null);
             }
 
-            Log.d(LOGTAG, "Lat : " + mLastKnownLocation.getLatitude() + ", Lng : " + mLastKnownLocation.getLongitude());
+            Log.d(LOGTAG, "Lat: " + mLastKnownLocation.getLatitude() + ",Lng: " + mLastKnownLocation.getLongitude());
         }
 
         @Override
@@ -117,7 +117,7 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
     private boolean permDialogUp = false;
 
-    public CurrentLocation(){
+    public CurrentLocation() {
         createLocationRequest();
     }
 
@@ -160,18 +160,19 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
             permissionDialog.dismiss();
             permDialogUp = false;
         }
-        if(isPermissionGranted()) {
+        if (isPermissionGranted()) {
             Log.d(LOGTAG, "controlLocationRequest call from onResume");
             controlLocationRequest();
         }
     }
 
     private AlertDialog getNewPermissionDialog() {
-        return permissionDialog = MyApplication.showCustomAlert2Buttons("SwengProject needs your location to continue :(",
-                "To allow SwengProject to TRACKK U please go to the settings and allow" +
-                        " SwngProject to use your location",
+        permissionDialog = MyApplication.showCustomAlert2Buttons("SwengProject needs your location to continue :(",
+                "Please allow SwengProject to use your location, it will not work otherwise",
                 "Settings", "Done !",
                 bringMeToManagement, donePermission, activity);
+
+        return permissionDialog;
     }
 
 
@@ -229,11 +230,15 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                     Log.d(LOGTAG, "Permission denied, asking again");
                 }
             }
+            break;
+
+            default:
+                break;
         }
 
     }
 
-    private void createLocationRequest(){
+    private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(500);
         mLocationRequest.setFastestInterval(700);
@@ -241,11 +246,11 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
         request = (new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest)).build();
     }
-
+    
 
     private void controlLocationRequest() {
         Log.d(LOGTAG, "Who is asking for location : " + activity.getLocalClassName());
-        if(!alreadyAskingForLocation) {
+        if (!alreadyAskingForLocation) {
             alreadyAskingForLocation = true;
             SettingsClient client = LocationServices.getSettingsClient(activity);
             Task<LocationSettingsResponse> task = client.checkLocationSettings(request);
@@ -303,27 +308,26 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
                         break;
                 }
                 break;
+            default:
+                break;
         }
     }
 
 
-    private void startLocationUpdates() {
-        try {
-            if (isPermissionGranted()) {
-                Log.d(LOGTAG, "OK PERMISSION");
-                alreadyAskingForLocation = false;
-                if(!test) {
-                    mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-                }else{
-                    mLocationCallback.onLocationResult(mockLR);
-                }
+    private void startLocationUpdates() throws SecurityException {
+        if (isPermissionGranted()) {
+            Log.d(LOGTAG, "OK PERMISSION");
+            alreadyAskingForLocation = false;
+            if (!test) {
+                mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
             } else {
-                Log.d(LOGTAG, "NO PERMISSION");
-                checkLocationPermission();
+                mLocationCallback.onLocationResult(mockLr);
             }
-        } catch (SecurityException e) {
-            e.printStackTrace();
+        } else {
+            Log.d(LOGTAG, "NO PERMISSION");
+            checkLocationPermission();
         }
+
     }
 
     @Override
@@ -340,20 +344,20 @@ public class CurrentLocation implements LocationServer, ActivityCompat.OnRequest
 
 //For test purpose
 
-    public void setFunction(Function<Void, Void> newFunction){
+    public void setFunction(Function<Void, Void> newFunction) {
         function = newFunction;
     }
 
-    public LocationCallback getCallBack(){
+    public LocationCallback getCallBack() {
         return mLocationCallback;
     }
 
-    public void setTestMode(boolean test){
+    public void setTestMode(boolean test) {
         this.test = test;
     }
 
-    public void injectMockLocationResult(LocationResult lr){
-        mockLR = lr;
+    public void injectMockLocationResult(LocationResult lr) {
+        mockLr = lr;
     }
 
 }

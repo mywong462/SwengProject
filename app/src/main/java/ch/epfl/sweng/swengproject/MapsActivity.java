@@ -185,6 +185,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onResume();
         launchCurrentLocation();
         currLoc.callerOnResume();
+        if(lastLatLng != null){
+            updateUI();
+        }
     }
 
 
@@ -348,6 +351,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(!test) {
             //Display the pop-up window
             pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+            updateUI();
         }
 
         return true;
