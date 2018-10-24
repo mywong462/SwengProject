@@ -234,14 +234,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // TODO: recup la liste des needs, check si mon need est dedans et si la liste des participants a été updatée
                 Need user_need = findUserNeed(availableNeeds, Database.getDBauth);
                 if (user_need != null) { // the user has created a need already
-                    createNotification();
                     if (user_need.getNbPeopleNeeded() != ((MyApplication) this.getApplication()).getUser_need_ppl()) {
                         // the number of participants has been updated
                         ((MyApplication) this.getApplication()).setUser_need_ppl(user_need.getNbPeopleNeeded());
                         createNotification();
-                        Toast.makeText(this, "Someone is coming to you!", Toast.LENGTH_SHORT).show();
+                        Log.d("HELLO", "You just received a notification! Someone is coming for you!");
                     } else {
-                        Toast.makeText(this, "Noone has answered to your need yet.", Toast.LENGTH_SHORT).show();
+                        Log.d("HELLO", "Nobody has answered to your need yet");
                     }
                 }
 

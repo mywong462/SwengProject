@@ -91,7 +91,9 @@ public class DBTools {
      */
     public static Need findUserNeed(List<Need> needList, FirebaseAuth DBauth) {
         for (Need need: needList){
-            if(need.getEmitter() == DBauth.getCurrentUser().getEmail()) {
+            Log.d(LOGTAG_nn, "need.getEmitter = "+need.getEmitter());
+            Log.d(LOGTAG_nn, "DBauth.getCurrentUser().getEmail() = "+DBauth.getCurrentUser().getEmail());
+            if(need.getEmitter().equals(DBauth.getCurrentUser().getEmail())) {
                 Log.d(LOGTAG_nn, "emitter found!");
                 return need;
             }
