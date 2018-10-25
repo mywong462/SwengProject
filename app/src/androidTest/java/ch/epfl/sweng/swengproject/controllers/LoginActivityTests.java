@@ -63,19 +63,15 @@ import static org.mockito.Mockito.when;
 @RunWith(AndroidJUnit4.class)
 public class LoginActivityTests {
 
-    /*private static UserDao userDao;
+    //private static UserDao userDao;
 
-    @BeforeClass
-    public static void doBeforeAll(){
-        MyApplication.setUnderTest(true);
-        userDao = AppDatabase.getInstance().userDao();
-    }*/
+
 
     @Rule
     public final ActivityTestRule<LoginActivity> activityTestRule =
             new ActivityTestRule<>(LoginActivity.class, false, false);
 
-    /*@Mock
+    @Mock
     private FirebaseAuth mockFirebaseAuth;
 
     @Mock
@@ -87,6 +83,11 @@ public class LoginActivityTests {
     @Mock
     private FirebaseUser mockFirebaseUser;
 
+     @BeforeClass
+    public static void doBeforeAll(){
+        MyApplication.setUnderTest(true);
+        //userDao = AppDatabase.getInstance().userDao();
+    }
 
 
     @Before
@@ -104,10 +105,10 @@ public class LoginActivityTests {
         when(mockAuthResultTask.getException()).thenReturn(new UITestException());
 
         when(mockFirebaseAuth.getCurrentUser()).thenReturn(mockFirebaseUser);
-    }*/
+    }
 
 
-    @Test
+    /*@Test
     public void correctTransitionToRegisterActivity()  {
         String email = "monEmailTest@test.com";
 
@@ -131,7 +132,33 @@ public class LoginActivityTests {
 
         //assert that we are in the register activity with the password set
         onView(withId(R.id.email3)).check(matches(withText(email)));
-    }
+    }*/
+
+    //TODO: TOAST CHECK HERE
+//    @Test
+//    public void wrongFieldLeadToToast(){
+//        activityTestRule.launchActivity(new Intent());
+//
+//        onView(withId(R.id.login_btn1)).perform(click());
+//    //toast catch here
+//    }
+
+    //TODO: TOAST CHECK HERE
+//    @Test
+//    public void loginFails(){
+//        String email = "mauvaisEmail@test.com";
+//        String password = "mauvaisPassword";
+//
+//        activityTestRule.launchActivity(new Intent());
+//
+//        onView(withId(R.id.login_activity_email_edit_text)).perform(typeText(email)).perform(closeSoftKeyboard());
+//        onView(withId(R.id.login_activity_password)).perform(typeText(password)).perform(closeSoftKeyboard());
+//
+//        when(mockAuthResultTask.isSuccessful()).thenReturn(false);
+//
+//        onView(withId(R.id.login_btn1)).perform(click());
+//        //catch the toast here
+//    }
 
 
 
