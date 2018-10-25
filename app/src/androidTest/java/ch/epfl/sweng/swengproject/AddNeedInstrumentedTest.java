@@ -140,6 +140,33 @@ public class AddNeedInstrumentedTest {
     }
 
     @Test
+    public void userCanOnlyAddOneNeed(){
+
+        String description = "01234567890";
+
+        onView(withId(R.id.validity_txt)).perform(typeText("1"));
+        onView(withId(R.id.descr_txt)).perform(typeText(description)).perform(closeSoftKeyboard());
+        onView(withId(R.id.nbPeople_txt)).perform(typeText("1")).perform(closeSoftKeyboard());
+
+        onView(withId(R.id.create_btn)).perform(click());
+
+        // We should be on the mapsActivity layout
+        onView(withId(R.id.create_need_btn)).perform(click());
+
+        //Since a need is already created we should stay on the mapsActivity layout
+        boolean passed = false;
+
+        try{
+            onView(withId(R.id.create_btn)).perform(click());
+        }
+        catch(NoMatchingViewException e){
+            passed = true;
+        }
+
+        assertEquals(true,passed);
+    }
+
+    @Test
     public void invalidDescription(){
 
 

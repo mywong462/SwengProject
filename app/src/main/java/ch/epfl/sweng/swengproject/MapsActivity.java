@@ -72,6 +72,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private boolean test = false;   //boolean used when calling functions from instrumented tests
 
+
+    // Variables to prevent a user creating multiple needs
+    static final String LOGTAG_nn = "Tag_nn";
+    private long ttl;
+
     public void setAuth(FirebaseAuth fAuth){
         this.auth = fAuth;
         setTestMode();
@@ -102,8 +107,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             this.normalExec = false;
             currLoc = loc;
             ArrayList<Need> needList = new ArrayList<>();
-            long ttl = System.currentTimeMillis() + 100000;
-            needList.add(new Need("hedi.sassi@epfl.ch", "my description", ttl, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ,""));
+            long ttl_local = System.currentTimeMillis() + 100000;
+            needList.add(new Need("hedi.sassi@epfl.ch", "my description", ttl_local, currLoc.getLastLocation().latitude, currLoc.getLastLocation().longitude,Categories.ALL ,1 ,""));
             availableNeeds = needList;
         }
         else {
@@ -128,7 +133,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         createNeed_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currLoc.getLocationPermissionStatus()) {
+                if(currLoc.getLocationPermissionStatus() && (canAddNewNeed(((MyApplication) getApplication()).getUser_need_ttl()))) {
                     startActivity(new Intent(MapsActivity.this, AddNeedActivity.class));
                 }
             }
@@ -423,6 +428,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return new Pair<>(layout, pw);
 
+    }
+
+
+
+    /** This method uses the global variable accross the application state user_need_ttl
+     * Variable to keep track of the last need created by the user and allowing him to create only one
+     * If (user_need_ttl-System.currentTimeMillis()) is negative, it means the need created by the user has expired
+     * It is initialized at 0L, so the first time a need is created, the above will always evaluate to true
+     * However, for this to be true, a user created need needs to be deleted when he closes the app
+     * This makes sense for shortlived needs, especially since the user would not be notified
+     * when another accepts its invitation if the app is closed
+     */
+    private boolean canAddNewNeed(long user_need_ttl) {
+        ttl = user_need_ttl-System.currentTimeMillis();
+        Log.d(LOGTAG, "Time alive left = "+ttl);
+        if (ttl > 0) {
+            Toast.makeText(MapsActivity.this, "You can't add another need while you have one alive!", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

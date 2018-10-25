@@ -62,10 +62,6 @@ public class AddNeedActivity extends AppCompatActivity {
 
     private Button create_btn;
 
-    // Variables to prevent a user creating multiple needs
-    static final String LOGTAG_nn = "Tag_nn";
-    private long ttl;
-
     // Variables to allow user to set his own location for his need
     public static int REQUEST_LOCATION = 133;
     private Button chooseLocation_btn;
@@ -208,26 +204,32 @@ public class AddNeedActivity extends AppCompatActivity {
 
     //method used to write in the DB
     private void writeNewNeed( String descr, long ttl, LatLng pos, int nbPeopleNeeded) {
-        if (canAddNewNeed(((MyApplication) this.getApplication()).getUser_need_ttl())) {
-            Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
-            //set_fcm_InstanceId(newNeed);
-            final long ttlCopy = new Long(ttl);
-            final int pplCopy = new Integer(nbPeopleNeeded);
-            if(!test) {
-                Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()) {
-                            updateTtl(ttlCopy);
-                            updatePpl(pplCopy);
-                            Toast.makeText(AddNeedActivity.this, "Need Successfully added", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(AddNeedActivity.this, "Error : Please verify your connection", Toast.LENGTH_SHORT).show();
-                        }
+        Need newNeed = new Need(Database.getDBauth.getCurrentUser().getEmail(), descr, ttl, pos.latitude, pos.longitude, category, nbPeopleNeeded, "");
+        //set_fcm_InstanceId(newNeed);
+        final long ttlCopy = new Long(ttl);
+        final int pplCopy = new Integer(nbPeopleNeeded);
+        if(!test) {
+            Database.saveNeed(newNeed).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentReference> task) {
+                    if (task.isSuccessful()) {
+                      updateTtl(ttlCopy);
+                      updatePpl(pplCopy);
+                      Toast.makeText(AddNeedActivity.this, "Need Successfully added", Toast.LENGTH_SHORT).show();
+                    } else {
+                      Toast.makeText(AddNeedActivity.this, "Error : Please verify your connection", Toast.LENGTH_SHORT).show();
                     }
-                });
-            }
+                }
+            });
         }
+    }
+
+    private void updateTtl(long ttl) {
+        ((MyApplication) this.getApplication()).setUser_need_ttl(ttl);
+    }
+
+    private void updatePpl(int ppl) {
+        ((MyApplication) this.getApplication()).setUser_need_ppl(ppl);
     }
 
 
@@ -248,32 +250,7 @@ public class AddNeedActivity extends AppCompatActivity {
                 });
     }*/
 
-    private void updateTtl(long ttl) {
-        ((MyApplication) this.getApplication()).setUser_need_ttl(ttl);
-    }
 
-    private void updatePpl(int ppl) {
-        ((MyApplication) this.getApplication()).setUser_need_ppl(ppl);
-    }
-
-    /** This method uses the global variable accross the application state user_need_ttl
-     * Variable to keep track of the last need created by the user and allowing him to create only one
-     * If (user_need_ttl-System.currentTimeMillis()) is negative, it means the need created by the user has expired
-     * It is initialized at 0L, so the first time a need is created, the above will always evaluate to true
-     * However, for this to be true, a user created need needs to be deleted when he closes the app
-     * This makes sense for shortlived needs, especially since the user would not be notified
-     * when another accepts its invitation if the app is closed
-     */
-    private boolean canAddNewNeed(long user_need_ttl) {
-        ttl = user_need_ttl-System.currentTimeMillis();
-        Log.d(LOGTAG_nn, "Time alive left = "+ttl);
-        if (ttl > 0) {
-            Toast.makeText(AddNeedActivity.this, "You can't add another need while you have one alive!", Toast.LENGTH_SHORT).show();
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     public void writeNewNeedInside(Task<DocumentReference> task){
         if(task.isSuccessful()){
