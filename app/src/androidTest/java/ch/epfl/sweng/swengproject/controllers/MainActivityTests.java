@@ -104,14 +104,6 @@ public class MainActivityTests {
         when(mockFirebaseAuth.getCurrentUser()).thenReturn(mockFirebaseUser);
     }
 
-     @Test
-    public void authSucceedAndUserVerified() throws InterruptedException {
-        assertEquals(true,true);
-    }
-
-    /*
-
-
     @Test
     public void noProfileInHDExist(){
         StorageHelper.deleteAllDataStoredLocally();
@@ -122,7 +114,7 @@ public class MainActivityTests {
         onView(withId(R.id.registration_scr)).perform(click());
     }
 
-
+ /*
     @Test
     public void authDoesNotSucceed(){
 
