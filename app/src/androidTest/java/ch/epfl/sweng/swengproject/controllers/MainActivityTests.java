@@ -61,7 +61,7 @@ import static org.mockito.Mockito.when;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTests {
 
-    private static UserDao userDao;
+    /*private static UserDao userDao;
 
     @BeforeClass
     public static void doBeforeAll(){
@@ -183,5 +183,6 @@ public class MainActivityTests {
 
         //assert equal we are in maps activity
         onView(withId(R.id.map_activity_main_view)).perform(click());
-    }
+    }*/
+
 }
